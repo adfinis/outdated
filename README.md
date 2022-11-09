@@ -8,8 +8,4 @@ Yellow: One or more Packages released a new lts version, you "should" migrate to
 
 Red: One or more Packages are outdated
 
-Black: All Packages are outdated, shame on you!
-
----
-
-An example of a usable .env file will be provided once the App works.
+Black: All Packages are outdated, this is not good
