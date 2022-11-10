@@ -1,0 +1,272 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %} {% load templateutils %}{% load static %} {% block head %}
+<link
+  rel="stylesheet"
+  href="http://code.jquery.com/ui/1.10.3/themes/dark-hive/jquery-ui.css"
+/>
+<!-- In the end, the website should be a 1 pager (uk-switch)-->
+<link rel="stylesheet" href="{% static 'js/jquery-ui.css' %}" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script>
+  $(function () {
+    $(".datepicker").datepicker({ dateFormat: "yy-mm-dd" });
+  });
+</script>
+{% endblock head %}
+<!-- prettier-ignore -->
+{% block pagecontent %}
+
+<div
+  class="uk-flex uk-container-extend uk-child-width-1-2 uk-height-viewport"
+  uk-height-viewport="offset-top: true"
+>
+  <div class="uk-background-primary uk-padding uk-light">
+    <div class="uk-flex uk-flex-column">
+      <div class="uk-background-secondary uk-border-rounded uk-padding">
+        <form class="uk-form" action="" method="post">
+          {% csrf_token %}
+          <fieldset class="uk-fieldset">
+            <legend class="uk-legend">New Project</legend>
+            <hr />
+            <!-- prettier-ignore -->
+            {{project_form}}
+          </fieldset>
+          {% submitButton "create" "project" %}
+        </form>
+      </div>
+      <div
+        class="uk-background-secondary uk-padding uk-border-rounded uk-margin-top uk-padding-small uk-padding-remove-top"
+      >
+        <div
+          class="uk-margin-small-left uk-margin-small-right uk-margin-small-bottom uk-margin-top"
+        >
+          <form
+            method="get"
+            class="uk-search uk-search-default"
+            style="width: 100%"
+          >
+            <span class="uk-search-icon-flip" uk-search-icon></span>
+            <input
+              class="uk-input uk-border-rounded"
+              type="search"
+              name="search"
+              placeholder="Search..."
+              value="{{request.GET.search}}"
+            />
+          </form>
+
+          <div
+            class="uk-height-max-medium uk-margin-small-top uk-overflow-auto"
+          >
+            {% for package in packages %}
+            <div
+              class="od-background-green-primary uk-border-rounded uk-margin-small"
+            >
+              <div class="uk-flex uk-padding-small uk-visible-toggle">
+                <h3
+                  class="uk-margin-remove od-clickable uk-width-1-1 uk-flex uk-flex-middle"
+                  uk-toggle="target: [data-id='{{package.pk}}']; animation: uk-animation-fade;"
+                >
+                  {{package.name}}
+                </h3>
+                <button
+                  class="uk-button uk-button-primary uk-button-small uk-border-rounded uk-invisible-hover"
+                  uk-toggle
+                  href="#package_modal_{{package.pk}}"
+                >
+                  edit
+                </button>
+              </div>
+              <!-- Modal Start -->
+              <div id="package_modal_{{package.pk}}" uk-modal>
+                <div class="uk-modal-dialog uk-light uk-border-rounded">
+                  <button
+                    class="uk-modal-close-default"
+                    type="button"
+                    uk-close
+                  ></button>
+
+                  <div
+                    class="uk-modal-header od-background-primary-green od-round-top"
+                  >
+                    <h2 class="uk-modal-title">Edit {{package.name}}</h2>
+                  </div>
+                  <form method="POST">
+                    {% csrf_token %}
+                    <div
+                      class="uk-modal-body uk-background-secondary"
+                      uk-overflow-auto
+                    >
+                      <div class="uk-text-right">
+                        <button
+                          class="uk-button uk-button-danger uk-border-rounded uk-button uk-button-small"
+                          type="submit"
+                          name="delete"
+                          value="package-{{package.pk}}"
+                        >
+                          DELETE
+                        </button>
+                      </div>
+
+                      <div>{% package_form package.pk %}</div>
+                    </div>
+
+                    <div
+                      class="uk-modal-footer od-background-primary-green od-round-bottom uk-flex"
+                    >
+                      <div class="uk-width-1-1">
+                        <button
+                          class="uk-button uk-button-primary uk-border-rounded uk-modal-close"
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                      <button
+                        class="uk-button uk-button-primary uk-border-rounded"
+                        type="submit"
+                        name="edit"
+                        value="package-{{package.pk}}"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <!-- Modal End -->
+
+              <div
+                class="uk-padding-small uk-border-rounded uk-margin-bottom"
+                data-id="{{package.pk}}"
+                hidden
+              >
+                <!-- prettier-ignore -->
+                {% get_versions package.pk as versions%}
+
+                {% for version in versions%}
+                <div
+                  class="{{version.status.CSSClass}} uk-padding-small uk-margin-small uk-margin-remove-bottom uk-border-rounded uk-flex od-inset"
+                  uk-toggle="target: [data-vid='{{version.pk}}']; mode: hover; cls: uk-invisible"
+                >
+                  <span
+                    class="uk-width-1-1 uk-flex uk-flex-middle uk-text-bold od-text-white"
+                    >{{version.name}}</span
+                  >
+                  <button
+                    class="uk-button uk-button-secondary uk-button-small uk-border-rounded uk-invisible"
+                    uk-toggle
+                    data-vid="{{version.pk}}"
+                    href="#version_modal_{{version.pk}}"
+                  >
+                    edit
+                  </button>
+                </div>
+                <!-- Modal Start -->
+                <div id="version_modal_{{version.pk}}" uk-modal>
+                  <div class="uk-modal-dialog uk-light uk-border-rounded">
+                    <button
+                      class="uk-modal-close-default"
+                      type="button"
+                      uk-close
+                    ></button>
+
+                    <div
+                      class="uk-modal-header od-background-green-primary od-round-top"
+                    >
+                      <h2 class="uk-modal-title">Edit Version</h2>
+                    </div>
+                    <form method="POST">
+                      {% csrf_token %}
+
+                      <div
+                        class="uk-modal-body uk-background-secondary"
+                        uk-overflow-auto
+                      >
+                        <div class="uk-text-right">
+                          <button
+                            class="uk-button uk-button-danger uk-border-rounded uk-button uk-button-small"
+                            type="submit"
+                            name="delete"
+                            value="version-{{version.pk}}"
+                          >
+                            DELETE
+                          </button>
+                        </div>
+                        {% version_form version.pk %}
+                      </div>
+
+                      <div
+                        class="uk-modal-footer od-background-primary-green od-round-bottom uk-flex"
+                      >
+                        <div class="uk-width-1-1">
+                          <button
+                            class="uk-button uk-button-primary uk-border-rounded uk-modal-close"
+                            type="button"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                        <button
+                          class="uk-button uk-button-primary uk-border-rounded"
+                          type="submit"
+                          name="edit"
+                          value="version-{{version.pk}}"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- Modal End -->
+                {% empty %}
+                <!-- prettier-ignore -->
+                {% warning "This Package has no versions yet, start by creating one." %} 
+              {% endfor %}
+              </div>
+            </div>
+            {% empty %}
+            <!-- prettier-ignore -->
+            {% closeable_warning "There were no results, please check your spelling or try again." %} 
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--  prettier-ignore -->
+
+  <div class="uk-background-secondary uk-padding uk-dark">
+    <div class="uk-margin-small-left uk-flex uk-flex-column">
+      <div class="uk-background-primary uk-padding uk-border-rounded">
+        <form class="uk-form" action="" method="post">
+          {% csrf_token %}
+          <fieldset class="uk-fieldset">
+            <legend class="uk-legend">Add Package</legend>
+            <hr />
+            {{package_form}}
+          </fieldset>
+          {% submitButton "create" "package" %}
+        </form>
+      </div>
+      <div
+        class="uk-background-primary uk-padding uk-margin-top uk-border-rounded"
+      >
+        <form class="uk-form" action="" method="post">
+          {% csrf_token %}
+          <fieldset class="uk-fieldset">
+            <legend class="uk-legend">Add Package Version</legend>
+            <hr />
+            {{version_form}}
+          </fieldset>
+          {% submitButton "create" "version" %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- prettier ignore -->
+{% endblock pagecontent %}

@@ -1,0 +1,157 @@
+{% extends "base.html" %} {% block pagecontent %}{% load templateutils %}
+<div class="uk-background-secondary">
+  <div
+    class="uk-padding uk-padding-remove-vertical"
+    style="padding-bottom: 20px !important; padding-top: 30px !important"
+  >
+    <div class="uk-background-secondary uk-light uk-width-1-1">
+      <form class="uk-search uk-search-default uk-width-1-1" method="GET">
+        <span class="uk-search-icon-flip" uk-search-icon></span>
+        <input
+          class="uk-input uk-width-1-1 uk-border-rounded"
+          type="search"
+          name="search"
+          value="{{request.GET.search}}"
+          placeholder="Search"
+          aria-label="Search"
+        />
+      </form>
+    </div>
+  </div>
+
+  <div
+    class="uk-margin-remove uk-overflow-auto uk-padding uk-padding-remove-vertical"
+    style="height: calc(100vh - 170px)"
+  >
+    <!-- prettier-ignore -->
+    {% for project in projects%}
+    <div
+      data-up_to_dateness="{{project.status.up_to_dateness}}"
+      data-colour="{{project.status.colour}}"
+      class="uk-container uk-container-expand uk-margin uk-padding-small uk-border-rounded od-background-primary-{{project.status.colour}}"
+    >
+      <h2
+        class="od-text-white uk-margin-remove od-clickable"
+        uk-toggle="target: #project_details_{{project.pk}}; animation: uk-animation-fade;"
+      >
+        {{project.name}}
+      </h2>
+
+      <div
+        id="project_details_{{project.pk}}"
+        class="uk-flex uk-flex-row"
+        hidden
+      >
+        <div
+          class="uk-flex uk-flex-left od-text-white od-child-height-1-3 uk-flex-column uk-flex-between"
+        >
+          <a
+            href="{{project.repo}}"
+            target="_blank"
+            class="uk-link-reset uk-label uk-label-warning uk-flex uk-flex-middle od-inset uk-margin-small-right"
+            uk-icon="git-branch"
+          >
+          </a>
+          <a
+            href="#project_modal_{{project.pk}}"
+            class="uk-link-reset uk-label od-background-green uk-flex uk-flex-middle od-inset uk-margin-small-right"
+            uk-icon="file-edit"
+            uk-toggle
+          ></a>
+
+          <!-- Modal Start -->
+          <div id="project_modal_{{project.pk}}" uk-modal>
+            <div class="uk-modal-dialog uk-light uk-border-rounded">
+              <button
+                class="uk-modal-close-default"
+                type="button"
+                uk-close
+              ></button>
+
+              <div
+                class="uk-modal-header od-background-green-primary od-round-top"
+              >
+                <h2 class="uk-modal-title">Edit Project</h2>
+              </div>
+              <form method="POST">
+                {% csrf_token %}
+
+                <div
+                  class="uk-modal-body uk-background-secondary"
+                  uk-overflow-auto
+                >
+                  <div class="uk-text-right">
+                    <button
+                      class="uk-button uk-button-danger uk-border-rounded uk-button uk-button-small"
+                      type="submit"
+                      name="delete_project"
+                      value="{{project.pk}}"
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                  {% project_form project.pk %}
+                </div>
+
+                <div
+                  class="uk-modal-footer od-background-primary-green od-round-bottom uk-flex"
+                >
+                  <div class="uk-width-1-1">
+                    <button
+                      class="uk-button uk-button-primary uk-border-rounded uk-modal-close"
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <button
+                    class="uk-button uk-button-primary uk-border-rounded"
+                    type="submit"
+                    name="edit_project"
+                    value="{{project.pk}}"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- Modal End -->
+          <form method="post">
+            {% csrf_token %}
+            <button
+              name="delete_project"
+              class="uk-link-reset uk-label uk-alert-danger uk-flex uk-flex-middle od-inset uk-margin-small-right uk-height-1-1"
+              uk-icon="trash"
+              type="submit"
+              value="{{project.pk}}"
+            ></button>
+          </form>
+        </div>
+
+        <div class="packages uk-width-1-1">
+          <!-- prettier-ignore -->
+          {% for version in project.used_packages.all %}
+          <div
+            class="od-background-primary-{{version.status.colour}} uk-margin-small uk-padding-small uk-margin-remove-bottom uk-border-rounded uk-flex od-inset"
+          >
+            <span
+              class="uk-width-1-1 uk-flex uk-flex-middle uk-text-bold od-text-white"
+              >{{version.package.name}}</span
+            >
+            <span class="uk-flex uk-flex-middle od-text-white uk-text-nowrap"
+              >{{version.name}}</span
+            >
+          </div>
+
+          <!-- prettier-ignore -->
+          {% empty %}{% warning "This Project has no Packages added to it yet, start by adding one." %} {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- prettier-ignore -->
+    {% empty %} {% if request.GET.search %} {% warning "Your search had no results, please check your spelling and try again." %} {% else %} {% warning "You have not added any Projects yet, therefore nothing is displayed." %} {% endif %}{% endfor %}
+  </div>
+</div>
+
+{% endblock pagecontent %}
