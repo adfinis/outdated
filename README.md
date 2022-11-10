@@ -14,6 +14,6 @@ Black: All Packages are outdated, this is not good
 
 ## How to start the Application?
 
-First install Docker-Compose and Poetry, after that download or clone this project, then rename .env.dist file and change the values of the variables to your liking. Then run ```docker-compose up``` this will start the database.
+First install Docker-Compose and Poetry, after that download or clone this project, then rename .env.dist file and change the values of the variables to your liking. Then run ```docker-compose up -d``` this will start the database.
 For starting the Django App, please wait until the database is properly started after that run:
 ```poetry run python outdated/manage.py runserver```.
