@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/css/uikit.min.css"
+    />
+    <link href="css/styles.css" rel="stylesheet" />
+  </head>
+  <body class="uk-background-muted">
+    <div class="uk-animation-fade projects uk-padding">
+      {% for project in projects %}
+      <div
+        style="border-radius: 25px !important"
+        class="uk-animation-fade uk-container uk-margin uk-background-secondary uk-dark"
+      >
+        <h1 class="uk-text-success uk-text-center">{{project.name}}</h1>
+        <div
+          class="uk-animation-fade uk-container uk-light uk-background-secondary"
+        >
+          <div class="uk-container uk-background-primary uk-light">
+            <a
+              uk-icon="icon: github; ratio: 5"
+              class="uk-icon-button uk-icon-hover"
+              href="{{project.repo}}"
+            ></a>
+          </div>
+          <div
+            class="uk-container uk-background-secondary uk-dark uk-margin-bottom"
+          >
+            <div class="uk-container uk-background-secondary uk-dark">
+              {% for package in project.packages.all%}
+              <div class="uk-animation-fade uk-background-secondary">
+                <strong>{{package.name}}</strong>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/js/uikit.min.js"
+      integrity="sha512-OZ9Sq7ecGckkqgxa8t/415BRNoz2GIInOsu8Qjj99r9IlBCq2XJlm9T9z//D4W1lrl+xCdXzq0EYfMo8DZJ+KA=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/js/uikit-icons.min.js"
+      integrity="sha512-hcz3GoZLfjU/z1OyArGvM1dVgrzpWcU3jnYaC6klc2gdy9HxrFkmoWmcUYbraeS+V/GWSgfv6upr9ff4RVyQPw=="
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

@@ -18,9 +18,6 @@ env = environ.Env()
 
 env.read_env(".env")
 
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 DEBUG = True
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
@@ -31,7 +28,9 @@ ALLOWED_HOSTS = ["127.0.0.1"]
 
 # Application definition
 
+
 INSTALLED_APPS = [
+    "projects.apps.ProjectsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -55,7 +55,7 @@ ROOT_URLCONF = "outdated.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["outdated/templates/"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
