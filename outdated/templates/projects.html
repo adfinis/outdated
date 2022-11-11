@@ -1,4 +1,24 @@
 <!DOCTYPE html>
+{% load static %}
+<link
+  rel="icon"
+  type="image/png"
+  href="{% static 'favicon-32x32.png' %}"
+  sizes="32x32"
+/>
+<link
+  rel="icon"
+  type="image/png"
+  href="{% static 'favicon-16x16.png' %}"
+  sizes="16x16"
+/>
+
+<link
+  rel="shortcut icon"
+  href="{% static 'favicon.ico' %}"
+  type="image/x-icon"
+/>
+
 <html lang="en">
   <head>
     <title></title>
@@ -8,37 +28,63 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/css/uikit.min.css"
     />
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
   </head>
-  <body class="uk-background-muted">
-    <div class="uk-animation-fade projects uk-padding">
+
+  <body>
+    <div
+      uk-sticky="end: #transparent-sticky-navbar; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
+    >
+      <nav class="uk-navbar-container uk-container-extend" uk-navbar>
+        <div class="uk-navbar-left">
+          <img
+            href="/"
+            uk-svg
+            width="150"
+            src="{% static 'logo.svg' %}"
+            class="uk-navbar-item uk-logo uk-preserve"
+          />
+        </div>
+      </nav>
+    </div>
+    <div
+      class="uk-padding"
+      uk-scrollspy="cls: uk-animation-fade; target: .project; delay: 50; repeat: true"
+    >
       {% for project in projects %}
       <div
-        style="border-radius: 25px !important"
-        class="uk-animation-fade uk-container uk-margin uk-background-secondary uk-dark"
+        class="uk-container-extend uk-margin uk-padding uk-border-rounded uk-background-primary uk-text-center uk-flex project"
       >
-        <h1 class="uk-text-success uk-text-center">{{project.name}}</h1>
         <div
-          class="uk-animation-fade uk-container uk-light uk-background-secondary"
+          class="uk-width-1-5 uk-padding uk-margin-right uk-background-secondary uk-border-rounded"
         >
-          <div class="uk-container uk-background-primary uk-light">
-            <a
-              uk-icon="icon: github; ratio: 5"
-              class="uk-icon-button uk-icon-hover"
-              href="{{project.repo}}"
-            ></a>
-          </div>
+          <h2 class="od-text-white uk-margin-remove uk-text-center">
+            {{project.name}}
+          </h2>
+        </div>
+
+        <div
+          class="uk-padding uk-border-rounded uk-background-secondary uk-width-4-6 uk-flex-column"
+          style="justify-content: center"
+        >
+          {% for package in project.packages.all%}
           <div
-            class="uk-container uk-background-secondary uk-dark uk-margin-bottom"
+            class="uk-margin uk-padding uk-background-primary uk-border-rounded"
           >
-            <div class="uk-container uk-background-secondary uk-dark">
-              {% for package in project.packages.all%}
-              <div class="uk-animation-fade uk-background-secondary">
-                <strong>{{package.name}}</strong>
+            <div class="uk-padding uk-background-secondary uk-border-rounded">
+              <strong
+                type="button"
+                class="
+        uk-text-{{package.status}}
+      "
+                >{{package.name}}</strong
+              >
+              <div uk-dropdown="mode: click">
+                Package Released: {{package.release_date}}
               </div>
-              {% endfor %}
             </div>
           </div>
+          {% endfor %}
         </div>
       </div>
       {% endfor %}

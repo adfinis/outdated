@@ -1,3 +1,5 @@
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from django.db import models
 
 
@@ -8,6 +10,15 @@ class Package(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def status(self):
+        if date.today() >= self.end_of_life_date:
+            return "danger"
+        elif date.today() - relativedelta(months=1) >= self.end_of_life_date:
+            return "warning"
+        else:
+            return "success"
 
 
 class Project(models.Model):
