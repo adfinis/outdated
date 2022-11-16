@@ -21,7 +21,7 @@
 
 <html lang="en">
   <head>
-    <title></title>
+    <title>Outdated</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -33,9 +33,13 @@
 
   <body>
     <div
-      uk-sticky="end: #transparent-sticky-navbar; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
+      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
     >
-      <nav class="uk-navbar-container uk-container-extend" uk-navbar>
+      <nav
+        class="uk-navbar-container uk-container-extend uk-box-shadow-large"
+        uk-navbar="dropbar: true;"
+        style="background: linear-gradient(#28b5f6, #1e88f1) !important"
+      >
         <div class="uk-navbar-left">
           <img
             href="/"
@@ -45,50 +49,47 @@
             class="uk-navbar-item uk-logo uk-preserve"
           />
         </div>
+        <div class="uk-navbar-right uk-light">
+          <ul class="uk-navbar-nav">
+            <li class="uk-button uk-box-shadow-hover-large uk-active">
+              <a href="/" aria-current="page">Overview</a>
+            </li>
+            <li class="uk-button uk-box-shadow-hover-large">
+              <a href="/admin">Create New</a>
+            </li>
+          </ul>
+        </div>
       </nav>
     </div>
-    <div
-      class="uk-padding"
-      uk-scrollspy="cls: uk-animation-fade; target: .project; delay: 50; repeat: true"
-    >
-      {% for project in projects %}
-      <div
-        class="uk-container-extend uk-margin uk-padding uk-border-rounded uk-background-primary uk-text-center uk-flex project"
-      >
-        <div
-          class="uk-width-1-5 uk-padding uk-margin-right uk-background-secondary uk-border-rounded"
-        >
-          <h2 class="od-text-white uk-margin-remove uk-text-center">
-            {{project.name}}
-          </h2>
-        </div>
 
-        <div
-          class="uk-padding uk-border-rounded uk-background-secondary uk-width-4-6 uk-flex-column"
-          style="justify-content: center"
-        >
-          {% for package in project.packages.all%}
-          <div
-            class="uk-margin uk-padding uk-background-primary uk-border-rounded"
+    {% for project in projects %}
+    <div
+      class="uk-container uk-margin uk-padding uk-border-rounded"
+      style="{{project.background}}"
+    >
+      <h2 class="od-text-white uk-text-center uk-box-shadow-medium uk-margin">
+        {{project.name}}
+      </h2>
+      <div class="uk-flex uk-flex-row">
+        <div class="uk-flex uk-flex-left uk-width-1-2 od-text-white">
+          <a
+            href="{{project.repo}}"
+            target="_blank"
+            class="uk-link-reset uk-label uk-label-warning uk-box-shadow-small uk-box-shadow-hover-large"
+            >Repository</a
           >
-            <div class="uk-padding uk-background-secondary uk-border-rounded">
-              <strong
-                type="button"
-                class="
-        uk-text-{{package.status}}
-      "
-                >{{package.name}}</strong
-              >
-              <div uk-dropdown="mode: click">
-                Package Released: {{package.release_date}}
-              </div>
-            </div>
-          </div>
-          {% endfor %}
+        </div>
+        <div class="packages uk-flex uk-flex-right uk-width-1-2">
+          {% for package in project.packages.all%} &nbsp;<label
+            class="uk-label uk-box-shadow-small"
+            style="background:{{package.status}}"
+            >{{package.name}}</label
+          >{% endfor %}
         </div>
       </div>
-      {% endfor %}
     </div>
+    {% endfor %}
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/js/uikit.min.js"
       integrity="sha512-OZ9Sq7ecGckkqgxa8t/415BRNoz2GIInOsu8Qjj99r9IlBCq2XJlm9T9z//D4W1lrl+xCdXzq0EYfMo8DZJ+KA=="
