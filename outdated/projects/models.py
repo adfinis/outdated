@@ -1,7 +1,7 @@
-from datetime import date, timedelta, datetime
-import math
+from datetime import date, timedelta
+
 from django.db import models
-from colour import Color
+
 import environ
 
 env = environ.Env()
