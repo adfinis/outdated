@@ -9,3 +9,10 @@ def index(request):
     packages = Package.objects.order_by("name")
     context = {"projects": projects, "packages": packages}
     return render(request, "projects.html", context)
+
+
+def create(request):
+    projects = Project.objects.order_by("name")
+    packages = Package.objects.order_by("name")
+    context = {"projects": projects, "packages": packages}
+    return render(request, "create.html", context)
