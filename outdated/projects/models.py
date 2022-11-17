@@ -40,34 +40,22 @@ class Project(models.Model):
     @property
     def background(self):
 
-        red = Color(env("RED"))
-        yellow = Color(env("YELLOW"))
-        green = Color(env("GREEN"))
-
         count = {"green": 0, "yellow": 0, "red": 0}
         for package in self.packages.all():
-            colour = Color(package.status)
+            colour = package.status
 
-            if colour == green:
+            if colour == env("GREEN"):
                 count["green"] += 1
-            elif colour == yellow:
+            elif colour == env("YELLOW"):
                 count["yellow"] += 1
             else:
                 count["red"] += 1
 
-        packageCount = len(self.packages.all())
-
-        gradient = list(green.range_to(yellow, packageCount)) + list(
-            yellow.range_to(red, packageCount)
-        )
-        if count["green"] == packageCount:
-            return f"background: {gradient[0].hex_l}"
-
+        if count["red"] != 0:
+            return f"background: {env('RED')}; "
+        elif count["green"] != len(self.packages.all()):
+            colour = env("YELLOW")
         else:
-            calculatedGradient = [
-                f"{env(key.upper())} {count[key]*88//packageCount}% ,"
-                for key in count
-                if count[key] != 0
-            ]
+            colour = env("GREEN")
 
-            return f"background: linear-gradient(to bottom, {calculatedGradient});"
+        return f"background: linear-gradient(to left, {colour},{env('PRIMARY')}); filter: hue-rotate(5deg): "
