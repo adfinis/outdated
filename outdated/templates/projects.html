@@ -1,0 +1,64 @@
+{% extends "base.html" %} {% block pagecontent %}
+<div uk-filter="target: .js-filter;">
+  <div uk-sticky="sel-target: 200; offset: 80; ">
+    <div class="uk-flex uk-background-secondary uk-dark">
+      <ul style="display: none">
+        <li class="uk-active" uk-filter-control="sort: data-completion"></li>
+      </ul>
+      <ul class="uk-subnav uk-subnav-pill uk-width-auto uk-margin-remove">
+        <li class="uk-active uk-padding-remove" uk-filter-control>
+          <a href="#">All</a>
+        </li>
+      </ul>
+      <ul class="uk-subnav uk-subnav-pill uk-width-5-6 uk-margin-remove">
+        <li uk-filter-control="[data-color='red']">
+          <a href="#">Critical</a>
+        </li>
+        <li uk-filter-control="[data-color='yellow']">
+          <a href="#">Pending</a>
+        </li>
+        <li uk-filter-control="[data-color='green']">
+          <a href="#">Up to date</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <ul class="js-filter uk-list uk-list-striped uk-margin-remove">
+    {% for project in projects %}
+    <li
+      data-color="{{project.status.color}}"
+      data-completion="{{project.status.completion}}"
+    >
+      <div
+        class="uk-container uk-margin uk-padding uk-border-rounded"
+        style="{{project.status.style}}"
+      >
+        <h2 class="od-text-white uk-text-center uk-box-shadow-medium uk-margin">
+          {{project.name}}
+        </h2>
+        <div class="uk-flex uk-flex-row">
+          <div
+            class="uk-flex uk-flex-left uk-width-1-2 od-text-white uk-flex-wrap-stretch"
+          >
+            <a
+              href="{{project.repo}}"
+              target="_blank"
+              class="uk-link-reset uk-label uk-label-warning uk-box-shadow-small uk-box-shadow-hover-large uk-icon-button uk-button"
+              uk-icon="github"
+            >
+            </a>
+          </div>
+          <div class="packages uk-flex uk-flex-right uk-width-1-2 uk-flex-wrap">
+            {% for package in project.packages.all%}<label
+              class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right"
+              style="background:{{package.status}}"
+              >{{package.name}}</label
+            >{% endfor %}
+          </div>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock pagecontent %}
