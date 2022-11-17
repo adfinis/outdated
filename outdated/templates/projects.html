@@ -40,14 +40,15 @@
         uk-navbar="dropbar: true;"
         style="background: linear-gradient(#28b5f6, #1e88f1) !important"
       >
-        <div class="uk-navbar-left">
-          <img
-            href="/"
-            uk-svg
-            width="150"
-            src="{% static 'logo.svg' %}"
-            class="uk-navbar-item uk-logo uk-preserve"
-          />
+        <div class="uk-navbar-left od-text-white">
+          <a class="uk-navbar-item uk-logo uk-link-reset">
+            <img
+              href="/"
+              width="35"
+              src="{% static 'logo.svg' %}"
+              alt="Outdated"
+            />utdated</a
+          >
         </div>
         <div class="uk-navbar-right uk-light">
           <ul class="uk-navbar-nav">
@@ -62,33 +63,73 @@
       </nav>
     </div>
 
-    {% for project in projects %}
-    <div
-      class="uk-container uk-margin uk-padding uk-border-rounded"
-      style="{{project.background}}"
-    >
-      <h2 class="od-text-white uk-text-center uk-box-shadow-medium uk-margin">
-        {{project.name}}
-      </h2>
-      <div class="uk-flex uk-flex-row">
-        <div class="uk-flex uk-flex-left uk-width-1-2 od-text-white">
-          <a
-            href="{{project.repo}}"
-            target="_blank"
-            class="uk-link-reset uk-label uk-label-warning uk-box-shadow-small uk-box-shadow-hover-large"
-            >Repository</a
-          >
-        </div>
-        <div class="packages uk-flex uk-flex-right uk-width-1-2">
-          {% for package in project.packages.all%} &nbsp;<label
-            class="uk-label uk-box-shadow-small"
-            style="background:{{package.status}}"
-            >{{package.name}}</label
-          >{% endfor %}
+    <div uk-filter="target: .js-filter">
+      <div uk-sticky="sel-target: .od-filter; start: 200; offset: 80; ">
+        <div
+          class="uk-grid-small uk-grid-divider uk-child-width-auto uk-sticky uk-background-muted uk-box-shadow-medium"
+          uk-grid
+        >
+          <div>
+            <ul class="uk-subnav uk-subnav-pill">
+              <li class="uk-active" uk-filter-control="sort: data-completion;">
+                <a href="#">All</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <ul class="uk-subnav uk-subnav-pill">
+              <li uk-filter-control=".tag-red"><a href="#">Critical</a></li>
+              <li uk-filter-control=".tag-yellow"><a href="#">Pending</a></li>
+              <li uk-filter-control=".tag-green">
+                <a href="#">Up to date</a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
+
+      <ul class="js-filter uk-list uk-list-striped uk-margin-remove">
+        {% for project in projects %}
+        <li
+          class="tag-{{project.status.color}}"
+          data-completion="{{project.status.completion}}"
+        >
+          <div
+            class="uk-container uk-margin uk-padding uk-border-rounded"
+            style="{{project.status.style}}"
+          >
+            <h2
+              class="od-text-white uk-text-center uk-box-shadow-medium uk-margin"
+            >
+              {{project.name}}
+            </h2>
+            <div class="uk-flex uk-flex-row">
+              <div
+                class="uk-flex uk-flex-left uk-width-1-2 od-text-white uk-flex-wrap-stretch"
+              >
+                <a
+                  href="{{project.repo}}"
+                  target="_blank"
+                  class="uk-link-reset uk-label uk-label-warning uk-box-shadow-small uk-box-shadow-hover-large uk-icon-button uk-button"
+                  uk-icon="github"
+                >
+                </a>
+              </div>
+              <div
+                class="packages uk-flex uk-flex-right uk-width-1-2 uk-flex-wrap"
+              >
+                {% for package in project.packages.all%}<label
+                  class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right"
+                  style="background:{{package.status}}"
+                  >{{package.name}}</label
+                >{% endfor %}
+              </div>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-    {% endfor %}
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/js/uikit.min.js"
