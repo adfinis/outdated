@@ -1,145 +1,64 @@
-<!DOCTYPE html>
-{% load static %}
-<link
-  rel="icon"
-  type="image/png"
-  href="{% static 'favicon-32x32.png' %}"
-  sizes="32x32"
-/>
-<link
-  rel="icon"
-  type="image/png"
-  href="{% static 'favicon-16x16.png' %}"
-  sizes="16x16"
-/>
-
-<link
-  rel="shortcut icon"
-  href="{% static 'favicon.ico' %}"
-  type="image/x-icon"
-/>
-
-<html lang="en">
-  <head>
-    <title>Outdated</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/css/uikit.min.css"
-    />
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-  </head>
-
-  <body>
+{% extends "base.html" %} {% block pagecontent %}
+<div uk-filter="target: .js-filter">
+  <div uk-sticky="sel-target: .od-filter; start: 200; offset: 80; ">
     <div
-      uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
+      class="uk-grid-small uk-grid-divider uk-child-width-auto uk-sticky uk-background-muted uk-box-shadow-medium"
+      uk-grid
     >
-      <nav
-        class="uk-navbar-container uk-container-extend uk-box-shadow-large"
-        uk-navbar="dropbar: true;"
-        style="background: linear-gradient(#28b5f6, #1e88f1) !important"
-      >
-        <div class="uk-navbar-left od-text-white">
-          <a class="uk-navbar-item uk-logo uk-link-reset">
-            <img
-              href="/"
-              width="35"
-              src="{% static 'logo.svg' %}"
-              alt="Outdated"
-            />utdated</a
-          >
-        </div>
-        <div class="uk-navbar-right uk-light">
-          <ul class="uk-navbar-nav">
-            <li class="uk-button uk-box-shadow-hover-large uk-active">
-              <a href="/" aria-current="page">Overview</a>
-            </li>
-            <li class="uk-button uk-box-shadow-hover-large">
-              <a href="/admin">Create New</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <div>
+        <ul class="uk-subnav uk-subnav-pill">
+          <li class="uk-active" uk-filter-control="sort: data-completion;">
+            <a href="#">All</a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <ul class="uk-subnav uk-subnav-pill">
+          <li uk-filter-control=".tag-red"><a href="#">Critical</a></li>
+          <li uk-filter-control=".tag-yellow"><a href="#">Pending</a></li>
+          <li uk-filter-control=".tag-green">
+            <a href="#">Up to date</a>
+          </li>
+        </ul>
+      </div>
     </div>
-
-    <div uk-filter="target: .js-filter">
-      <div uk-sticky="sel-target: .od-filter; start: 200; offset: 80; ">
-        <div
-          class="uk-grid-small uk-grid-divider uk-child-width-auto uk-sticky uk-background-muted uk-box-shadow-medium"
-          uk-grid
-        >
-          <div>
-            <ul class="uk-subnav uk-subnav-pill">
-              <li class="uk-active" uk-filter-control="sort: data-completion;">
-                <a href="#">All</a>
-              </li>
-            </ul>
+  </div>
+  <ul class="js-filter uk-list uk-list-striped uk-margin-remove">
+    {% for project in projects %}
+    <li
+      class="tag-{{project.status.color}}"
+      data-completion="{{project.status.completion}}"
+    >
+      <div
+        class="uk-container uk-margin uk-padding uk-border-rounded"
+        style="{{project.status.style}}"
+      >
+        <h2 class="od-text-white uk-text-center uk-box-shadow-medium uk-margin">
+          {{project.name}}
+        </h2>
+        <div class="uk-flex uk-flex-row">
+          <div
+            class="uk-flex uk-flex-left uk-width-1-2 od-text-white uk-flex-wrap-stretch"
+          >
+            <a
+              href="{{project.repo}}"
+              target="_blank"
+              class="uk-link-reset uk-label uk-label-warning uk-box-shadow-small uk-box-shadow-hover-large uk-icon-button uk-button"
+              uk-icon="github"
+            >
+            </a>
           </div>
-          <div>
-            <ul class="uk-subnav uk-subnav-pill">
-              <li uk-filter-control=".tag-red"><a href="#">Critical</a></li>
-              <li uk-filter-control=".tag-yellow"><a href="#">Pending</a></li>
-              <li uk-filter-control=".tag-green">
-                <a href="#">Up to date</a>
-              </li>
-            </ul>
+          <div class="packages uk-flex uk-flex-right uk-width-1-2 uk-flex-wrap">
+            {% for package in project.packages.all%}<label
+              class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right"
+              style="background:{{package.status}}"
+              >{{package.name}}</label
+            >{% endfor %}
           </div>
         </div>
       </div>
-
-      <ul class="js-filter uk-list uk-list-striped uk-margin-remove">
-        {% for project in projects %}
-        <li
-          class="tag-{{project.status.color}}"
-          data-completion="{{project.status.completion}}"
-        >
-          <div
-            class="uk-container uk-margin uk-padding uk-border-rounded"
-            style="{{project.status.style}}"
-          >
-            <h2
-              class="od-text-white uk-text-center uk-box-shadow-medium uk-margin"
-            >
-              {{project.name}}
-            </h2>
-            <div class="uk-flex uk-flex-row">
-              <div
-                class="uk-flex uk-flex-left uk-width-1-2 od-text-white uk-flex-wrap-stretch"
-              >
-                <a
-                  href="{{project.repo}}"
-                  target="_blank"
-                  class="uk-link-reset uk-label uk-label-warning uk-box-shadow-small uk-box-shadow-hover-large uk-icon-button uk-button"
-                  uk-icon="github"
-                >
-                </a>
-              </div>
-              <div
-                class="packages uk-flex uk-flex-right uk-width-1-2 uk-flex-wrap"
-              >
-                {% for package in project.packages.all%}<label
-                  class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right"
-                  style="background:{{package.status}}"
-                  >{{package.name}}</label
-                >{% endfor %}
-              </div>
-            </div>
-          </div>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/js/uikit.min.js"
-      integrity="sha512-OZ9Sq7ecGckkqgxa8t/415BRNoz2GIInOsu8Qjj99r9IlBCq2XJlm9T9z//D4W1lrl+xCdXzq0EYfMo8DZJ+KA=="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.5.9/js/uikit-icons.min.js"
-      integrity="sha512-hcz3GoZLfjU/z1OyArGvM1dVgrzpWcU3jnYaC6klc2gdy9HxrFkmoWmcUYbraeS+V/GWSgfv6upr9ff4RVyQPw=="
-      crossorigin="anonymous"
-    ></script>
-  </body>
-</html>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock pagecontent %}
