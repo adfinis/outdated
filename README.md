@@ -1,4 +1,4 @@
-# outdated
+# Outdated
 
 This Application is meant to make it easier to know what Project has outdated Packages, Outdated Packages are Packages that have gone out of Long Term Support (short lts). There is a colour-code to what state a Project is in:
 
