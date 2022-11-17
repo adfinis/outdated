@@ -4,5 +4,5 @@
 
 /* text colours */
 .od-text-white {
-  color: white;
+  color: white !important;
 }

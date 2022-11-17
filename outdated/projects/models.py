@@ -19,7 +19,6 @@ class Package(models.Model):
 
     @property
     def status(self):
-        status = {}
         if date.today() >= self.end_of_life_date:
             colour = env("RED")
         elif date.today() + timedelta(days=30) >= self.end_of_life_date:
@@ -38,24 +37,37 @@ class Project(models.Model):
         return self.name
 
     @property
-    def background(self):
-
+    def status(self):
+        packageValues = 0.0
         count = {"green": 0, "yellow": 0, "red": 0}
         for package in self.packages.all():
             colour = package.status
-
             if colour == env("GREEN"):
                 count["green"] += 1
+                packageValues += 1
             elif colour == env("YELLOW"):
                 count["yellow"] += 1
+                packageValues += 0.5
             else:
                 count["red"] += 1
+        packageNum = len(self.packages.all())
+        completion = packageValues * 100 // packageNum
 
         if count["red"] != 0:
-            return f"background: {env('RED')}; "
-        elif count["green"] != len(self.packages.all()):
-            colour = env("YELLOW")
+            return {
+                "style": f"background: linear-gradient(to left,#f37169, {env('PRIMARY')});filter: hue-rotate(5deg); filter: brightness(1)",
+                "color": "red",
+                "completion": completion,
+            }
+        elif count["green"] != packageNum:
+            hex = env("YELLOW")
+            color = "yellow"
         else:
-            colour = env("GREEN")
+            hex = env("GREEN")
+            color = "green"
 
-        return f"background: linear-gradient(to left, {colour},{env('PRIMARY')}); filter: hue-rotate(5deg): "
+        return {
+            "style": f"background: linear-gradient(to left, {hex},{env('PRIMARY')}); filter: hue-rotate(5deg);",
+            "color": color,
+            "completion": completion,
+        }
