@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "outdated"
-version = "0.0.0"
-description = "Tool to show when Packages go out of lts and when to update to the new long term support version."
+name = "Outdated"
+version = "1.0.0"
+description = "Shows all added projects, and their packages, also indicates when a package is no longer supported."
 authors = ["Adfinis AG"]
 license = "GPL-3.0-or-later"
 readme = "README.md"
@@ -11,7 +11,6 @@ python = "^3.8"
 django = "^3.2.16"
 django-environ = "^0.9.0"
 psycopg2-binary = "^2.9.5"
-python-dateutil = "^2.8.2"
 
 
 [build-system]

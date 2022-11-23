@@ -38,36 +38,26 @@ class Project(models.Model):
 
     @property
     def status(self):
-        packageValues = 0.0
-        count = {"green": 0, "yellow": 0, "red": 0}
+        value_packages = 0.0
+        colours_packages = {"green": 0, "yellow": 0, "red": 0}
         for package in self.packages.all():
             colour = package.status
             if colour == env("GREEN"):
-                count["green"] += 1
-                packageValues += 1
+                colours_packages["green"] += 1
+                value_packages += 1
             elif colour == env("YELLOW"):
-                count["yellow"] += 1
-                packageValues += 0.5
+                colours_packages["yellow"] += 1
+                value_packages += 0.5
             else:
-                count["red"] += 1
-        packageNum = len(self.packages.all())
-        completion = packageValues * 100 // packageNum
-
-        if count["red"] != 0:
-            return {
-                "style": f"background: linear-gradient(to left,#f37169, {env('PRIMARY')});filter: hue-rotate(5deg); filter: brightness(1)",
-                "color": "red",
-                "completion": completion,
-            }
-        elif count["green"] != packageNum:
-            hex = env("YELLOW")
-            color = "yellow"
+                colours_packages["red"] += 1
+        if colours_packages["red"] != 0:
+            colour = "RED"
+        elif len(self.packages.all()) != colours_packages["green"]:
+            colour = "YELLOW"
         else:
-            hex = env("GREEN")
-            color = "green"
-
+            colour = "GREEN"
         return {
-            "style": f"background: linear-gradient(to left, {hex},{env('PRIMARY')}); filter: hue-rotate(5deg);",
-            "color": color,
-            "completion": completion,
+            "up_to_dateness": value_packages * 100 // len(self.packages.all()),
+            "background": env(colour + "_GRADIENT"),
+            "colour": colour,
         }
