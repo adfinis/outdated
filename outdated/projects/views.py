@@ -1,8 +1,14 @@
 from django.template import loader
 from django.http import HttpResponse
 from django.shortcuts import render
+import environ
 from .models import Project, Package
-from .forms import PackageForm
+from .forms import PackageForm, ProjectForm
+
+env = environ.Env()
+
+env.read_env(".env")
+
 
 # Create your views here.
 def index(request):
@@ -21,5 +27,12 @@ def create(request):
     if package_form.is_valid():
         package_form.save()
     context["package_form"] = package_form
-
+    project_form = ProjectForm(request.POST or None)
+    if project_form.is_valid():
+        project_form.save()
+    context["project_form"] = project_form
+    context["primary"] = env("PRIMARY")
+    context["green"] = env("GREEN")
+    context["yellow"] = env("YELLOW")
+    context["red"] = env("RED")
     return render(request, "create.html", context)

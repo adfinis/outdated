@@ -29,9 +29,11 @@
       href="{% static 'favicon.ico' %}"
       type="image/x-icon"
     />
+    {% block head %} {% endblock head%}
   </head>
 
   <body>
+    {% csrf_token %}
     <div
       uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
     >
@@ -44,7 +46,7 @@
           <a href="/" class="uk-navbar-item uk-logo uk-link-reset">
             <img
               href="/"
-              width="35"
+              width="38"
               src="{% static 'logo.svg' %}"
               alt="Outdated"
             />utdated</a

@@ -1,5 +1,87 @@
-{% extends "base.html" %} {% block pagecontent %}
-<span>TODO</span>
-<form>{{package_form}}</form>
+<!-- prettier-ignore -->
+{% extends "base.html" %}{% include "./components/buttons/submit.html" %} {% load templateutils %}{% load static %}
+{% block head %}
+<style>
+  form label,
+  form legend {
+    color: #fff !important;
+  }
+  input:focus,
+  select:focus {
+    border: none !important;
+  }
+  input:not(:focus),
+  select:not(:focus) {
+    box-shadow: 0 0 3px 3px {{primary}};
+    filter: hue(deg 5)
+  }
+  input:focus:valid,
+  select:focus:valid {
+    box-shadow: 0 0 3px 3px {{green}};
+  }
+  input:focus:invalid,
+  select:focus:invalid {
+    box-shadow: 0 0 3px 3px {{red}};
+  }
+</style>
+<link
+  rel="stylesheet"
+  href="http://code.jquery.com/ui/1.10.3/themes/dark-hive/jquery-ui.css"
+/>
+<link rel="stylesheet" href="{% static 'js/jquery-ui.css' %}" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script>
+  $(function () {
+    $(".datepicker").datepicker({ dateFormat: "yy-mm-dd" });
+  });
+</script>
+{% endblock head %}
+<!-- prettier-ignore -->
+{% block pagecontent %}
+
+<div uk-filter="target: .js-filter;">
+  <div uk-sticky="sel-target: 200; offset: 80; ">
+    <div class="uk-flex uk-background-secondary uk-dark">
+      <ul class="uk-subnav uk-subnav-pill uk-width-5-6 uk-margin-remove">
+        <li class="uk-padding-remove" uk-filter-control=".od-add-project">
+          <a href="#">Add Project</a>
+        </li>
+        <li uk-filter-control=".od-add-package">
+          <a href="#">Add Package</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="js-filter">
+    <div
+      class="od-add-project uk-container uk-container-large uk-background-primary uk-border-rounded uk-margin-top uk-padding"
+    >
+      <form class="uk-form">
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend {% get_env 'GREEgN' %}">New Project</legend>
+          <hr />
+          <!-- prettier-ignore -->
+          {{project_form}} {% submitButton %}
+        </fieldset>
+      </form>
+    </div>
+    <div
+      class="od-add-package uk-container uk-container-large uk-background-primary uk-border-rounded uk-margin-top uk-padding"
+      style="background: {{primary}} {{green}}; filter: hue-rotate(5deg);"
+    >
+      <form class="uk-form">
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Add Package</legend>
+          <hr />
+          {{package_form}}{% submitButton %}
+        </fieldset>
+      </form>
+    </div>
+  </div>
+  <hr />
+</div>
+
 <!-- prettier ignore -->
 {% endblock pagecontent %}
