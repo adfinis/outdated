@@ -6,22 +6,20 @@
   form legend {
     color: #fff !important;
   }
-  input:focus,
-  select:focus {
+  input,
+  select {
     border: none !important;
+    transition: box-shadow .5s !important;
   }
-  input:not(:focus),
-  select:not(:focus) {
-    box-shadow: 0 0 3px 3px {{primary}};
-    filter: hue(deg 5)
+
+  input:valid,  input:valid.input:placeholder-shown,
+  select:valid {
+    box-shadow: 0 0 3px 3px {% get_env "GREEN" %};
+
   }
-  input:focus:valid,
-  select:focus:valid {
-    box-shadow: 0 0 3px 3px {{green}};
-  }
-  input:focus:invalid,
-  select:focus:invalid {
-    box-shadow: 0 0 3px 3px {{red}};
+  input:focus:invalid, input:invalid.input:not(:placeholder-shown),
+  select:invalid {
+    box-shadow: 0 0 3px 3px {% get_env "RED" %} ;
   }
 </style>
 <link
@@ -40,48 +38,35 @@
 <!-- prettier-ignore -->
 {% block pagecontent %}
 
-<div uk-filter="target: .js-filter;">
-  <div uk-sticky="sel-target: 200; offset: 80; ">
-    <div class="uk-flex uk-background-secondary uk-dark">
-      <ul class="uk-subnav uk-subnav-pill uk-width-5-6 uk-margin-remove">
-        <li class="uk-padding-remove" uk-filter-control=".od-add-project">
-          <a href="#">Add Project</a>
-        </li>
-        <li uk-filter-control=".od-add-package">
-          <a href="#">Add Package</a>
-        </li>
-      </ul>
-    </div>
+<main class="uk-flex uk-margin uk-padding uk-flex-between">
+  <div
+    class="uk-background-primary uk-border-rounded uk-padding uk-width-1-2 uk-margin-small-right"
+  >
+    <form class="uk-form" action="" method="post">
+      {% csrf_token %}
+      <fieldset class="uk-fieldset">
+        <legend class="uk-legend">New Project</legend>
+        <hr />
+        <!-- prettier-ignore -->
+        {{project_form}}
+      </fieldset>
+      {% submitButton "create_project" %}
+    </form>
   </div>
 
-  <div class="js-filter">
-    <div
-      class="od-add-project uk-container uk-container-large uk-background-primary uk-border-rounded uk-margin-top uk-padding"
-    >
-      <form class="uk-form">
-        <fieldset class="uk-fieldset">
-          <legend class="uk-legend {% get_env 'GREEgN' %}">New Project</legend>
-          <hr />
-          <!-- prettier-ignore -->
-          {{project_form}} {% submitButton %}
-        </fieldset>
-      </form>
-    </div>
-    <div
-      class="od-add-package uk-container uk-container-large uk-background-primary uk-border-rounded uk-margin-top uk-padding"
-      style="background: {{primary}} {{green}}; filter: hue-rotate(5deg);"
-    >
-      <form class="uk-form">
-        <fieldset class="uk-fieldset">
-          <legend class="uk-legend">Add Package</legend>
-          <hr />
-          {{package_form}}{% submitButton %}
-        </fieldset>
-      </form>
-    </div>
+  <div
+    class="uk-background-primary uk-border-rounded uk-padding uk-width-1-2 uk-margin-small-left"
+  >
+    <form class="uk-form" action="" method="post">
+      {% csrf_token %}
+      <fieldset class="uk-fieldset">
+        <legend class="uk-legend">Add Package</legend>
+        <hr />
+        {{package_form}}
+      </fieldset>
+      {% submitButton "create_package" %}
+    </form>
   </div>
-  <hr />
-</div>
-
+</main>
 <!-- prettier ignore -->
 {% endblock pagecontent %}
