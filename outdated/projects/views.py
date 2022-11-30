@@ -12,27 +12,56 @@ env.read_env(".env")
 
 # Create your views here.
 def index(request):
+
     projects = Project.objects.order_by("name")
-    packages = Package.objects.order_by("name")
-    context = {"projects": projects, "packages": packages}
+    context = {"projects": projects}
     return render(request, "projects.html", context)
 
 
 def create(request):
-    projects = Project.objects.order_by("name")
-    packages = Package.objects.order_by("name")
-    context = {"projects": projects, "packages": packages}
 
-    package_form = PackageForm(request.POST or None)
-    if package_form.is_valid():
-        package_form.save()
-    context["package_form"] = package_form
-    project_form = ProjectForm(request.POST or None)
-    if project_form.is_valid():
-        project_form.save()
-    context["project_form"] = project_form
-    context["primary"] = env("PRIMARY")
-    context["green"] = env("GREEN")
-    context["yellow"] = env("YELLOW")
-    context["red"] = env("RED")
-    return render(request, "create.html", context)
+    if request.method == "POST":
+        success_message = None
+        if "create_package" in request.POST:
+            package_details = PackageForm(request.POST)
+            if package_details.is_valid():
+                post = package_details.save(commit=False)
+                post.save()
+                package_form = PackageForm(None)
+                project_form = ProjectForm(None)
+                success_message = "Package was successfully created"
+            else:
+                package_form = package_details
+                project_form = ProjectForm(None)
+        elif "create_project" in request.POST:
+            project_details = ProjectForm(request.POST)
+            if project_details.is_valid():
+                post = project_details.save(commit=False)
+                post.save()
+                package_form = PackageForm(None)
+                project_form = ProjectForm(None)
+                success_message = "Project was successfully created"
+            else:
+                project_form = project_details
+                package_form = PackageForm(None)
+        return render(
+            request,
+            "create.html",
+            {
+                "package_form": package_form,
+                "project_form": project_form,
+                "success_message": success_message,
+            },
+        )
+    else:
+        package_form = PackageForm(None)
+        project_form = ProjectForm(None)
+
+    return render(
+        request,
+        "create.html",
+        {
+            "package_form": package_form,
+            "project_form": project_form,
+        },
+    )

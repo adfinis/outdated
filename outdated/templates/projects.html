@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block pagecontent %}
+{% extends "base.html" %} {% block pagecontent %}{% load templateutils %}
 <div uk-filter="target: .js-filter;">
   <div uk-sticky="sel-target: 200; offset: 80; ">
     <div class="uk-flex uk-background-secondary uk-dark">
@@ -51,11 +51,11 @@
             >
             </a>
           </div>
-          <ul style="display: none">
           <div class="packages uk-flex uk-flex-right uk-width-1-2 uk-flex-wrap">
-            {% for package in project.packages.all%}<label
+            <!-- prettier-ignore -->
+            {% for package in project.packages.all %}<label
               class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right"
-              style="background:{{package.status}}"
+              style="background:{% get_env package.status %}"
               >{{package.name}}</label
             >{% endfor %}
           </div>

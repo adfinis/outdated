@@ -10,9 +10,10 @@ register = template.Library()
 
 
 @register.simple_tag
-def submitButton():
+def submitButton(name: str, text="submit"):
+
     return mark_safe(
-        f"<button type='submit' class='uk-button-danger uk-margin-top ' uk-icon='icon: check; ratio: 2;' ></button>"
+        f"<button name='{name}' type='submit' class='uk-button uk-button-secondary uk-margin-top uk-border-rounded' >{text}</button>"
     )
 
 

@@ -31,9 +31,10 @@
     />
     {% block head %} {% endblock head%}
   </head>
+  <!-- prettier-ignore -->
+  <body {% if success_message %}onload='UIkit.notification("{{success_message}}", { status: "success" , timeout: 250})'{% endif %}>
+    
 
-  <body>
-    {% csrf_token %}
     <div
       uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
     >
