@@ -2,8 +2,8 @@ from django.template import loader
 from django.http import HttpResponse
 from django.shortcuts import render
 import environ
-from .models import Project, Package
-from .forms import PackageForm, ProjectForm
+from .models import Project, Package, Version
+from .forms import PackageForm, ProjectForm, VersionForm
 
 env = environ.Env()
 
@@ -19,7 +19,6 @@ def index(request):
 
 
 def create(request):
-
     if request.method == "POST":
         success_message = None
         if "create_package" in request.POST:
@@ -27,35 +26,50 @@ def create(request):
             if package_details.is_valid():
                 post = package_details.save(commit=False)
                 post.save()
-                package_form = PackageForm(None)
-                project_form = ProjectForm(None)
+
                 success_message = "Package was successfully created"
+                package_form = PackageForm(None)
             else:
                 package_form = package_details
-                project_form = ProjectForm(None)
+            project_form = ProjectForm(None)
+            version_form = VersionForm(None)
         elif "create_project" in request.POST:
             project_details = ProjectForm(request.POST)
             if project_details.is_valid():
-                post = project_details.save(commit=False)
-                post.save()
-                package_form = PackageForm(None)
-                project_form = ProjectForm(None)
+                post = project_details.save(commit=True)
+
                 success_message = "Project was successfully created"
+                project_form = ProjectForm(None)
             else:
                 project_form = project_details
-                package_form = PackageForm(None)
+            package_form = PackageForm(None)
+            version_form = VersionForm(None)
+        elif "create_version" in request.POST:
+            version_details = VersionForm(request.POST)
+            if version_details.is_valid():
+                post = version_details.save(commit=False)
+                post.save()
+                success_message = "Version was successfully added"
+                version_form = VersionForm(None)
+            else:
+                version_form = version_details
+            package_form = PackageForm(None)
+            project_form = ProjectForm(None)
+
         return render(
             request,
             "create.html",
             {
                 "package_form": package_form,
                 "project_form": project_form,
+                "version_form": version_form,
                 "success_message": success_message,
             },
         )
     else:
         package_form = PackageForm(None)
         project_form = ProjectForm(None)
+        version_form = VersionForm(None)
 
     return render(
         request,
@@ -63,5 +77,6 @@ def create(request):
         {
             "package_form": package_form,
             "project_form": project_form,
+            "version_form": version_form,
         },
     )

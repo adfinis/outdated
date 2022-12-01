@@ -1,8 +1,51 @@
-/*__________________________________*/
-/* Outdated CSS changes (UIkit-like)*/
-/*__________________________________*/
+/*______________*/
+/* Outdated CSS */
+/*______________*/
+
+/* vars */
+:root {
+  --od-primary: #2885f7;
+  --od-green: #31d2a0;
+  --od-yellow: #f7e160;
+  --od-red: #f0746d;
+}
 
 /* text colours */
 .od-text-white {
   color: white !important;
+}
+
+/* Static Backrounds */
+.od-background-primary {
+  background: var(--od-primary);
+}
+.od-background-green {
+  background: var(--od-green);
+}
+.od-background-yellow {
+  background: var(--od-yellow);
+}
+.od-background-red {
+  background: var(--od-red);
+}
+
+/* Gradient Backgrounds */
+.od-background-primary-green {
+  background: linear-gradient(to right, var(--od-primary), var(--od-green));
+}
+.od-background-primary-yellow {
+  background: linear-gradient(to right, var(--od-primary), var(--od-yellow));
+}
+.od-background-primary-red {
+  background: linear-gradient(to right, var(--od-primary), var(--od-red));
+}
+
+.od-background-green-primary {
+  background: linear-gradient(to left, var(--od-primary), var(--od-green));
+}
+.od-background-yellow-primary {
+  background: linear-gradient(to left, var(--od-primary), var(--od-yellow));
+}
+.od-background-red-primary {
+  background: linear-gradient(to left, var(--od-primary), var(--od-red));
 }
