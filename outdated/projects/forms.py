@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.utils import ErrorList
 from django.utils.html import format_html, format_html_join
-from .models import Package, Project
+from .models import Package, Project, Version
 import environ
 import datetime
 
@@ -40,13 +40,19 @@ def uikitify(fields):
             field.widget.attrs[
                 "pattern"
             ] = "[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])"
-        elif field_supertype == "TextField" or field_supertype == "CharField":
+        elif (
+            field_supertype == "TextField"
+            or field_supertype == "CharField"
+            or field_supertype == "URLField"
+        ):
             field_class += " uk-input "
-        elif field_supertype == "ModelMultipleChoiceField":
+        elif (
+            field_supertype == "ModelMultipleChoiceField"
+            or field_supertype == "ModelChoiceField"
+        ):
             field_class += " uk-select "
 
         field.widget.attrs["class"] = field_class + " uk-border-rounded"
-        field.widget.attrs["placeholder"] = ""
     return fields
 
 
@@ -69,5 +75,28 @@ class ProjectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
+        self.fields = uikitify(self.fields)
+        self.error_class = UiKitErrorList
+
+        self.fields["used_packages"].widget.choices = [
+            (
+                package.name + ":",
+                tuple(
+                    tuple([version.pk, version.name])
+                    for version in Version.objects.filter(package=package.pk)
+                ),
+            )
+            for package in Package.objects.all()
+            if Version.objects.filter(package=package.pk)
+        ]
+
+
+class VersionForm(forms.ModelForm):
+    class Meta:
+        model = Version
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super(VersionForm, self).__init__(*args, **kwargs)
         self.fields = uikitify(self.fields)
         self.error_class = UiKitErrorList

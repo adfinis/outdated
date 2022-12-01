@@ -14,13 +14,13 @@
         </li>
       </ul>
       <ul class="uk-subnav uk-subnav-pill uk-width-5-6 uk-margin-remove">
-        <li uk-filter-control="[data-colour='RED']">
+        <li uk-filter-control="[data-colour='red']">
           <a href="#">Critical</a>
         </li>
-        <li uk-filter-control="[data-colour='YELLOW']">
+        <li uk-filter-control="[data-colour='yellow']">
           <a href="#">Pending</a>
         </li>
-        <li uk-filter-control="[data-colour='GREEN']">
+        <li uk-filter-control="[data-colour='green']">
           <a href="#">Up to date</a>
         </li>
       </ul>
@@ -33,8 +33,7 @@
       data-colour="{{project.status.colour}}"
     >
       <div
-        class="uk-container uk-container-large uk-margin uk-padding uk-border-rounded"
-        style="background:{{project.status.background}}"
+        class="uk-container uk-container-large uk-margin uk-padding uk-border-rounded od-background-primary-{{project.status.colour}}"
       >
         <h2 class="od-text-white uk-text-center uk-box-shadow-medium uk-margin">
           {{project.name}}
@@ -53,9 +52,8 @@
           </div>
           <div class="packages uk-flex uk-flex-right uk-width-1-2 uk-flex-wrap">
             <!-- prettier-ignore -->
-            {% for package in project.packages.all %}<label
-              class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right"
-              style="background:{% get_env package.status %}"
+            {% for package in project.used_packages.all %}<label
+              class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right {{package.CSSClass}}"
               >{{package.name}}</label
             >{% endfor %}
           </div>

@@ -1,6 +1,5 @@
 <!-- prettier-ignore -->
-{% extends "base.html" %}{% include "./components/buttons/submit.html" %} {% load templateutils %}{% load static %}
-{% block head %}
+{% extends "base.html" %} {% load templateutils %}{% load static %} {% block head %}
 <style>
   form label,
   form legend {
@@ -26,6 +25,7 @@
   rel="stylesheet"
   href="http://code.jquery.com/ui/1.10.3/themes/dark-hive/jquery-ui.css"
 />
+<!-- In the end, the website should be a 1 pager (uk-switch)-->
 <link rel="stylesheet" href="{% static 'js/jquery-ui.css' %}" />
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -38,7 +38,7 @@
 <!-- prettier-ignore -->
 {% block pagecontent %}
 
-<main class="uk-flex uk-margin uk-padding uk-flex-between">
+<div class="uk-flex uk-margin-top uk-padding uk-flex-between">
   <div
     class="uk-background-primary uk-border-rounded uk-padding uk-width-1-2 uk-margin-small-right"
   >
@@ -54,19 +54,33 @@
     </form>
   </div>
 
-  <div
-    class="uk-background-primary uk-border-rounded uk-padding uk-width-1-2 uk-margin-small-left"
-  >
-    <form class="uk-form" action="" method="post">
-      {% csrf_token %}
-      <fieldset class="uk-fieldset">
-        <legend class="uk-legend">Add Package</legend>
-        <hr />
-        {{package_form}}
-      </fieldset>
-      {% submitButton "create_package" %}
-    </form>
+  <div class="uk-width-1-2 uk-margin-small-left uk-flex uk-flex-column">
+    <div class="uk-background-primary uk-padding uk-border-rounded">
+      <form class="uk-form" action="" method="post">
+        {% csrf_token %}
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Add Package</legend>
+          <hr />
+          {{package_form}}
+        </fieldset>
+        {% submitButton "create_package" %}
+      </form>
+    </div>
+    <div
+      class="uk-background-primary uk-padding uk-margin-top uk-border-rounded"
+    >
+      <form class="uk-form" action="" method="post">
+        {% csrf_token %}
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Add Package Version</legend>
+          <hr />
+          {{version_form}}
+        </fieldset>
+        {% submitButton "create_version" %}
+      </form>
+    </div>
   </div>
-</main>
+</div>
+
 <!-- prettier ignore -->
 {% endblock pagecontent %}

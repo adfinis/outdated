@@ -11,56 +11,61 @@ env.read_env(".env")
 
 class Package(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Version(models.Model):
+    package = models.ForeignKey(Package, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, unique=True)
     release_date = models.DateField()
     end_of_life_date = models.DateField()
-
-    class Meta:
-        ordering = ["end_of_life_date"]
 
     def __str__(self):
         return self.name
 
     @property
-    def status(self):
+    def CSSClass(self):
         if date.today() >= self.end_of_life_date:
-            colour = "RED"
+            css_class = "od-background-red"
         elif date.today() + timedelta(days=30) >= self.end_of_life_date:
-            colour = "YELLOW"
+            css_class = "od-background-yellow"
         else:
-            colour = "GREEN"
-        return colour
+            css_class = "od-background-green"
+        return css_class
 
 
 class Project(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    repo = models.CharField(max_length=200, unique=True)
-    packages = models.ManyToManyField(Package)
+    repo = models.URLField(max_length=200, unique=True)
+    used_packages = models.ManyToManyField(Version, blank=False)
 
     def __str__(self):
         return self.name
 
     @property
     def status(self):
+        print(self.used_packages.all())
         value_packages = 0.0
         colours_packages = {"green": 0, "yellow": 0, "red": 0}
-        for package in self.packages.all():
-            colour = package.status
-            if colour == "GREEN":
+        for package in self.used_packages.all():
+            package_class = package.CSSClass
+            if package_class == "od-background-green":
                 colours_packages["green"] += 1
                 value_packages += 1
-            elif colour == "YELLOW":
+            elif package_class == "od-background-yellow":
                 colours_packages["yellow"] += 1
                 value_packages += 0.5
             else:
                 colours_packages["red"] += 1
         if colours_packages["red"] != 0:
-            colour = "RED"
-        elif len(self.packages.all()) != colours_packages["green"]:
-            colour = "YELLOW"
+            colour = "red"
+        elif len(self.used_packages.all()) != colours_packages["green"]:
+            colour = "yellow"
         else:
-            colour = "GREEN"
+            colour = "green"
         return {
-            "up_to_dateness": value_packages * 100 // len(self.packages.all()) or 0,
-            "background": env(colour + "_GRADIENT"),
+            "up_to_dateness": value_packages * 100 // len(self.used_packages.all()),
             "colour": colour,
         }
