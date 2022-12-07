@@ -2,12 +2,6 @@ from datetime import date, timedelta
 
 from django.db import models
 
-import environ
-
-env = environ.Env()
-
-env.read_env(".env")
-
 
 class Package(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -21,6 +15,9 @@ class Version(models.Model):
     name = models.CharField(max_length=100, unique=True)
     release_date = models.DateField()
     end_of_life_date = models.DateField()
+
+    class Meta:
+        ordering = ["end_of_life_date"]
 
     def __str__(self):
         return self.name
@@ -46,7 +43,7 @@ class Project(models.Model):
 
     @property
     def status(self):
-        print(self.used_packages.all())
+
         value_packages = 0.0
         colours_packages = {"green": 0, "yellow": 0, "red": 0}
         for package in self.used_packages.all():

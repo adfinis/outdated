@@ -1,6 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
 import environ
+from projects.models import Version
 
 env = environ.Env()
 
@@ -20,3 +21,22 @@ def submitButton(name: str, text="submit"):
 @register.simple_tag
 def get_env(key):
     return env.get_value(key, default="")
+
+
+@register.simple_tag
+def get_elements(pk):
+    return Version.objects.filter(package=int(pk))
+
+
+@register.simple_tag
+def closeable_warning(text: str):
+    return mark_safe(
+        f'<div class="uk-alert-danger uk-margin-remove uk-border-rounded" uk-alert><a class="uk-alert-close" uk-close></a><p>{text}</p></div>'
+    )
+
+
+@register.simple_tag
+def warning(text: str):
+    return mark_safe(
+        f'<div class="uk-alert-danger uk-margin-remove uk-border-rounded" uk-alert><p>{text}</p></div>'
+    )

@@ -1,13 +1,8 @@
-from django.template import loader
-from django.http import HttpResponse
 from django.shortcuts import render
-import environ
-from .models import Project, Package, Version
+
+
 from .forms import PackageForm, ProjectForm, VersionForm
-
-env = environ.Env()
-
-env.read_env(".env")
+from .models import Project, Package, Version
 
 
 # Create your views here.
@@ -19,64 +14,58 @@ def index(request):
 
 
 def create(request):
+
+    packages = Package.objects.order_by("name")
+    versions = Version.objects
+    context = {
+        "packages": packages,
+        "versions": versions,
+        "unfiltered_packages": packages,
+    }
     if request.method == "POST":
+        package_form = PackageForm(request.POST)
+        project_form = ProjectForm(request.POST)
+        version_form = VersionForm(request.POST)
         success_message = None
         if "create_package" in request.POST:
-            package_details = PackageForm(request.POST)
-            if package_details.is_valid():
-                post = package_details.save(commit=False)
-                post.save()
+            if package_form.is_valid():
+                package_form.save()
 
                 success_message = "Package was successfully created"
                 package_form = PackageForm(None)
-            else:
-                package_form = package_details
+
             project_form = ProjectForm(None)
             version_form = VersionForm(None)
         elif "create_project" in request.POST:
-            project_details = ProjectForm(request.POST)
-            if project_details.is_valid():
-                post = project_details.save(commit=True)
+            if project_form.is_valid():
+                project_form.save(commit=True)
 
                 success_message = "Project was successfully created"
                 project_form = ProjectForm(None)
-            else:
-                project_form = project_details
+
             package_form = PackageForm(None)
             version_form = VersionForm(None)
         elif "create_version" in request.POST:
-            version_details = VersionForm(request.POST)
-            if version_details.is_valid():
-                post = version_details.save(commit=False)
-                post.save()
+
+            if version_form.is_valid():
+                version_form.save()
+
                 success_message = "Version was successfully added"
                 version_form = VersionForm(None)
-            else:
-                version_form = version_details
             package_form = PackageForm(None)
             project_form = ProjectForm(None)
+        context["success_message"] = success_message
 
-        return render(
-            request,
-            "create.html",
-            {
-                "package_form": package_form,
-                "project_form": project_form,
-                "version_form": version_form,
-                "success_message": success_message,
-            },
-        )
     else:
         package_form = PackageForm(None)
         project_form = ProjectForm(None)
         version_form = VersionForm(None)
-
-    return render(
-        request,
-        "create.html",
-        {
-            "package_form": package_form,
-            "project_form": project_form,
-            "version_form": version_form,
-        },
-    )
+    if request.method == "GET":
+        if "package_search" in request.GET:
+            context["packages"] = Package.objects.order_by("name").filter(
+                name__icontains=request.GET["package_search"]
+            )
+    context["project_form"] = project_form
+    context["package_form"] = package_form
+    context["version_form"] = version_form
+    return render(request, "create.html", context)
