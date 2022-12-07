@@ -1,11 +1,10 @@
 from django import forms
 from django.forms.utils import ErrorList
 from django.utils.html import format_html, format_html_join
-from .models import Package, Project, Version
-import environ
-import datetime
 
-env = environ.Env()
+from .models import Package, Project, Version
+
+from .environ import env
 
 
 class UiKitErrorList(ErrorList):
@@ -18,7 +17,10 @@ class UiKitErrorList(ErrorList):
             self.error_class,
             format_html_join(
                 "",
-                " <p class='uk-margin-remove uk-text-danger'>{}</p>",
+                """<div class="uk-alert-danger" uk-alert>
+            <a class="uk-alert-close" uk-close></a>
+            <p>{}</p>
+          </div>""",
                 ((e,) for e in self),
             ),
         )
@@ -28,10 +30,7 @@ class UiKitErrorList(ErrorList):
 
 
 def uikitify(fields):
-    for field_name, field in fields.items():
-        print(
-            field.__class__.__name__,
-        )
+    for _, field in fields.items():
         field_supertype = field.__class__.__name__
 
         field_class = field.widget.attrs.get("class", "")

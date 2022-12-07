@@ -8,17 +8,17 @@
   input,
   select {
     border: none !important;
-    transition: box-shadow .5s !important;
+
+    transition: box-shadow 0.5s !important;
   }
 
-  input:valid,  input:valid.input:placeholder-shown,
+  input:valid:focus,
   select:valid {
-    box-shadow: 0 0 3px 3px {% get_env "GREEN" %};
-
+    box-shadow: 0 0 3px 3px var(--od-green);
   }
-  input:focus:invalid, input:invalid.input:not(:placeholder-shown),
-  select:invalid {
-    box-shadow: 0 0 3px 3px {% get_env "RED" %} ;
+  input:focus:invalid,
+  select:focus:invalid {
+    box-shadow: 0 0 3px 3px var(--od-red);
   }
 </style>
 <link
@@ -38,49 +38,127 @@
 <!-- prettier-ignore -->
 {% block pagecontent %}
 
-<div class="uk-flex uk-margin-top uk-padding uk-flex-between">
-  <div
-    class="uk-background-primary uk-border-rounded uk-padding uk-width-1-2 uk-margin-small-right"
-  >
-    <form class="uk-form" action="" method="post">
-      {% csrf_token %}
-      <fieldset class="uk-fieldset">
-        <legend class="uk-legend">New Project</legend>
-        <hr />
-        <!-- prettier-ignore -->
-        {{project_form}}
-      </fieldset>
-      {% submitButton "create_project" %}
-    </form>
+<div
+  class="uk-flex uk-container-extend uk-child-width-1-2 uk-height-viewport"
+  uk-height-viewport="offset-top: true"
+>
+  <div class="uk-background-primary uk-padding uk-light">
+    <div class="uk-flex uk-flex-column">
+      <div class="uk-background-secondary uk-border-rounded uk-padding">
+        <form class="uk-form" action="" method="post">
+          {% csrf_token %}
+          <fieldset class="uk-fieldset">
+            <legend class="uk-legend">New Project</legend>
+            <hr />
+            <!-- prettier-ignore -->
+            {{project_form}}
+          </fieldset>
+          {% submitButton "create_project" %}
+        </form>
+      </div>
+      <div
+        class="uk-background-secondary uk-padding uk-border-rounded uk-margin-top uk-padding-small uk-padding-remove-top"
+      >
+        <div
+          class="uk-margin-small-left uk-margin-small-right uk-margin-small-bottom uk-margin-top"
+        >
+          <form
+            method="get"
+            class="uk-search uk-search-default"
+            style="width: 100%"
+          >
+            <span class="uk-search-icon-flip" uk-search-icon></span>
+            <input
+              class="uk-input uk-border-rounded"
+              type="search"
+              required
+              name="package_search"
+              placeholder="Search..."
+              value="{{request.GET.package_search}}"
+            />
+          </form>
+
+          <div
+            class="uk-height-max-medium uk-margin-small-top uk-overflow-auto"
+          >
+            {% for package in packages %}
+            <div
+              class="od-background-green-primary uk-border-rounded uk-margin-small"
+            >
+              <h3
+                class="uk-margin-remove uk-padding-small od-clickable uk-width-1-1"
+                uk-toggle="target: [data-id='{{package.pk}}']; animation: uk-animation-fade"
+              >
+                {{package.name}}
+              </h3>
+
+              <div
+                class="uk-padding-small uk-border-rounded uk-margin-bottom"
+                data-id="{{package.pk}}"
+                hidden
+              >
+                <!-- prettier-ignore -->
+                {% get_elements package.pk as thingy%}
+
+                {% for version in thingy%}
+                <div
+                  class="{{version.CSSClass}} uk-padding-small uk-margin-small uk-margin-remove-bottom uk-border-rounded uk-flex od-inset"
+                >
+                  <span class="uk-width-1-1 uk-flex uk-flex-middle"
+                    >{{version.name}}</span
+                  >
+                  <button
+                    class="uk-button uk-button-secondary uk-button-small uk-border-rounded"
+                  >
+                    edit
+                  </button>
+                </div>
+                {% empty %}
+                <!-- prettier-ignore -->
+                {% warning "This Package has no versions yet, start by creating one." %} 
+              {% endfor %}
+              </div>
+            </div>
+            {% empty %}
+            <!-- prettier-ignore -->
+            {% closeable_warning "There were no results, please check your spelling or try again." %} 
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="uk-width-1-2 uk-margin-small-left uk-flex uk-flex-column">
-    <div class="uk-background-primary uk-padding uk-border-rounded">
-      <form class="uk-form" action="" method="post">
-        {% csrf_token %}
-        <fieldset class="uk-fieldset">
-          <legend class="uk-legend">Add Package</legend>
-          <hr />
-          {{package_form}}
-        </fieldset>
-        {% submitButton "create_package" %}
-      </form>
-    </div>
-    <div
-      class="uk-background-primary uk-padding uk-margin-top uk-border-rounded"
-    >
-      <form class="uk-form" action="" method="post">
-        {% csrf_token %}
-        <fieldset class="uk-fieldset">
-          <legend class="uk-legend">Add Package Version</legend>
-          <hr />
-          {{version_form}}
-        </fieldset>
-        {% submitButton "create_version" %}
-      </form>
+  <!--  prettier-ignore -->
+
+  <div class="uk-background-secondary uk-padding">
+    <div class="uk-margin-small-left uk-flex uk-flex-column">
+      <div class="uk-background-primary uk-padding uk-border-rounded">
+        <form class="uk-form" action="" method="post">
+          {% csrf_token %}
+          <fieldset class="uk-fieldset">
+            <legend class="uk-legend">Add Package</legend>
+            <hr />
+            {{package_form}}
+          </fieldset>
+          {% submitButton "create_package" %}
+        </form>
+      </div>
+      <div
+        class="uk-background-primary uk-padding uk-margin-top uk-border-rounded"
+      >
+        <form class="uk-form" action="" method="post">
+          {% csrf_token %}
+          <fieldset class="uk-fieldset">
+            <legend class="uk-legend">Add Package Version</legend>
+            <hr />
+            {{version_form}}
+          </fieldset>
+          {% submitButton "create_version" %}
+        </form>
+      </div>
     </div>
   </div>
 </div>
-
 <!-- prettier ignore -->
 {% endblock pagecontent %}
