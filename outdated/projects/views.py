@@ -8,9 +8,41 @@ from .models import Project, Package, Version
 
 # Create your views here.
 def index(request):
+    context = {}
+    error_message = None
+    if request.method == "POST":
 
-    projects = Project.objects.order_by("name")
-    context = {"projects": projects}
+        if "edit_project" in request.POST:
+            data = ProjectForm(
+                request.POST,
+                instance=Project.objects.filter(pk=request.POST["edit_project"])[0],
+            )
+            if data.is_valid():
+                data.save()
+            else:
+                error_message = "".join(
+                    [
+                        f"Error: {field}, {e[0]['message']}"
+                        for field, e in json.loads(data.errors.as_json()).items()
+                    ]
+                )
+        elif "delete_project" in request.POST:
+
+            instances = Project.objects.filter(pk=request.POST["delete_project"])
+            if instances:
+                instances.delete()
+            else:
+                error_message = (
+                    "The Project, you were trying to delete does not seem to exist."
+                )
+        context["error_message"] = error_message
+
+    if request.GET.get("search", ""):
+        context["projects"] = Project.objects.order_by("name").filter(
+            name__icontains=request.GET["search"]
+        )
+    else:
+        context["projects"] = Project.objects.order_by("name")
     return render(request, "projects.html", context)
 
 

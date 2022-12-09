@@ -1,8 +1,8 @@
 from django import template
 from django.utils.safestring import mark_safe
 import environ
-from projects.models import Version, Package
-from projects.forms import PackageForm, VersionForm
+from projects.models import Version, Package, Project
+from projects.forms import PackageForm, VersionForm, ProjectForm
 
 env = environ.Env()
 
@@ -56,3 +56,9 @@ def package_form(pk: int):
 @register.simple_tag
 def version_form(pk: int):
     return VersionForm(None, instance=Version.objects.filter(pk=pk)[0])
+
+
+@register.simple_tag
+def project_form(pk: int):
+
+    return ProjectForm(None, instance=Project.objects.filter(pk=pk)[0])

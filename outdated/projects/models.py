@@ -39,7 +39,7 @@ class Version(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=100, unique=True)
     repo = models.URLField(max_length=200, unique=True)
-    used_packages = models.ManyToManyField(Version, blank=False)
+    used_packages = models.ManyToManyField(Version, blank=True)
 
     def __str__(self):
         return self.name
