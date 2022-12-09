@@ -53,16 +53,80 @@
           >
           </a>
           <a
-            href="open modal"
+            href="#project_modal_{{project.pk}}"
             class="uk-link-reset uk-label od-background-green uk-flex uk-flex-middle od-inset uk-margin-small-right"
             uk-icon="file-edit"
+            uk-toggle
           ></a>
-          <a
-            href="delete project"
-            class="uk-link-reset uk-label uk-alert-danger uk-flex uk-flex-middle od-inset uk-margin-small-right"
-            uk-icon="trash"
-          >
-          </a>
+
+          <!-- Modal Start -->
+          <div id="project_modal_{{project.pk}}" uk-modal>
+            <div class="uk-modal-dialog uk-light uk-border-rounded">
+              <button
+                class="uk-modal-close-default"
+                type="button"
+                uk-close
+              ></button>
+
+              <div
+                class="uk-modal-header od-background-green-primary od-round-top"
+              >
+                <h2 class="uk-modal-title">Edit Project</h2>
+              </div>
+              <form method="POST">
+                {% csrf_token %}
+
+                <div
+                  class="uk-modal-body uk-background-secondary"
+                  uk-overflow-auto
+                >
+                  <div class="uk-text-right">
+                    <button
+                      class="uk-button uk-button-danger uk-border-rounded uk-button uk-button-small"
+                      type="submit"
+                      name="delete_project"
+                      value="{{project.pk}}"
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                  {% project_form project.pk %}
+                </div>
+
+                <div
+                  class="uk-modal-footer od-background-primary-green od-round-bottom uk-flex"
+                >
+                  <div class="uk-width-1-1">
+                    <button
+                      class="uk-button uk-button-primary uk-border-rounded uk-modal-close"
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <button
+                    class="uk-button uk-button-primary uk-border-rounded"
+                    type="submit"
+                    name="edit_project"
+                    value="{{project.pk}}"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- Modal End -->
+          <form method="post">
+            {% csrf_token %}
+            <button
+              name="delete_project"
+              class="uk-link-reset uk-label uk-alert-danger uk-flex uk-flex-middle od-inset uk-margin-small-right uk-height-1-1"
+              uk-icon="trash"
+              type="submit"
+              value="{{project.pk}}"
+            ></button>
+          </form>
         </div>
 
         <div class="packages uk-width-1-1">
@@ -85,7 +149,8 @@
         </div>
       </div>
     </div>
-    {% endfor %}
+    <!-- prettier-ignore -->
+    {% empty %} {% if request.GET.search %} {% warning "Your search had no results, please check your spelling and try again." %} {% else %} {% warning "You have not added any Projects yet, therefore nothing is displayed." %} {% endif %}{% endfor %}
   </div>
 </div>
 
