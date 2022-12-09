@@ -1,66 +1,92 @@
 {% extends "base.html" %} {% block pagecontent %}{% load templateutils %}
-<div uk-filter="target: .js-filter; animation: delayed-fade;">
-  <div uk-sticky="sel-target: 200; offset: 80; ">
-    <div class="uk-flex uk-background-secondary uk-dark">
-      <ul style="display: none">
-        <li
-          class="uk-active"
-          uk-filter-control="sort: data-up_to_dateness"
-        ></li>
-      </ul>
-      <ul class="uk-subnav uk-subnav-pill uk-width-auto uk-margin-remove">
-        <li class="uk-active uk-padding-remove" uk-filter-control>
-          <a href="#">All</a>
-        </li>
-      </ul>
-      <ul class="uk-subnav uk-subnav-pill uk-width-5-6 uk-margin-remove">
-        <li uk-filter-control="[data-colour='red']">
-          <a href="#">Critical</a>
-        </li>
-        <li uk-filter-control="[data-colour='yellow']">
-          <a href="#">Pending</a>
-        </li>
-        <li uk-filter-control="[data-colour='green']">
-          <a href="#">Up to date</a>
-        </li>
-      </ul>
+<div class="uk-background-secondary">
+  <div
+    class="uk-padding uk-padding-remove-vertical"
+    style="padding-bottom: 20px !important; padding-top: 30px !important"
+  >
+    <div class="uk-background-secondary uk-light uk-width-1-1">
+      <form class="uk-search uk-search-default uk-width-1-1" method="GET">
+        <span class="uk-search-icon-flip" uk-search-icon></span>
+        <input
+          class="uk-input uk-width-1-1 uk-border-rounded"
+          type="search"
+          name="search"
+          value="{{request.GET.search}}"
+          placeholder="Search"
+          aria-label="Search"
+        />
+      </form>
     </div>
   </div>
-  <ul class="js-filter uk-list uk-list-striped uk-margin-remove">
-    {% for project in projects %}
-    <li
+
+  <div
+    class="uk-margin-remove uk-overflow-auto uk-padding uk-padding-remove-vertical"
+    style="height: calc(100vh - 170px)"
+  >
+    <!-- prettier-ignore -->
+    {% for project in projects%}
+    <div
       data-up_to_dateness="{{project.status.up_to_dateness}}"
       data-colour="{{project.status.colour}}"
+      class="uk-container uk-container-expand uk-margin uk-padding-small uk-border-rounded od-background-primary-{{project.status.colour}}"
     >
-      <div
-        class="uk-container uk-container-large uk-margin uk-padding uk-border-rounded od-background-primary-{{project.status.colour}}"
+      <h2
+        class="od-text-white uk-margin-remove od-clickable"
+        uk-toggle="target: #project_details_{{project.pk}}; animation: uk-animation-fade;"
       >
-        <h2 class="od-text-white uk-text-center uk-box-shadow-medium uk-margin">
-          {{project.name}}
-        </h2>
-        <div class="uk-flex uk-flex-row">
-          <div
-            class="uk-flex uk-flex-left uk-width-1-2 od-text-white uk-flex-wrap-stretch"
+        {{project.name}}
+      </h2>
+
+      <div
+        id="project_details_{{project.pk}}"
+        class="uk-flex uk-flex-row"
+        hidden
+      >
+        <div
+          class="uk-flex uk-flex-left od-text-white od-child-height-1-3 uk-flex-column uk-flex-between"
+        >
+          <a
+            href="{{project.repo}}"
+            target="_blank"
+            class="uk-link-reset uk-label uk-label-warning uk-flex uk-flex-middle od-inset uk-margin-small-right"
+            uk-icon="git-branch"
           >
-            <a
-              href="{{project.repo}}"
-              target="_blank"
-              class="uk-link-reset uk-label uk-label-warning uk-box-shadow-small uk-box-shadow-hover-large uk-icon-button uk-button"
-              uk-icon="git-branch"
+          </a>
+          <a
+            href="open modal"
+            class="uk-link-reset uk-label od-background-green uk-flex uk-flex-middle od-inset uk-margin-small-right"
+            uk-icon="file-edit"
+          ></a>
+          <a
+            href="delete project"
+            class="uk-link-reset uk-label uk-alert-danger uk-flex uk-flex-middle od-inset uk-margin-small-right"
+            uk-icon="trash"
+          >
+          </a>
+        </div>
+
+        <div class="packages uk-width-1-1">
+          <!-- prettier-ignore -->
+          {% for version in project.used_packages.all %}
+          <div
+            class="od-background-primary-{{version.status.colour}} uk-margin-small uk-padding-small uk-margin-remove-bottom uk-border-rounded uk-flex od-inset"
+          >
+            <span
+              class="uk-width-1-1 uk-flex uk-flex-middle uk-text-bold od-text-white"
+              >{{version.package.name}}</span
             >
-            </a>
+            <span class="uk-flex uk-flex-middle od-text-white uk-text-nowrap"
+              >{{version.name}}</span
+            >
           </div>
-          <div class="packages uk-flex uk-flex-right uk-width-1-2 uk-flex-wrap">
-            <!-- prettier-ignore -->
-            {% for package in project.used_packages.all %}<label
-              class="uk-label uk-box-shadow-small uk-margin-small-bottom uk-margin-small-right {{package.CSSClass}}"
-              >{{package.name}}</label
-            >{% endfor %}
-          </div>
+
+          <!-- prettier-ignore -->
+          {% empty %}{% warning "This Project has no Packages added to it yet, start by adding one." %} {% endfor %}
         </div>
       </div>
-    </li>
+    </div>
     {% endfor %}
-  </ul>
+  </div>
 </div>
+
 {% endblock pagecontent %}

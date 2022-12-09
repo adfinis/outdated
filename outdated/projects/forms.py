@@ -11,13 +11,13 @@ class UiKitErrorList(ErrorList):
     def as_uikit(self):
         if not self.data:
             return ""
-
+        print(vars(self))
         return format_html(
             '<div class=" {}"  >{}</div>',
             self.error_class,
             format_html_join(
                 "",
-                """<div class="uk-alert-danger" uk-alert>
+                """<div class="uk-alert-danger uk-margin-small-bottom" uk-alert>
             <a class="uk-alert-close" uk-close></a>
             <p>{}</p>
           </div>""",
