@@ -32,7 +32,7 @@
     {% block head %} {% endblock head%}
   </head>
   <!-- prettier-ignore -->
-  <body {% if success_message %}onload='UIkit.notification("{{success_message}}", { status: "success" , timeout: 250})'{% endif %}>
+  <body {% if success_message %}onload='UIkit.notification("{{success_message}}", { status: "success" , timeout: 250})'{% elif error_message %}onload='UIkit.notification("{{error_message}}", { status: "danger" , timeout: 1250})'{% endif %}>
     
 
     <div

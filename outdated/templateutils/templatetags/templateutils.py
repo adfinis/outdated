@@ -1,7 +1,8 @@
 from django import template
 from django.utils.safestring import mark_safe
 import environ
-from projects.models import Version
+from projects.models import Version, Package
+from projects.forms import PackageForm, VersionForm
 
 env = environ.Env()
 
@@ -24,19 +25,34 @@ def get_env(key):
 
 
 @register.simple_tag
-def get_elements(pk):
+def get_versions(pk):
     return Version.objects.filter(package=int(pk))
+
+
+@register.simple_tag
+def get_package(foreign_key):
+    return Package.objects.filter(pk=foreign_key)[0]
 
 
 @register.simple_tag
 def closeable_warning(text: str):
     return mark_safe(
-        f'<div class="uk-alert-danger uk-margin-remove uk-border-rounded" uk-alert><a class="uk-alert-close" uk-close></a><p>{text}</p></div>'
+        f'<div class="uk-alert-danger uk-margin-remove uk-flex uk-flex-middle" uk-alert><a class="uk-alert-close" uk-close></a><p>{text}</p></div>'
     )
 
 
 @register.simple_tag
 def warning(text: str):
     return mark_safe(
-        f'<div class="uk-alert-danger uk-margin-remove uk-border-rounded" uk-alert><p>{text}</p></div>'
+        f'<div class="uk-alert-danger uk-margin-remove uk-flex uk-flex-middle" uk-alert><p>{text}</p></div>'
     )
+
+
+@register.simple_tag
+def package_form(pk: int):
+    return PackageForm(None, instance=Package.objects.filter(pk=pk)[0])
+
+
+@register.simple_tag
+def version_form(pk: int):
+    return VersionForm(None, instance=Version.objects.filter(pk=pk)[0])
