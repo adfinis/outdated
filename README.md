@@ -4,11 +4,11 @@ This Application is meant to make it easier to know what Project has outdated Pa
 
 Green: Project is up to date
 
-Yellow: One or more Packages released a new lts version, you "should" migrate to it now since the other version is still in support
+Yellow: One or more Packages released a new lts version, you "should" upgrade to it now since the other version is still in support
 
 Red: One or more Packages are outdated
 
-Black: All Packages are outdated, this is not good
+Gray: There are no Packages added to this Project.
 
 ---
 
