@@ -1,6 +1,10 @@
 import json
+import re
 
+from django.apps import apps
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views import View
 
 from .forms import PackageForm, ProjectForm, VersionForm
 from .models import Package, Project, Version
@@ -46,115 +50,60 @@ def index(request):
     return render(request, "projects.html", context)
 
 
-def create(request):
-    context = {}
-    if request.method == "POST":
-        package_form = PackageForm(request.POST)
-        project_form = ProjectForm(request.POST)
-        version_form = VersionForm(request.POST)
-        success_message = None
-        error_message = None
-        if "create_package" in request.POST:
-            if package_form.is_valid():
-                package_form.save()
+class CreateFormView(View):
+    template_name = "create.html"
 
-                success_message = "Package was successfully created"
-                package_form = PackageForm(None)
+    def get_forms(self, parameter, instance=None):
+        return {
+            "package_form": PackageForm(parameter, instance=instance),
+            "project_form": ProjectForm(parameter, instance=instance),
+            "version_form": VersionForm(parameter, instance=instance),
+        }
 
-            project_form = ProjectForm(None)
-            version_form = VersionForm(None)
-        elif "create_project" in request.POST:
-            if project_form.is_valid():
-                project_form.save(commit=True)
+    def get_model_data(self):
+        return {
+            "projects": Project.objects.all(),
+            "packages": Package.objects.all(),
+            "versions": Version.objects.all(),
+        }
 
-                success_message = "Project was successfully created"
-                project_form = ProjectForm(None)
-
-            package_form = PackageForm(None)
-            version_form = VersionForm(None)
-        elif "create_version" in request.POST:
-
-            if version_form.is_valid():
-                version_form.save()
-
-                success_message = "Version was successfully added"
-                version_form = VersionForm(None)
-            package_form = PackageForm(None)
-            project_form = ProjectForm(None)
-        else:
-            if "edit_package" in request.POST:
-                edit_package_form = PackageForm(
-                    request.POST,
-                    instance=Package.objects.filter(pk=request.POST["edit_package"])[0],
-                )
-                if edit_package_form.is_valid():
-                    edit_package_form.save()
-                    success_message = "Package Updated!"
-
-                else:
-                    error_message = "".join(
-                        [
-                            f"Error: {field}, {e[0]['message']}"
-                            for field, e in json.loads(
-                                edit_package_form.errors.as_json()
-                            ).items()
-                        ]
-                    )
-
-            elif "edit_version" in request.POST:
-                edit_version_form = VersionForm(
-                    request.POST,
-                    instance=Version.objects.filter(pk=request.POST["edit_version"])[0],
-                )
-                if edit_version_form.is_valid():
-                    edit_version_form.save()
-                    success_message = "Version Updated!"
-
-                else:
-                    error_message = "".join(
-                        [
-                            f"Error: {field}, {e[0]['message']}"
-                            for field, e in json.loads(
-                                edit_version_form.errors.as_json()
-                            ).items()
-                        ]
-                    )
-
-            elif "delete_version" in request.POST:
-
-                instances = Version.objects.filter(pk=request.POST["delete_version"])
-                if instances:
-                    instances.delete()
-                else:
-                    error_message = (
-                        "The Version, you were trying to delete does not seem to exist."
-                    )
-            elif "delete_package" in request.POST:
-                instances = Package.objects.filter(pk=request.POST["delete_package"])
-                if instances:
-                    instances.delete()
-                else:
-                    error_message = (
-                        "The Package, you were trying to delete does not seem to exist."
-                    )
-            package_form = PackageForm(None)
-            project_form = ProjectForm(None)
-            version_form = VersionForm(None)
-        context["success_message"] = success_message
-        context["error_message"] = error_message
-    else:
-        package_form = PackageForm(None)
-        project_form = ProjectForm(None)
-        version_form = VersionForm(None)
-
-    if request.GET.get("search", ""):
-        context["packages"] = Package.objects.order_by("name").filter(
-            name__icontains=request.GET["search"]
+    def get(self, request, *args, **kwargs):
+        return render(
+            request,
+            self.template_name,
+            {**self.get_forms(None), **self.get_model_data()},
         )
-    else:
-        context["packages"] = Package.objects.order_by("name")
-    context["versions"] = Version.objects
-    context["project_form"] = project_form
-    context["package_form"] = package_form
-    context["version_form"] = version_form
-    return render(request, "create.html", context)
+
+    def post(self, request, *args, **kwargs):
+
+        post = self.request.POST
+        print(post)
+        if "create" in post:
+            target = post["create"]
+            chosen_form = self.get_forms(post)[target + "_form"]
+            if chosen_form.is_valid():
+                chosen_form.save()
+                return HttpResponseRedirect(self.request.path_info)
+            else:
+                return render(
+                    request,
+                    self.template_name,
+                    {
+                        **self.get_model_data(),
+                        **self.get_forms(None),
+                        **{target + "_form": chosen_form},
+                    },
+                )
+        elif "edit" in post:
+            target, pk = re.findall(r"([A-Za-z]+)-(\d+)", post["edit"])[0]
+
+            chosen_form = self.get_forms(
+                post, apps.get_model("projects." + target).objects.filter(pk=pk)[0]
+            )[target + "_form"]
+            if chosen_form.is_valid():
+                chosen_form.save()
+            return HttpResponseRedirect(self.request.path_info)
+        elif "delete" in post:
+            target, pk = re.findall(r"([A-Za-z]+)-(\d+)", post["delete"])[0]
+            apps.get_model("projects." + target).objects.filter(pk=pk).delete()
+            return HttpResponseRedirect(self.request.path_info)

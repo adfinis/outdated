@@ -32,7 +32,7 @@
             <!-- prettier-ignore -->
             {{project_form}}
           </fieldset>
-          {% submitButton "create_project" %}
+          {% submitButton "create" "project" %}
         </form>
       </div>
       <div
@@ -102,8 +102,8 @@
                         <button
                           class="uk-button uk-button-danger uk-border-rounded uk-button uk-button-small"
                           type="submit"
-                          name="delete_package"
-                          value="{{package.pk}}"
+                          name="delete"
+                          value="package-{{package.pk}}"
                         >
                           DELETE
                         </button>
@@ -126,8 +126,8 @@
                       <button
                         class="uk-button uk-button-primary uk-border-rounded"
                         type="submit"
-                        name="edit_package"
-                        value="{{package.pk}}"
+                        name="edit"
+                        value="package-{{package.pk}}"
                       >
                         Save
                       </button>
@@ -188,8 +188,8 @@
                           <button
                             class="uk-button uk-button-danger uk-border-rounded uk-button uk-button-small"
                             type="submit"
-                            name="delete_version"
-                            value="{{version.pk}}"
+                            name="delete"
+                            value="version-{{version.pk}}"
                           >
                             DELETE
                           </button>
@@ -211,8 +211,8 @@
                         <button
                           class="uk-button uk-button-primary uk-border-rounded"
                           type="submit"
-                          name="edit_version"
-                          value="{{version.pk}}"
+                          name="edit"
+                          value="version-{{version.pk}}"
                         >
                           Save
                         </button>
@@ -249,7 +249,7 @@
             <hr />
             {{package_form}}
           </fieldset>
-          {% submitButton "create_package" %}
+          {% submitButton "create" "package" %}
         </form>
       </div>
       <div
@@ -262,7 +262,7 @@
             <hr />
             {{version_form}}
           </fieldset>
-          {% submitButton "create_version" %}
+          {% submitButton "create" "version" %}
         </form>
       </div>
     </div>
