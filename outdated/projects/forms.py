@@ -13,7 +13,7 @@ class UiKitErrorList(ErrorList):
         if not self.data:
             return ""
         return format_html(
-            '<div class="{}">{}</div>',
+            '<div class="{}">{}</div>',  # noqa: P103
             self.error_class,
             format_html_join(
                 "",
@@ -21,7 +21,7 @@ class UiKitErrorList(ErrorList):
                 <div class="uk-alert-danger uk-margin-small-bottom" uk-alert>
                 <a class="uk-alert-close" uk-close></a>
                 <p>{}</p>
-                </div>""",
+                </div>""",  # noqa: P103
                 ((e,) for e in self),
             ),
         )
