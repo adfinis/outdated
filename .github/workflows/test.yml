@@ -10,7 +10,23 @@ on:
 
 jobs:
   lint:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
-      - name: Echo something
-        run: echo "something"
+      - uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run black
+        run: poetry run black --check .
+
+      - name: Run flake8
+        run: poetry run flake8
