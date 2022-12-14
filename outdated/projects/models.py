@@ -1,30 +1,41 @@
+"""The Database Models for Outdated."""
+
 from datetime import date, timedelta
 
 from django.db import models
 
 
 class Package(models.Model):
+    """Define the Package model."""
+
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
+        """Return Package name."""
         return self.name
 
 
 class Version(models.Model):
+    """Define the Version model."""
+
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     release_date = models.DateField()
     end_of_life_date = models.DateField()
 
     class Meta:
+        """Define ordering and unique together."""
+
         ordering = ["end_of_life_date"]
         unique_together = ("package", "name")
 
     def __str__(self):
+        """Return Version name."""
         return self.name
 
     @property
     def status(self):
+        """Return the current status of given version."""
         if date.today() >= self.end_of_life_date:
 
             colour = "red"
@@ -38,20 +49,25 @@ class Version(models.Model):
 
 
 class Project(models.Model):
+    """Define the Project Model."""
+
     name = models.CharField(max_length=100, unique=True)
     repo = models.URLField(max_length=200, unique=True)
     used_packages = models.ManyToManyField(Version, blank=True)
 
     def __str__(self):
+        """Return Project name."""
         return self.name
 
     @property
     def status(self):
-        if self.used_packages.all():
+        """Return the current status of given project."""
+        packages = self.used_packages.all()
+        if packages:
 
             value_packages = 0.0
             colours_packages = {"green": 0, "yellow": 0, "red": 0}
-            for package in self.used_packages.all():
+            for package in packages:
                 package_class = package.status["colour"]
                 if package_class == "green":
                     colours_packages["green"] += 1
@@ -63,12 +79,12 @@ class Project(models.Model):
                     colours_packages["red"] += 1
             if colours_packages["red"] != 0:
                 colour = "red"
-            elif len(self.used_packages.all()) != colours_packages["green"]:
+            elif len(packages) != colours_packages["green"]:
                 colour = "yellow"
             else:
                 colour = "green"
             return {
-                "up_to_dateness": value_packages * 100 // len(self.used_packages.all()),
+                "up_to_dateness": value_packages * 100 // len(packages),
                 "colour": colour,
             }
         else:
