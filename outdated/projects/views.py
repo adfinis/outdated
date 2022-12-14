@@ -77,7 +77,6 @@ class CreateFormView(View):
     def post(self, request, *args, **kwargs):
 
         post = self.request.POST
-        print(post)
         if "create" in post:
             target = post["create"]
             chosen_form = self.get_forms(post)[target + "_form"]
