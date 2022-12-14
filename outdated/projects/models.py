@@ -12,12 +12,13 @@ class Package(models.Model):
 
 class Version(models.Model):
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     release_date = models.DateField()
     end_of_life_date = models.DateField()
 
     class Meta:
         ordering = ["end_of_life_date"]
+        unique_together = ("package", "name")
 
     def __str__(self):
         return self.name
