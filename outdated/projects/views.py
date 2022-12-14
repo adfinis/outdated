@@ -3,12 +3,12 @@ import re
 
 from django.apps import apps
 from django.http import HttpResponseRedirect
+
 from django.shortcuts import render
 from django.views import View
 
-
 from .forms import PackageForm, ProjectForm, VersionForm
-from .models import Project, Package, Version
+from .models import Package, Project, Version
 
 
 # Create your views here.
@@ -86,7 +86,6 @@ class CreateFormView(View):
     def post(self, request, *args, **kwargs):
 
         post = self.request.POST
-        print(post)
         if "create" in post:
             target = post["create"]
             chosen_form = self.get_forms(post)[target + "_form"]
