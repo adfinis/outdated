@@ -4,23 +4,24 @@ from django.utils.html import format_html, format_html_join
 
 from .models import Package, Project, Version
 
-from .environ import env
-
 
 class UiKitErrorList(ErrorList):
+    """Custom error class, that returns errors in a styled way per default."""
+
     def as_uikit(self):
+        """Return errors styled with UIKit CSS."""
         if not self.data:
             return ""
-        print(vars(self))
         return format_html(
-            '<div class=" {}"  >{}</div>',
+            '<div class="{}">{}</div>',
             self.error_class,
             format_html_join(
                 "",
-                """<div class="uk-alert-danger uk-margin-small-bottom" uk-alert>
-            <a class="uk-alert-close" uk-close></a>
-            <p>{}</p>
-          </div>""",
+                """
+                <div class="uk-alert-danger uk-margin-small-bottom" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p>{}</p>
+                </div>""",
                 ((e,) for e in self),
             ),
         )
@@ -30,6 +31,7 @@ class UiKitErrorList(ErrorList):
 
 
 def uikitify(fields):
+    """Styles the different fields with UIKit."""
     for _, field in fields.items():
         field_supertype = field.__class__.__name__
 
@@ -57,11 +59,12 @@ def uikitify(fields):
 
 class PackageForm(forms.ModelForm):
     class Meta:
+
         model = Package
         fields = "__all__"
-        override = True
 
     def __init__(self, *args, **kwargs):
+
         super(PackageForm, self).__init__(*args, **kwargs)
         self.fields = uikitify(self.fields)
         self.error_class = UiKitErrorList
@@ -69,10 +72,12 @@ class PackageForm(forms.ModelForm):
 
 class ProjectForm(forms.ModelForm):
     class Meta:
+
         model = Project
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
+
         super(ProjectForm, self).__init__(*args, **kwargs)
         self.fields = uikitify(self.fields)
         self.error_class = UiKitErrorList
@@ -92,10 +97,12 @@ class ProjectForm(forms.ModelForm):
 
 class VersionForm(forms.ModelForm):
     class Meta:
+
         model = Version
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
+
         super(VersionForm, self).__init__(*args, **kwargs)
         self.fields = uikitify(self.fields)
         self.error_class = UiKitErrorList
