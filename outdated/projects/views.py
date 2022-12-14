@@ -1,9 +1,9 @@
 import json
+
 from django.shortcuts import render
 
-
 from .forms import PackageForm, ProjectForm, VersionForm
-from .models import Project, Package, Version
+from .models import Package, Project, Version
 
 
 # Create your views here.
@@ -47,7 +47,6 @@ def index(request):
 
 
 def create(request):
-
     context = {}
     if request.method == "POST":
         package_form = PackageForm(request.POST)
