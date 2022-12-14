@@ -10,6 +10,9 @@ class Package(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
 
+    class Meta:
+        ordering = ["name"]
+
     def __str__(self):
         """Return Package name."""
         return self.name
@@ -54,6 +57,9 @@ class Project(models.Model):
     name = models.CharField(max_length=100, unique=True)
     repo = models.URLField(max_length=200, unique=True)
     used_packages = models.ManyToManyField(Version, blank=True)
+
+    class Meta:
+        ordering = ["name"]
 
     def __str__(self):
         """Return Project name."""
