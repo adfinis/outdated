@@ -1,12 +1,9 @@
-"""The Database Models for Outdated."""
-
 from datetime import date, timedelta
 
 from django.db import models
 
 
 class Package(models.Model):
-    """Define the Package model."""
 
     name = models.CharField(max_length=100, unique=True)
 
@@ -19,7 +16,6 @@ class Package(models.Model):
 
 
 class Version(models.Model):
-    """Define the Version model."""
 
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -33,7 +29,7 @@ class Version(models.Model):
         unique_together = ("package", "name")
 
     def __str__(self):
-        """Return Version name."""
+
         return self.name
 
     @property
@@ -52,7 +48,6 @@ class Version(models.Model):
 
 
 class Project(models.Model):
-    """Define the Project Model."""
 
     name = models.CharField(max_length=100, unique=True)
     repo = models.URLField(max_length=200, unique=True)
@@ -62,7 +57,7 @@ class Project(models.Model):
         ordering = ["name"]
 
     def __str__(self):
-        """Return Project name."""
+
         return self.name
 
     @property
