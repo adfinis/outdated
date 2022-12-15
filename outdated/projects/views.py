@@ -60,18 +60,26 @@ class CreateFormView(View):
             "version_form": VersionForm(parameter, instance=instance),
         }
 
-    def get_model_data(self):
-        return {
+    def get_model_data(self, search=""):
+        data_dict = {
             "projects": Project.objects.all(),
             "packages": Package.objects.all(),
             "versions": Version.objects.all(),
         }
 
+        if search:
+            data_dict["packages"] = Package.objects.filter(name__icontains=search)
+
+        return data_dict
+
     def get(self, request, *args, **kwargs):
         return render(
             request,
             self.template_name,
-            {**self.get_forms(None), **self.get_model_data()},
+            {
+                **self.get_forms(None),
+                **self.get_model_data(request.GET.get("search")),
+            },
         )
 
     def post(self, request, *args, **kwargs):
