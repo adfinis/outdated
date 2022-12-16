@@ -1,5 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
+
 from projects.forms import PackageForm, ProjectForm, VersionForm
 from projects.models import Package, Project, Version
 
