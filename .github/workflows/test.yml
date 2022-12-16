@@ -10,6 +10,7 @@ on:
 
 jobs:
   lint-backend:
+    name: "lint the backend"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -35,13 +36,13 @@ jobs:
         run: poetry run flake8
 
   frontend-lint:
-    name: "Lint"
+    name: "Lint the frontend"
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - name: Switch directory
-        run: cd frontend
+        run: ls
       - uses: actions/checkout@v3
       - name: Install Node
         uses: actions/setup-node@v3
