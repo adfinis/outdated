@@ -1,0 +1,82 @@
+@import 'ember-uikit';
+
+/*Table*/
+.od-table {
+  @extend .uk-table;
+  @extend .uk-text-center;
+  @extend .uk-table-striped;
+  tbody {
+    border: #e3e3e3 2px solid;
+    tr:nth-of-type(2n + 1) {
+      box-shadow: inset 0 0 5px 1px rgba(59, 59, 59, 0.1) !important;
+    }
+  }
+}
+
+/* Package Table */
+.od-package-table {
+  .od-package-table-scroll-container {
+    @extend .uk-overflow-auto;
+    @extend .uk-height-max-medium;
+    border: 1px solid #e3e3e3;
+  }
+  table,
+  .od-package-table-head {
+    @extend .od-table;
+    @extend .uk-margin-remove-bottom;
+    border: none;
+    th {
+      @extend .uk-text-center;
+      @extend .uk-position-sticky;
+      top: 0;
+      z-index: 1;
+      background: #fff;
+    }
+  }
+  td,
+  th {
+    @extend .uk-width-1-4;
+  }
+}
+/* Packages in General */
+.package-outdated {
+  @extend .uk-text-danger;
+}
+.package-warning {
+  @extend .uk-text-warning;
+}
+.package-up-to-date {
+  @extend .uk-text-success;
+}
+/* Button Navbar */
+.od-button-nav {
+  @extend .uk-button-group;
+}
+.od-button-nav button {
+  @extend .uk-button-large;
+}
+.od-button-nav a.ember-view.active button {
+  @extend .uk-button-primary;
+}
+
+/* Projects in General */
+.od-project {
+  @extend .uk-margin;
+  .uk-card {
+    @extend .uk-card;
+    @extend .uk-border-rounded;
+    .uk-card-header {
+      @extend .uk-flex;
+      .uk-card-title {
+        @extend .uk-margin-remove;
+        display: block;
+        width: 100%;
+        @extend .uk-text-center;
+        font-size: 2.5rem;
+      }
+      .uk-button {
+        height: 100%;
+      }
+    }
+  }
+}
