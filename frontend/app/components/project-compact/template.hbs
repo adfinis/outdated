@@ -1,0 +1,22 @@
+<div class='od-project-compact'>
+
+  <UkCard as |card|>
+
+    <LinkTo @route='details'>
+      <h3 class='od-title-compact'>{{@name}}</h3></LinkTo>
+
+    <card.body>
+
+      <div class='od-icon-compact'>
+
+        <UkIcon @icon='{{this.icon}}' @ratio={{4}} />
+
+      </div>
+      {{#if (has-block)}}
+        {{yield}}
+      {{else}}
+        <PackageCompact />
+      {{/if}}
+    </card.body>
+  </UkCard>
+</div>
