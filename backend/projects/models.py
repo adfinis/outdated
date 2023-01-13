@@ -2,6 +2,8 @@ from datetime import date, timedelta
 
 from django.db import models
 
+# TODO: Rename package to dependency, in the version class instead of name it should be version// 30 days' '''  '''
+
 
 class Package(models.Model):
 
