@@ -1,5 +1,25 @@
 @import 'ember-uikit';
 
+/* Font */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+html {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+/* Utility Classes*/
+
+.od-margin-small {
+  @extend .uk-margin-small-left;
+  @extend .uk-margin-small-right;
+  @extend .uk-margin-small-bottom;
+  @extend .uk-margin-small-top;
+}
+
 /*Table*/
 .od-table {
   @extend .uk-table;
@@ -15,11 +35,6 @@
 
 /* Package Table */
 .od-package-table {
-  .od-package-table-scroll-container {
-    @extend .uk-overflow-auto;
-    @extend .uk-height-max-medium;
-    border: 1px solid #e3e3e3;
-  }
   table,
   .od-package-table-head {
     @extend .od-table;
@@ -76,6 +91,53 @@
       }
       .uk-button {
         height: 100%;
+      }
+    }
+  }
+}
+/* Compact Projects*/
+.od-projects-compact {
+  @extend .uk-container;
+  @extend .uk-container-expand;
+  @extend .uk-grid;
+  @extend .uk-grid-small;
+  @extend .uk-grid-match;
+}
+.od-project-compact {
+  @extend .od-margin-small;
+  a {
+    @extend .uk-text-decoration-none;
+  }
+
+  width: 17.5%;
+  .od-title-compact {
+    margin: 0;
+    @extend .uk-text-center;
+    @extend .uk-text-nowrap;
+    padding-top: 6px;
+    padding-inline: 10px;
+    &:hover {
+      background: #fbfbfb;
+    }
+  }
+  .uk-card-body {
+    @extend .uk-padding-small;
+    @extend .uk-padding-remove-top;
+
+    @extend .uk-flex;
+    @extend .uk-flex-column;
+    @extend .uk-flex-middle;
+    @extend .uk-flex-center;
+    .od-icon-compact {
+      span[icon='bolt'] {
+        @extend .uk-text-danger;
+      }
+      span[icon='warning'] {
+        @extend .uk-text-warning;
+        margin-right: 10px;
+      }
+      span[icon='check'] {
+        @extend .uk-text-success;
       }
     }
   }
