@@ -9,4 +9,5 @@ export default class Router extends EmberRouter {
 Router.map(function () {
   this.route('overview', { path: '/' });
   this.route('create');
+  this.route('details', { path: '/projects/nanosoft' });
 });
