@@ -1,0 +1,31 @@
+<div
+  class='uk-margin-bottom'
+  uk-sticky='sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky'
+>
+  <nav
+    class='uk-navbar-container uk-container-extend uk-padding uk-padding-remove-vertical'
+    uk-navbar
+  >
+    <div class='uk-navbar-left'>
+      <LinkTo @route='projects' class='uk-navbar-item uk-logo'>
+        Outdated</LinkTo>
+    </div>
+    <div class='uk-navbar-right'>
+      <ul class='uk-navbar-nav uk-navbar-left'>
+        <div class='od-button-nav'>
+          <li>
+
+            <LinkTo @route='projects'><UkButton
+                @size='large'
+              >Overview</UkButton></LinkTo>
+          </li>
+
+          <li>
+            <LinkTo @route='create'><UkButton
+                @size='large'
+              >Manage</UkButton></LinkTo>
+          </li></div>
+      </ul>
+    </div>
+  </nav>
+</div>

@@ -1,10 +1,10 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 
-export default class ProjectsRoute extends Route {
+export default class ProjectDetailedRoute extends Route {
   @service store;
-  model() {
-    return this.store.findAll('project', {
+  model(params) {
+    return this.store.findRecord('project', params.id, {
       include: 'versions,versions.dependency',
     });
   }
