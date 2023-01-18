@@ -1,6 +1,5 @@
 {{page-title 'Projects'}}
-<h1>Hallo</h1>
-{{#each @model as |project|}}
-  <h1>{{project.name}}</h1>
-  <a>{{project.repo}}</a>
-{{/each}}
+<div class='compact-projects'>
+  {{#each (sort-by 'status' @model) as |project|}}
+    <ProjectCompact @project={{project}} />
+  {{/each}}</div>
