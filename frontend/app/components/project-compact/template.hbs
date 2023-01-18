@@ -1,0 +1,19 @@
+<div class='project-compact'>
+
+  <UkCard as |card|>
+
+    <LinkTo @route='project-detailed' @model={{@project}}>
+      <h3 class='title-compact'>{{@project.name}}</h3></LinkTo>
+
+    <card.body class='text-{{@project.status}}'>
+
+      <div class='project-icon'>
+
+        <UkIcon @icon='{{this.icon}}' @ratio={{4}} />
+
+      </div>
+      <DependencyCompact @version={{this.version}} />
+
+    </card.body>
+  </UkCard>
+</div>

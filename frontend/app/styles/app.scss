@@ -1,0 +1,111 @@
+@import 'ember-uikit';
+
+/* Utility Classes*/
+
+.od-margin-small {
+  @extend .uk-margin-small-left;
+  @extend .uk-margin-small-right;
+  @extend .uk-margin-small-bottom;
+  @extend .uk-margin-small-top;
+}
+
+/*Table*/
+table {
+  @extend .uk-table;
+  @extend .uk-text-center;
+  @extend .uk-table-striped;
+  th {
+    @extend .uk-text-center;
+    background: #fff;
+  }
+  tbody {
+    border: #e3e3e3 2px solid;
+    tr:nth-of-type(2n + 1) {
+      box-shadow: inset 0 0 5px 1px rgba(59, 59, 59, 0.1) !important;
+    }
+  }
+}
+
+/* Package Table */
+.package-table {
+  td,
+  th {
+    @extend .uk-width-1-4;
+  }
+}
+
+.project-detailed {
+  .uk-card-header {
+    @extend .uk-flex;
+    .uk-card-title {
+      @extend .uk-margin-remove;
+      display: block;
+      width: 100%;
+      @extend .uk-text-center;
+      font-size: 2.5rem;
+    }
+    button {
+      height: 100%;
+    }
+  }
+}
+/* Compact Projects*/
+.compact-projects {
+  @extend .uk-container;
+  @extend .uk-container-expand;
+  @extend .uk-grid;
+  @extend .uk-grid-small;
+  @extend .uk-grid-match;
+}
+
+.project-icon {
+  @extend .od-margin-small;
+  a {
+    @extend .uk-text-decoration-none;
+  }
+}
+.project-compact {
+  width: 17.5%;
+  @extend .uk-margin-small-bottom;
+  .uk-card-body {
+    @extend .uk-padding-small;
+    @extend .uk-padding-remove-top;
+
+    @extend .uk-flex;
+    @extend .uk-flex-column;
+    @extend .uk-flex-middle;
+    @extend .uk-flex-center;
+  }
+}
+
+.title-compact {
+  margin: 0;
+  @extend .uk-text-center;
+  @extend .uk-text-nowrap;
+  padding-top: 6px;
+  padding-inline: 10px;
+  &:hover {
+    background: #fbfbfb;
+  }
+}
+
+/* Button Navbar */
+.od-button-nav {
+  @extend .uk-button-group;
+  button {
+    @extend .uk-button-large;
+  }
+  a.ember-view.active button {
+    @extend .uk-button-primary;
+  }
+}
+
+.text-OUTDATED {
+  @extend .uk-text-danger;
+}
+.text-WARNING {
+  @extend .uk-text-warning;
+}
+.text-UP-TO-DATE {
+  @extend .uk-text-success;
+}
