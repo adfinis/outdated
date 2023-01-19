@@ -1,22 +1,26 @@
 <div class='project-detailed'>
-  <UkCard as |card|>
-    <card.header>
-      <card.title>{{@project.name}}</card.title>
-      <a href='{{@project.repo}}' target='blank_'>
-        <UkButton @color='text' @label='Repository' /></a>
-    </card.header>
-    <card.body>
-      <table class='package-table'>
-        <thead><tr><th>Package</th><th>Version</th><th>End Of Life Date</th><th
-            >Release Date</th></tr></thead>
 
-        <tbody>
-          {{#each (sort-by "eolDate:asc" @project.versions) as |version|}}
-            <DependencyDetailed @version={{version}} />
-          {{/each}}
+  <div class='detailed-header'>
 
-        </tbody>
-      </table>
-    </card.body>
+    <a class='detailed-heading' href='{{@project.repo}}' target='blank_'>
 
-  </UkCard></div>
+      {{@project.name}}
+
+    </a>
+
+  </div>
+
+  <h1 class='seperator'></h1>
+  <table class='package-table'>
+    <thead><tr><th>Package</th><th>Version</th><th>End Of Life Date</th><th
+        >Release Date</th></tr></thead>
+
+    <tbody>
+      {{#each (sort-by 'eolDate:asc' @project.versions) as |version|}}
+        <DependencyDetailed @version={{version}} />
+      {{/each}}
+
+    </tbody>
+  </table>
+
+</div>
