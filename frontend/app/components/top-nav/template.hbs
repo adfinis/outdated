@@ -1,18 +1,15 @@
 <div
-  class='uk-margin-bottom'
-  uk-sticky='sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky'
+  class='navbar'
+  uk-sticky='sel-target: .navbar-container; cls-active: uk-navbar-sticky'
 >
-  <nav
-    class='uk-navbar-container uk-container-extend uk-padding uk-padding-remove-vertical'
-    uk-navbar
-  >
+  <nav class='navbar-container' uk-navbar>
     <div class='uk-navbar-left'>
       <LinkTo @route='projects' class='uk-navbar-item uk-logo'>
         Outdated</LinkTo>
     </div>
     <div class='uk-navbar-right'>
       <ul class='uk-navbar-nav uk-navbar-left'>
-        <div class='od-button-nav'>
+        <div class='button-nav'>
           <li>
 
             <LinkTo @route='projects'><UkButton

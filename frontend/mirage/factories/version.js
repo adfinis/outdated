@@ -7,23 +7,22 @@ export default Factory.extend({
   eolDate: () => faker.date.future(2),
   releaseDate: () => faker.date.past(4),
 
-
-
   status() {
-    let eolDateTime = DateTime.fromJSDate(this.eolDate)
-    if (eolDateTime < DateTime.now()) {
+    const eolDateTime = DateTime.fromJSDate(this.eolDate);
+    const now = DateTime.now();
+    if (eolDateTime < now) {
       return 'OUTDATED';
-    } else if (eolDateTime < DateTime.now().plus({months: 1})) {
+    } else if (eolDateTime < now.plus({ months: 1 })) {
       return 'WARNING';
     }
     return 'UP-TO-DATE';
   },
 
-    isEndOfLife: trait({
+  isEndOfLife: trait({
     eolDate: () => faker.date.recent(),
   }),
   isNearlyEndOfLife: trait({
-    eolDate : () => faker.date.soon(25),
+    eolDate: () => faker.date.soon(25),
   }),
 
   afterCreate(version, server) {
