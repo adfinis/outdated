@@ -7,11 +7,8 @@
 
     <card.body class='text-{{@project.status}}'>
 
-      <div class='project-icon'>
+      <UkIcon @icon='{{this.icon}}' @ratio={{4}} />
 
-        <UkIcon @icon='{{this.icon}}' @ratio={{4}} />
-
-      </div>
       <DependencyCompact @version={{this.version}} />
 
     </card.body>

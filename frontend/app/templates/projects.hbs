@@ -1,5 +1,5 @@
 {{page-title 'Projects'}}
 <div class='compact-projects'>
-  {{#each (sort-by 'status' @model) as |project|}}
+  {{#each @model as |project|}}
     <ProjectCompact @project={{project}} />
   {{/each}}</div>
