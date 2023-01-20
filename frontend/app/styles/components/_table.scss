@@ -1,0 +1,22 @@
+table {
+  @extend .uk-table;
+  @extend .uk-text-center;
+  @extend .uk-table-striped;
+  th {
+    @extend .uk-text-center;
+    background: #fff;
+  }
+
+  th,
+  td {
+    padding: var(--table-cell-paddings);
+
+    font-size: var(--table-cell-font-size);
+  }
+  tbody {
+    border: #e3e3e3 2px solid;
+    tr:nth-of-type(2n + 1) {
+      box-shadow: inset 0 0 5px 1px rgba(59, 59, 59, 0.1) !important;
+    }
+  }
+}
