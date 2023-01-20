@@ -1,0 +1,50 @@
+@media only screen and (min-width: $breakpoint-xsmall) {
+  :root {
+    --navbar-height: 50px;
+    --table-cell-paddings: 9px 6px;
+    --table-cell-font-size: 0.7rem;
+    --navbar-margin-bottom: 10px;
+    --detailed-heading-font-size: 1.4rem;
+    --seperator-margin-bottom: 2px;
+    --button-nav-button-padding: 0 10px;
+  }
+}
+@media only screen and (min-width: $breakpoint-small) {
+  :root {
+    --seperator-margin-bottom: 3px;
+    --navbar-height: 60px;
+    --table-cell-paddings: 12px 9px;
+    --table-cell-font-size: 0.8rem;
+    --navbar-margin-bottom: 15px;
+    --compact-projects-width: 47%;
+    --button-nav-button-padding: 0 28px;
+    --button-nav-button-line-height: 42px;
+    --detailed-heading-font-size: 1.9rem;
+  }
+}
+@media only screen and (min-width: $breakpoint-medium) {
+  :root {
+    --navbar-height: 70px;
+    --seperator-margin-bottom: 5px;
+    --table-cell-paddings: 16px 12px;
+    --table-cell-font-size: 1.1rem;
+    --navbar-margin-bottom: 20px;
+    --compact-projects-width: 29%;
+    --button-nav-button-padding: 0 40px;
+    --button-nav-button-line-height: 53px;
+    --detailed-heading-font-size: 2.5rem;
+  }
+}
+@media only screen and (min-width: $breakpoint-large) {
+  :root {
+    --navbar-height: 80px;
+    --compact-projects-width: 18%;
+    --detailed-heading-font-size: 2.8rem;
+    --title-compact-font-size: 1.3rem;
+  }
+}
+/* Content Contaier */
+.content-container {
+  @extend .uk-container;
+  @extend .uk-container-expand;
+}
