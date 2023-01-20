@@ -2,15 +2,20 @@
 
   <div class='detailed-header'>
 
-    <a class='detailed-heading' href='{{@project.repo}}' target='blank_'>
+    <h1 class='detailed-heading'>
 
       {{@project.name}}
 
-    </a>
+    </h1>
+
+    <a href='{{@project.repo}}' target='blank_' data-test-repo-link><UkIcon
+        @icon='github'
+        @ratio={{3}}
+      /></a>
 
   </div>
 
-  <h1 class='seperator'></h1>
+  <p class='seperator'></p>
   <table class='package-table'>
     <thead><tr><th>Package</th><th>Version</th><th>End Of Life Date</th><th
         >Release Date</th></tr></thead>

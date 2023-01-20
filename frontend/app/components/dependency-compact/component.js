@@ -10,6 +10,8 @@ export default class DependencyCompactComponent extends Component {
         return state;
       case 'up-to-date':
         return 'success';
+      default:
+        return 'invalid';
     }
   }
 }
