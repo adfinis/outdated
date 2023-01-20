@@ -11,6 +11,7 @@ $breakpoint-xsmall: 419px;
   --button-nav-button-padding: 0 6px;
   --button-nav-button-line-height: 28px;
   --detailed-heading-font-size: 1.2rem;
+  --seperator-margin-bottom: 1px;
 }
 
 /* Navbar */
@@ -75,24 +76,28 @@ table {
   }
 }
 .seperator {
-  @extend .uk-heading-divider;
-  @extend .uk-heading-medium;
+  font-size: 2.8875rem;
+  line-height: 1.1;
+  padding-bottom: calc(var(--seperator-margin-bottom) + 0.1em);
+
+  border-bottom: calc(0.2px + 0.05em) solid #e5e5e5;
   margin: 0;
 }
 
 .detailed-header {
   text-align: center;
-
+  display: flex;
+  align-items: center;
   .detailed-heading {
     @extend .uk-link-heading;
 
     margin: 0;
-
     display: block;
     width: 100%;
     font-size: var(--detailed-heading-font-size);
-
-    color: #fff;
+  }
+  a {
+    width: calc(5px + var(--detailed-heading-font-size));
   }
 }
 
@@ -164,7 +169,7 @@ table {
     --table-cell-font-size: 0.7rem;
     --navbar-margin-bottom: 10px;
     --detailed-heading-font-size: 1.4rem;
-
+    --seperator-margin-bottom: 2px;
     --button-nav-button-padding: 0 10px;
   }
   .od-hidden\@xs {
@@ -180,6 +185,7 @@ table {
 
 @media (min-width: $breakpoint-small) {
   :root {
+    --seperator-margin-bottom: 3px;
     --navbar-height: 60px;
     --table-cell-paddings: 12px 9px;
     --table-cell-font-size: 0.8rem;
@@ -187,27 +193,27 @@ table {
     --compact-projects-width: 47%;
     --button-nav-button-padding: 0 28px;
     --button-nav-button-line-height: 42px;
-    --detailed-heading-font-size: 1.6rem;
+    --detailed-heading-font-size: 1.9rem;
   }
 }
 @media (min-width: $breakpoint-medium) {
   :root {
     --navbar-height: 70px;
-
+    --seperator-margin-bottom: 5px;
     --table-cell-paddings: 16px 12px;
     --table-cell-font-size: 1.1rem;
     --navbar-margin-bottom: 20px;
     --compact-projects-width: 29%;
     --button-nav-button-padding: 0 40px;
     --button-nav-button-line-height: 53px;
-    --detailed-heading-font-size: 1.9rem;
+    --detailed-heading-font-size: 2.5rem;
   }
 }
 @media (min-width: $breakpoint-large) {
   :root {
     --navbar-height: 80px;
     --compact-projects-width: 18%;
-    --detailed-heading-font-size: 2.2rem;
+    --detailed-heading-font-size: 2.8rem;
   }
   .title-compact {
     font-size: 1.3rem;

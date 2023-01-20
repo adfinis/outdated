@@ -2,7 +2,11 @@
 
   <UkCard as |card|>
 
-    <LinkTo @route='project-detailed' @model={{@project}}>
+    <LinkTo
+      @route='project-detailed'
+      data-test-project-link='{{@project.id}}'
+      @model={{@project}}
+    >
       <h3 class='title-compact'>{{@project.name}}</h3></LinkTo>
 
     <card.body class='text-{{@project.status}}'>
