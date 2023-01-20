@@ -1,0 +1,221 @@
+@import 'ember-uikit';
+
+/* variables */
+$breakpoint-xsmall: 419px;
+:root {
+  --navbar-height: 40px;
+  --table-cell-paddings: 8px 6px;
+  --table-cell-font-size: 0.65rem;
+  --navbar-margin-bottom: 5px;
+  --compact-projects-width: 100%;
+  --button-nav-button-padding: 0 6px;
+  --button-nav-button-line-height: 28px;
+  --detailed-heading-font-size: 1.2rem;
+  --seperator-margin-bottom: 1px;
+}
+
+/* Navbar */
+.navbar {
+  height: var(--navbar-height);
+  margin-bottom: var(--navbar-margin-bottom) !important;
+}
+.navbar-container {
+  @extend .uk-navbar-container;
+  @extend .uk-container-expand;
+  padding: 0 30px;
+  height: var(--navbar-height);
+
+  a {
+    min-height: var(--navbar-height);
+  }
+}
+
+/* Button Navbar */
+.button-nav {
+  @extend .uk-button-group;
+  button {
+    @extend .uk-button-small;
+
+    padding: var(--button-nav-button-padding);
+    line-height: var(--button-nav-button-line-height);
+  }
+  a.ember-view.active button {
+    @extend .uk-button-primary;
+  }
+}
+/*Table*/
+table {
+  @extend .uk-table;
+  @extend .uk-text-center;
+  @extend .uk-table-striped;
+  th {
+    @extend .uk-text-center;
+    background: #fff;
+  }
+
+  th,
+  td {
+    padding: var(--table-cell-paddings);
+
+    font-size: var(--table-cell-font-size);
+  }
+  tbody {
+    border: #e3e3e3 2px solid;
+    tr:nth-of-type(2n + 1) {
+      box-shadow: inset 0 0 5px 1px rgba(59, 59, 59, 0.1) !important;
+    }
+  }
+}
+
+/* Package Table */
+.package-table {
+  margin: 0;
+  td,
+  th {
+    @extend .uk-width-1-3;
+  }
+}
+.seperator {
+  font-size: 2.8875rem;
+  line-height: 1.1;
+  padding-bottom: calc(var(--seperator-margin-bottom) + 0.1em);
+
+  border-bottom: calc(0.2px + 0.05em) solid #e5e5e5;
+  margin: 0;
+}
+
+.detailed-header {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  .detailed-heading {
+    @extend .uk-link-heading;
+
+    margin: 0;
+    display: block;
+    width: 100%;
+    font-size: var(--detailed-heading-font-size);
+  }
+  a {
+    width: calc(5px + var(--detailed-heading-font-size));
+  }
+}
+
+/* Compact Projects*/
+.compact-projects {
+  @extend .uk-grid;
+  @extend .uk-grid-small;
+  @extend .uk-grid-match;
+  @extend .uk-flex-center;
+}
+
+.project-compact {
+  @extend .uk-margin-small-bottom;
+  width: var(--compact-projects-width);
+
+  .uk-card-body {
+    @extend .uk-padding-small;
+    @extend .uk-padding-remove-top;
+
+    @extend .uk-flex-column;
+    @extend .uk-flex-middle;
+    @extend .uk-flex-center;
+    display: flex;
+  }
+  a {
+    @extend .uk-text-decoration-none;
+  }
+}
+
+.title-compact {
+  @extend .uk-text-center;
+  @extend .uk-text-nowrap;
+  margin: 0;
+  position: relative;
+  z-index: 0;
+  padding-block: 6px;
+  padding-inline: 10px;
+}
+
+.text-OUTDATED {
+  @extend .uk-text-danger;
+}
+.text-WARNING {
+  @extend .uk-text-warning;
+}
+.text-UP-TO-DATE {
+  @extend .uk-text-success;
+}
+
+/* Content Contaier */
+.content-container {
+  @extend .uk-container;
+  @extend .uk-container-expand;
+}
+/* Responsive Layout */
+@media (max-width: $breakpoint-xsmall) {
+  :root {
+    --navbar-height: 40px;
+  }
+
+  .od-visible\@xs {
+    display: none;
+  }
+}
+@media (min-width: $breakpoint-xsmall) {
+  :root {
+    --navbar-height: 50px;
+    --table-cell-paddings: 9px 6px;
+    --table-cell-font-size: 0.7rem;
+    --navbar-margin-bottom: 10px;
+    --detailed-heading-font-size: 1.4rem;
+    --seperator-margin-bottom: 2px;
+    --button-nav-button-padding: 0 10px;
+  }
+  .od-hidden\@xs {
+    display: none;
+  }
+  .package-table {
+    td,
+    th {
+      width: 25%;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-small) {
+  :root {
+    --seperator-margin-bottom: 3px;
+    --navbar-height: 60px;
+    --table-cell-paddings: 12px 9px;
+    --table-cell-font-size: 0.8rem;
+    --navbar-margin-bottom: 15px;
+    --compact-projects-width: 47%;
+    --button-nav-button-padding: 0 28px;
+    --button-nav-button-line-height: 42px;
+    --detailed-heading-font-size: 1.9rem;
+  }
+}
+@media (min-width: $breakpoint-medium) {
+  :root {
+    --navbar-height: 70px;
+    --seperator-margin-bottom: 5px;
+    --table-cell-paddings: 16px 12px;
+    --table-cell-font-size: 1.1rem;
+    --navbar-margin-bottom: 20px;
+    --compact-projects-width: 29%;
+    --button-nav-button-padding: 0 40px;
+    --button-nav-button-line-height: 53px;
+    --detailed-heading-font-size: 2.5rem;
+  }
+}
+@media (min-width: $breakpoint-large) {
+  :root {
+    --navbar-height: 80px;
+    --compact-projects-width: 18%;
+    --detailed-heading-font-size: 2.8rem;
+  }
+  .title-compact {
+    font-size: 1.3rem;
+  }
+}
