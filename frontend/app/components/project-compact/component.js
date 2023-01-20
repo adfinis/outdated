@@ -10,10 +10,12 @@ export default class ProjectCompactComponent extends Component {
         return 'warning';
       case 'UP-TO-DATE':
         return 'check';
+      default:
+        return 'invalid';
     }
   }
-  get version(){
-    let { project }  = this.args;
+  get version() {
+    let { project } = this.args;
     return project.versions.toArray()[0];
   }
 }
