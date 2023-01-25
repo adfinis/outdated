@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path
-from outdated.outdated import views
 from rest_framework import routers
+
+from outdated.outdated import views
 
 router = routers.DefaultRouter()
 router.register(r"projects", views.ProjectViewSet)
