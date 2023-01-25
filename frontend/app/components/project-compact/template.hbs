@@ -7,14 +7,17 @@
       data-test-project-link='{{@project.id}}'
       @model={{@project}}
     >
-      <h3 class='title-compact'>{{@project.name}}</h3></LinkTo>
+      <h3
+        data-test-project-name
+        class='title-compact'
+      >{{@project.name}}</h3></LinkTo>
 
-    <card.body class='text-{{@project.status}}'>
+    <card.body data-test-project-status class='text-{{@project.status}}'>
 
       <UkIcon @icon='{{this.icon}}' @ratio={{4}} />
 
       <DependencyCompact @version={{this.version}} />
 
-    </card.body>
+  </card.body>
   </UkCard>
 </div>
