@@ -10,6 +10,6 @@ services:
     ports:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
     volumes:
-      - dbdata:/var/lib/postgresql/data
+      - psqldata:/var/lib/postgresql/data
 volumes:
   dbdata:
