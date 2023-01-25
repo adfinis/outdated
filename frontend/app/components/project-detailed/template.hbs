@@ -21,7 +21,7 @@
         >Release Date</th></tr></thead>
 
     <tbody>
-      {{#each (sort-by 'eolDate:asc' @project.versions) as |version|}}
+      {{#each (sort-by 'eolDate:asc' @project.dependencyVersions) as |version|}}
         <DependencyDetailed @version={{version}} />
       {{/each}}
 

@@ -7,7 +7,7 @@ module('Integration | Component | dependency-detailed', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
   test('dependency-detailed renders correctly', async function (assert) {
-    this.version = await this.server.create('version');
+    this.version = await this.server.create('dependency-version');
 
     await render(hbs`<DependencyDetailed @version={{this.version}} />`);
     assert

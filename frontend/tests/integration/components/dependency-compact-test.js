@@ -7,7 +7,7 @@ module('Integration | Component | dependency-compact', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
   test('dependency-compact renders correctly', async function (assert) {
-    this.version = await this.server.create('version');
+    this.version = await this.server.create('dependency-version');
 
     await render(hbs`<DependencyCompact @version={{this.version}}/>`);
 

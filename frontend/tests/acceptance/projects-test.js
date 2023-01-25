@@ -20,6 +20,8 @@ module('Acceptance | projects', function (hooks) {
 
     assert.dom('[data-test-repo-link]').hasProperty('href', project.repo);
 
-    assert.dom('tbody>tr').exists({ count: project.versions.models.length });
+    assert
+      .dom('tbody>tr')
+      .exists({ count: project.dependencyVersions.models.length });
   });
 });

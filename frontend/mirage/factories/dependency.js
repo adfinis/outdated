@@ -1,4 +1,4 @@
-import { Factory } from 'miragejs';
+import { Factory, hasMany } from 'miragejs';
 import { faker } from '@faker-js/faker';
 export default Factory.extend({
   name: () =>
@@ -22,4 +22,5 @@ export default Factory.extend({
       faker.system.commonFileExt() +
         faker.helpers.arrayElement(['-support', '-export', '-import']),
     ]),
+  versions: hasMany(),
 });

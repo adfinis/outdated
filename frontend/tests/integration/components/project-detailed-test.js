@@ -12,7 +12,7 @@ module('Integration | Component | project-detailed', function (hooks) {
     let store = this.owner.lookup('service:store');
 
     this.project = await store.findRecord('project', project.id, {
-      include: 'versions,versions.dependency',
+      include: 'dependencyVersions,dependencyVersions.dependency',
     });
 
     await render(hbs`<ProjectDetailed @project={{this.project}}/>`);
@@ -20,6 +20,8 @@ module('Integration | Component | project-detailed', function (hooks) {
     assert.dom('[data-test-project-name]').hasText(this.project.name);
     assert.dom('[data-test-repo-link]').hasProperty('href', this.project.repo);
 
-    assert.dom('tbody>tr').exists({ count: this.project.versions.length });
+    assert
+      .dom('tbody>tr')
+      .exists({ count: this.project.dependencyVersions.length });
   });
 });
