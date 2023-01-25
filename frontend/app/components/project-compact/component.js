@@ -16,6 +16,6 @@ export default class ProjectCompactComponent extends Component {
   }
   get version() {
     let { project } = this.args;
-    return project.versions.toArray()[0];
+    return project.dependencyVersions.toArray()[0];
   }
 }

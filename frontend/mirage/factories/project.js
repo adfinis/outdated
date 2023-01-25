@@ -17,13 +17,15 @@ export default Factory.extend({
   },
   withVersions: trait({
     afterCreate(project, server) {
-      server.createList('version', 3, 'isEndOfLife', { projects: [project] });
-
-      server.createList('version', 3, 'isNearlyEndOfLife', {
+      server.createList('dependency-version', 3, 'isEndOfLife', {
         projects: [project],
       });
 
-      server.createList('version', 10, { projects: [project] });
+      server.createList('dependency-version', 3, 'isNearlyEndOfLife', {
+        projects: [project],
+      });
+
+      server.createList('dependency-version', 10, { projects: [project] });
     },
   }),
 });

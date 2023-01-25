@@ -12,7 +12,7 @@ module('Integration | Component | project-compact', function (hooks) {
     const project = this.server.create('project', 'withVersions');
     let store = this.owner.lookup('service:store');
     this.project = await store.findRecord('project', project.id, {
-      include: 'versions,versions.dependency',
+      include: 'dependencyVersions,dependencyVersions.dependency',
     });
     await render(hbs`<ProjectCompact  @project={{this.project}} />`);
 
