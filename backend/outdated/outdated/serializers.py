@@ -1,14 +1,15 @@
-from outdated.outdated.models import Dependency, DependencyVersion, Project
 from rest_framework_json_api import serializers
 
+from outdated.outdated.models import Dependency, DependencyVersion, Project
 
-class DependencySerializer(serializers.HyperlinkedModelSerializer):
+
+class DependencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Dependency
         fields = "__all__"
 
 
-class DependencyVersionSerializer(serializers.HyperlinkedModelSerializer):
+class DependencyVersionSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
 
     class Meta:
@@ -16,7 +17,7 @@ class DependencyVersionSerializer(serializers.HyperlinkedModelSerializer):
         fields = "__all__"
 
 
-class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
 
     class Meta:
