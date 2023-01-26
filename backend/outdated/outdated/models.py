@@ -20,10 +20,10 @@ class DependencyVersion(models.Model):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     version = models.CharField(max_length=100)
     release_date = models.DateField()
-    end_of_life_date = models.DateField()
+    eol_date = models.DateField()
 
     class Meta:
-        ordering = ["end_of_life_date"]
+        ordering = ["eol_date"]
         unique_together = ("dependency", "version")
 
     def __str__(self):
@@ -31,9 +31,9 @@ class DependencyVersion(models.Model):
 
     @property
     def status(self):
-        if date.today() >= self.end_of_life_date:
+        if date.today() >= self.eol_date:
             return "OUTDATED"
-        elif date.today() + timedelta(days=30) >= self.end_of_life_date:
+        elif date.today() + timedelta(days=30) >= self.eol_date:
             return "WARNING"
         return "UP-TO-DATE"
 
