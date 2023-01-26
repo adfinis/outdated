@@ -11,7 +11,9 @@ class DependencySerializer(serializers.ModelSerializer):
 
 class DependencyVersionSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
-    dependency = DependencySerializer(read_only=True)
+    included_serializers = {
+        "dependency": "outdated.outdated.serializers.DependencySerializer"
+    }
 
     class Meta:
         model = DependencyVersion
@@ -20,7 +22,10 @@ class DependencyVersionSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
-    dependency_versions = DependencyVersionSerializer(many=True, read_only=True)
+    # dependency_versions = DependencyVersionSerializer(many=True, read_only=True)
+    included_serializers = {
+        "dependency_versions": "outdated.outdated.serializers.DependencyVersionSerializer",
+    }
 
     class Meta:
         model = Project
