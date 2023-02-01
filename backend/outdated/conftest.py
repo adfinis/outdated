@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
@@ -16,6 +18,8 @@ def client(db):
 
 
 @pytest.fixture
-def date_format():
-    """Return the format for dates, used when converting strings to a datetime object."""
-    return "%Y-%m-%d"
+def format_date():
+    def _format_date(date: str):
+        return datetime.strptime(date, "%Y-%m-%d").date()
+
+    return _format_date
