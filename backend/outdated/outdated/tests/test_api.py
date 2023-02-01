@@ -20,16 +20,19 @@ def test_dependency(
 
 
 def test_dependency_versions(
-    client, format_date, dependency_factory, dependency_version_factory
+    client, str_to_date, dependency_factory, dependency_version_factory
 ):
     included = {"include": "dependency"}
     dependency_factory.create_batch(2)
-    n = 5
-    gen_dep_versions = dependency_version_factory.create_batch(n)
+    gen_dep_versions = [
+        dependency_version_factory.create(outdated=True),
+        dependency_version_factory.create(warning=True),
+        dependency_version_factory.create(up_to_date=True),
+    ]
 
     resp = client.get("/dependency-versions/", included)
     assert resp.status_code == status.HTTP_200_OK
-    assert len(resp.json()["data"]) == n
+    assert len(resp.json()["data"]) == 3
     for gen_dep_version in gen_dep_versions:
 
         resp_detailed = client.get(
@@ -49,7 +52,7 @@ def test_dependency_versions(
         )
 
         _status = resp_dep_version["status"]
-        eol_date = format_date(resp_dep_version["eol-date"])
+        eol_date = str_to_date(resp_dep_version["eol-date"])
 
         today = date.today()
         if today >= eol_date:
@@ -62,7 +65,7 @@ def test_dependency_versions(
         assert resp_dep_version["version"] == gen_dep_version.version
         assert eol_date == gen_dep_version.eol_date
         assert (
-            format_date(resp_dep_version["release-date"])
+            str_to_date(resp_dep_version["release-date"])
             == gen_dep_version.release_date
         )
 
@@ -102,4 +105,4 @@ def test_project(
             ):
                 assert int(gen_dep_version["id"]) == resp_dep_version.id
         else:
-            assert gen_project.dependency_versions.first() == None
+            assert not gen_project.dependency_versions.first()
