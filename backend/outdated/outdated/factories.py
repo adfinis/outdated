@@ -1,7 +1,7 @@
-import datetime
 import random
+from datetime import date, timedelta
 
-from factory import Faker, Sequence, SubFactory, post_generation
+from factory import Faker, Sequence, SubFactory, Trait, post_generation
 from factory.django import DjangoModelFactory
 
 from . import models
@@ -15,22 +15,26 @@ class DependencyFactory(DjangoModelFactory):
 
 
 class DependencyVersionFactory(DjangoModelFactory):
+    class Meta:
+        model = models.DependencyVersion
 
     dependency = SubFactory(DependencyFactory)
     version = ".".join([str(random.randint(0, 9)) for _ in range(3)])
     release_date = Faker(
         "date_between_dates",
-        date_start=datetime.date.today() - datetime.timedelta(80),
-        date_end=datetime.date.today(),
+        date_start=date.today() - timedelta(days=80),
+        date_end=date.today(),
     )
     eol_date = Faker(
         "date_between_dates",
         date_start=release_date,
-        date_end=datetime.date.today() + datetime.timedelta(80),
+        date_end=date.today() + timedelta(days=80),
     )
 
-    class Meta:
-        model = models.DependencyVersion
+    class Params:
+        outdated = Trait(eol_date=date.today() - timedelta(days=80))
+        warning = Trait(eol_date=date.today() + timedelta(days=20))
+        up_to_date = Trait(eol_date=date.today() + timedelta(days=31))
 
 
 class ProjectFactory(DjangoModelFactory):

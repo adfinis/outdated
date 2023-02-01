@@ -18,8 +18,8 @@ def client(db):
 
 
 @pytest.fixture
-def format_date():
-    def _format_date(date: str):
+def str_to_date():
+    def _str_to_date(date: str):
         return datetime.strptime(date, "%Y-%m-%d").date()
 
-    return _format_date
+    return _str_to_date
