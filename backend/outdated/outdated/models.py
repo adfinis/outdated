@@ -43,11 +43,12 @@ class Project(models.Model):
     dependency_versions = models.ManyToManyField(DependencyVersion, blank=True)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["name", "id"]
 
     @property
     def status(self) -> str:
-        return self.dependency_versions.first().status
+        first = self.dependency_versions.first()
+        return first.status if first else "UNDEFINED"
 
     def __str__(self):
         return self.name

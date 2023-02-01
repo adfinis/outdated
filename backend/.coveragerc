@@ -1,0 +1,15 @@
+[report]
+fail_under=100
+
+exclude_lines =
+    def __str__
+
+
+omit=
+    */migrations/*
+    */apps.py
+
+
+
+show_missing = True
+

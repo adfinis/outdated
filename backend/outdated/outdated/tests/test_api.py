@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, timedelta
 
 from rest_framework import status
 
@@ -20,7 +20,7 @@ def test_dependency(
 
 
 def test_dependency_versions(
-    client, date_format, dependency_factory, dependency_version_factory
+    client, format_date, dependency_factory, dependency_version_factory
 ):
     included = {"include": "dependency"}
     dependency_factory.create_batch(2)
@@ -47,15 +47,23 @@ def test_dependency_versions(
             )
             == gen_dep_version.dependency.id
         )
-        assert resp_dep_version["status"] == gen_dep_version.status
+
+        _status = resp_dep_version["status"]
+        eol_date = format_date(resp_dep_version["eol-date"])
+
+        today = date.today()
+        if today >= eol_date:
+            assert _status == "OUTDATED"
+        elif today + timedelta(days=30) >= eol_date:
+            assert _status == "WARNING"
+        else:
+            assert _status == "UP-TO-DATE"
+        assert _status == gen_dep_version.status
         assert resp_dep_version["version"] == gen_dep_version.version
+        assert eol_date == gen_dep_version.eol_date
         assert (
-            datetime.strptime(resp_dep_version["release-date"], date_format).date()
+            format_date(resp_dep_version["release-date"])
             == gen_dep_version.release_date
-        )
-        assert (
-            datetime.strptime(resp_dep_version["eol-date"], date_format).date()
-            == gen_dep_version.eol_date
         )
 
 
@@ -72,11 +80,26 @@ def test_project(
         project_factory.create(
             dependency_versions=dependency_version_factory.create_batch(3)
         )
-        for _ in range(n)
+        for _ in range(n - 1)
     ]
+    gen_projects.append(project_factory.create())
     resp = client.get("/projects/", included)
     assert len(resp.json()["data"]) == n
     assert resp.status_code == status.HTTP_200_OK
     for gen_project in gen_projects:
         resp_detailed = client.get(f"/projects/{gen_project.id}/", included)
         assert resp_detailed.status_code == status.HTTP_200_OK
+        resp_project = resp_detailed.json()["data"]["attributes"]
+        assert resp_project["status"] == gen_project.status
+        assert resp_project["name"] == gen_project.name
+        assert resp_project["repo"] == gen_project.repo
+        if gen_project.status != "UNDEFINED":
+            for gen_dep_version, resp_dep_version in zip(
+                resp_detailed.json()["data"]["relationships"]["dependency-versions"][
+                    "data"
+                ],
+                gen_project.dependency_versions.all(),
+            ):
+                assert int(gen_dep_version["id"]) == resp_dep_version.id
+        else:
+            assert gen_project.dependency_versions.first() == None
