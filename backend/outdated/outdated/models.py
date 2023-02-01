@@ -2,14 +2,12 @@ from datetime import date, timedelta
 
 from django.db import models
 
-# Create your models here.
-
 
 class Dependency(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["name", "id"]
 
     def __str__(self):
         return self.name
@@ -23,11 +21,8 @@ class DependencyVersion(models.Model):
     eol_date = models.DateField()
 
     class Meta:
-        ordering = ["eol_date"]
+        ordering = ["eol_date", "id"]
         unique_together = ("dependency", "version")
-
-    def __str__(self):
-        return self.dependency.name + " " + self.version
 
     @property
     def status(self):
@@ -36,6 +31,9 @@ class DependencyVersion(models.Model):
         elif date.today() + timedelta(days=30) >= self.eol_date:
             return "WARNING"
         return "UP-TO-DATE"
+
+    def __str__(self):
+        return self.dependency.name + self.version
 
 
 class Project(models.Model):
@@ -47,9 +45,9 @@ class Project(models.Model):
     class Meta:
         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
-
     @property
     def status(self) -> str:
         return self.dependency_versions.first().status
+
+    def __str__(self):
+        return self.name
