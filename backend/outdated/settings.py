@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from env import env
+from env_access import env
 
 DEBUG = True
 
@@ -104,7 +104,7 @@ USE_L10N = True
 USE_TZ = True
 
 REST_FRAMEWORK = {
-    "PAGE_SIZE": 10,
+    "PAGE_SIZE": env("PAGE_SIZE"),
     "EXCEPTION_HANDLER": "rest_framework_json_api.exceptions.exception_handler",
     "DEFAULT_PAGINATION_CLASS": "rest_framework_json_api.pagination.JsonApiPageNumberPagination",
     "DEFAULT_PARSER_CLASSES": (
