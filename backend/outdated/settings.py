@@ -1,11 +1,21 @@
 import os
 from pathlib import Path
 
-from env_access import env
+import environ
+
+env = environ.Env()
+django_root = environ.Path(__file__) - 3
+
+ENV_FILE = django_root(".env")
+if os.path.exists(ENV_FILE):
+    environ.Env.read_env(ENV_FILE)  # pragma: no cover
 
 DEBUG = True
 
-SECRET_KEY = env("DJANGO_SECRET_KEY", default="uuuuuuuuuu")
+SECRET_KEY = env(
+    "DJANGO_SECRET_KEY",
+    default="asdfklöfiklasdjflhjasdfjlasdjfkldajfkjasdklfjldasjfkjasklöfjdlaksjfklasdlfjkadsjfkljaslfjasdk",
+)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,7 +32,6 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_json_api",
 ]
@@ -62,11 +71,11 @@ WSGI_APPLICATION = "outdated.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DATABASE_NAME"),
-        "USER": env("DATABASE_USER"),
-        "PASSWORD": env("DATABASE_PASSWORD"),
-        "HOST": env("DATABASE_HOST"),
-        "PORT": env("DATABASE_PORT"),
+        "NAME": env("DATABASE_NAME", default="db"),
+        "USER": env("DATABASE_USER", default="outdated"),
+        "PASSWORD": env("DATABASE_PASSWORD", default="outdated"),
+        "HOST": env("DATABASE_HOST", default="localhost"),
+        "PORT": env.int("DATABASE_PORT", default=5432),
     }
 }
 
@@ -95,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "CET"
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -109,16 +118,12 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework_json_api.pagination.JsonApiPageNumberPagination",
     "DEFAULT_PARSER_CLASSES": (
         "rest_framework_json_api.parsers.JSONParser",
+        "rest_framework.parsers.JSONParser",
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
     ),
     "DEFAULT_RENDERER_CLASSES": (
         "rest_framework_json_api.renderers.JSONRenderer",
-        # If you're performance testing, you will want to use the browseable API
-        # without forms, as the forms can generate their own queries.
-        # If performance testing, enable:
-        # 'example.utils.BrowsableAPIRendererWithoutForms',
-        # Otherwise, to play around with the browseable API, enable:
         "rest_framework_json_api.renderers.BrowsableAPIRenderer",
     ),
     "DEFAULT_METADATA_CLASS": "rest_framework_json_api.metadata.JSONAPIMetadata",
@@ -132,6 +137,8 @@ REST_FRAMEWORK = {
     "SEARCH_PARAM": "filter[search]",
     "TEST_REQUEST_RENDERER_CLASSES": (
         "rest_framework_json_api.renderers.JSONRenderer",
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.MultiPartRenderer",
     ),
     "TEST_REQUEST_DEFAULT_FORMAT": "vnd.api+json",
 }
@@ -139,15 +146,3 @@ REST_FRAMEWORK = {
 JSON_API_FORMAT_FIELD_NAMES = "dasherize"
 JSON_API_FORMAT_TYPES = "dasherize"
 JSON_API_PLURALIZE_TYPES = True
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
