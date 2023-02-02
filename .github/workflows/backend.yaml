@@ -13,8 +13,8 @@ defaults:
     working-directory: ./backend
 
 jobs:
-  lint:
-    name: "Lint"
+  tests:
+    name: "Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,9 +29,17 @@ jobs:
 
       - name: Install dependencies
         run: poetry install
+      - name: Lint the Code
+        run: |
+          poetry run black --check .
+          poetry run flake8
+      - name: set up .env for tests
+        run: |
+          cp ../test.env ../.env
+      - name: Start Database
+        run: docker compose up -d
+      - name: Check for missing migrations
+        run: poetry run ./manage.py makemigrations --check --dry-run --no-input
 
-      - name: Run black
-        run: poetry run black --check .
-
-      - name: Run flake8
-        run: poetry run flake8
+      - name: Run pytests
+        run: poetry run pytest --cov --create-db
