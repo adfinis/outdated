@@ -12,4 +12,4 @@ services:
     volumes:
       - psqldata:/var/lib/postgresql/data
 volumes:
-  dbdata:
+  psqldata:

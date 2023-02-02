@@ -5,7 +5,7 @@ from env_access import env
 
 DEBUG = True
 
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="uuuuuuuuuu")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
