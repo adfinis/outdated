@@ -8,7 +8,7 @@ from . import models
 
 
 class DependencyFactory(DjangoModelFactory):
-    name = Faker("uuid4")
+    name = Faker("name")
 
     class Meta:
         model = models.Dependency

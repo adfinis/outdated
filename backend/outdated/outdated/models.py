@@ -2,8 +2,10 @@ from datetime import date, timedelta
 
 from django.db import models
 
+from outdated.models import UUIDModel
 
-class Dependency(models.Model):
+
+class Dependency(UUIDModel):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -13,7 +15,7 @@ class Dependency(models.Model):
         return self.name
 
 
-class DependencyVersion(models.Model):
+class DependencyVersion(UUIDModel):
 
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     version = models.CharField(max_length=100)
@@ -21,13 +23,13 @@ class DependencyVersion(models.Model):
     eol_date = models.DateField()
 
     class Meta:
-        ordering = ["eol_date", "id"]
+        ordering = ["eol_date", "dependency__name", "version", "release_date"]
         unique_together = ("dependency", "version")
 
     @property
     def status(self):
         if date.today() >= self.eol_date:
-            return "OUTDATED"
+            return "OUTDATED"  # als konstante definieren
         elif date.today() + timedelta(days=30) >= self.eol_date:
             return "WARNING"
         return "UP-TO-DATE"
@@ -36,7 +38,7 @@ class DependencyVersion(models.Model):
         return self.dependency.name + self.version
 
 
-class Project(models.Model):
+class Project(UUIDModel):
 
     name = models.CharField(max_length=100, unique=True)
     repo = models.URLField(max_length=200, unique=True)
