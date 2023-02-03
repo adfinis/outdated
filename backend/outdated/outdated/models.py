@@ -4,6 +4,14 @@ from django.db import models
 
 from outdated.models import UUIDModel
 
+STATUS_OPTIONS = {
+    "outdated": "OUTDATED",
+    "warning": "WARNING",
+    "up_to_date": "UP_TO_DATE",
+    "undefined": "UNDEFINED",
+}
+STATUS_CHOICES = [(status, status) for _, status in STATUS_OPTIONS.items()]
+
 
 class Dependency(UUIDModel):
     name = models.CharField(max_length=100, unique=True)
@@ -21,6 +29,7 @@ class DependencyVersion(UUIDModel):
     version = models.CharField(max_length=100)
     release_date = models.DateField()
     eol_date = models.DateField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
 
     class Meta:
         ordering = ["eol_date", "dependency__name", "version", "release_date"]
@@ -29,10 +38,10 @@ class DependencyVersion(UUIDModel):
     @property
     def status(self):
         if date.today() >= self.eol_date:
-            return "OUTDATED"  # als konstante definieren
+            return STATUS_OPTIONS["outdated"]
         elif date.today() + timedelta(days=30) >= self.eol_date:
-            return "WARNING"
-        return "UP-TO-DATE"
+            return STATUS_OPTIONS["warning"]
+        return STATUS_OPTIONS["up_to_date"]
 
     def __str__(self):
         return self.dependency.name + self.version
@@ -43,6 +52,7 @@ class Project(UUIDModel):
     name = models.CharField(max_length=100, unique=True)
     repo = models.URLField(max_length=200, unique=True)
     dependency_versions = models.ManyToManyField(DependencyVersion, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
 
     class Meta:
         ordering = ["name", "id"]
@@ -50,7 +60,7 @@ class Project(UUIDModel):
     @property
     def status(self) -> str:
         first = self.dependency_versions.first()
-        return first.status if first else "UNDEFINED"
+        return first.status if first else STATUS_OPTIONS["undefined"]
 
     def __str__(self):
         return self.name
