@@ -33,3 +33,12 @@ test-frontend: ## Test the frontend
 
 .PHONY: test
 test: test-backend test-frontend ## Test front- & backend
+
+
+.PHONY: makemigrations
+makemigrations: ## Make django migrations
+	@cd backend/; poetry run ./manage.py migrate
+
+.PHONY: migrate
+migrate: ## Migrate django
+	@cd backend/; poetry run ./manage.py migrate
