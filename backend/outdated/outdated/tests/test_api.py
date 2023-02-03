@@ -35,7 +35,6 @@ def test_dependency_versions(
         up_to_date=_status == "UP_TO_DATE",
     )
     url = reverse("dependencyversion-list")
-    print(url)
     resp = client.get(url, include)
     assert resp.status_code == status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
