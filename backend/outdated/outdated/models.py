@@ -7,7 +7,7 @@ from outdated.models import UUIDModel
 STATUS_OPTIONS = {
     "outdated": "OUTDATED",
     "warning": "WARNING",
-    "up_to_date": "UP_TO_DATE",
+    "up_to_date": "UP-TO-DATE",
     "undefined": "UNDEFINED",
 }
 STATUS_CHOICES = [(status, status) for _, status in STATUS_OPTIONS.items()]
