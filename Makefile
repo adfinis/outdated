@@ -8,10 +8,12 @@ help:
 start-backend: ## Starts only the backend
 	@docker-compose up -d --build
 	@cd backend/;poetry run ./manage.py runserver
-.PHONY: start-frontend
-start-frontend: ## Start only the frontend
+.PHONY: start-frontend-using-backend
+start-frontend-using-backend: ## Start the frontend, using the API
 	@cd frontend/; yarn ember server --proxy=http://localhost:8000
-
+.PHONY: start-frontend-using-backend
+start-frontend: ## Start the frontend, using Mirage
+	@cd frontend/; yarn ember s
 
 lint-backend: ## Lint the backend
 	@cd backend/; poetry run black .; poetry run isort .; poetry run flake8; 
