@@ -47,9 +47,7 @@ line_length = 88
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "outdated.settings"
-env = [
-    "DJANGO_SECRET_KEY=testonlykey"
-]
+
 
 [tool.coverage.run]
 source = ["."]
