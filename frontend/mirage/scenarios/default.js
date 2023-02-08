@@ -5,5 +5,6 @@ export default function (server) {
     This data will not be loaded in your tests.
   */
   // server.createList('post', 10);
-  server.createList('project', 10, 'withVersions');
+  server.createList('project', 3, 'withVersions');
+  server.createList('project', 2);
 }

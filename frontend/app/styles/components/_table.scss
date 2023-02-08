@@ -2,6 +2,7 @@ table {
   @extend .uk-table;
   @extend .uk-text-center;
   @extend .uk-table-striped;
+  @extend .uk-margin-bottom;
   th {
     @extend .uk-text-center;
     background: #fff;

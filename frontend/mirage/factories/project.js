@@ -3,9 +3,7 @@ import { faker } from '@faker-js/faker';
 
 export default Factory.extend({
   name: () => faker.hacker.adjective() + ' ' + faker.company.bsNoun(),
-
-  status: () =>
-    faker.helpers.arrayElement(['OUTDATED', 'WARNING', 'UP-TO-DATE']),
+  status: () => 'UNDEFINED',
 
   repo() {
     return (
@@ -16,6 +14,9 @@ export default Factory.extend({
     );
   },
   withVersions: trait({
+    status: () =>
+      faker.helpers.arrayElement(['OUTDATED', 'WARNING', 'UP-TO-DATE']),
+
     afterCreate(project, server) {
       server.createList('dependency-version', 3, 'isEndOfLife', {
         projects: [project],

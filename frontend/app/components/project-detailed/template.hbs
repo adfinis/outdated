@@ -16,16 +16,24 @@
   </div>
 
   <p class='seperator'></p>
-  <table>
-    <thead><tr><th>Dependency</th><th>Version</th><th>End Of Life Date</th><th
-        >Release Date</th></tr></thead>
+  {{#if @project.dependencyVersions}}
+    <table>
+      <thead><tr><th>Dependency</th><th>Version</th><th>End Of Life Date</th><th
+          >Release Date</th></tr></thead>
 
-    <tbody>
-      {{#each (sort-by 'eolDate:asc' @project.dependencyVersions) as |version|}}
-        <DependencyDetailed @version={{version}} />
-      {{/each}}
+      <tbody>
+        {{#each
+          (sort-by 'eolDate:asc' @project.dependencyVersions)
+          as |version|
+        }}
+          <DependencyDetailed @version={{version}} />
+        {{/each}}
 
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  {{else}}
+    <div class='none-yet' data-test-dependency-versions-none>
+      <span class='text-UNDEFINED'>No dependencies yet</span></div>
+  {{/if}}
 
 </div>

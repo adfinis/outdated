@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'outdated/tests/helpers';
-import { render } from '@ember/test-helpers';
+import { render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupMirage } from 'ember-cli-mirage/test-support';
 module('Integration | Component | project-detailed', function (hooks) {
@@ -23,5 +23,10 @@ module('Integration | Component | project-detailed', function (hooks) {
     assert
       .dom('tbody>tr')
       .exists({ count: this.project.dependencyVersions.length });
+
+    this.project.dependencyVersions = [];
+    await settled();
+
+    assert.dom('[data-test-dependency-versions-none]').exists();
   });
 });
