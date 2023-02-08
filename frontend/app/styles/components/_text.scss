@@ -7,3 +7,13 @@
 .text-UP-TO-DATE {
   @extend .uk-text-success;
 }
+.text-UNDEFINED {
+  @extend .uk-text-muted;
+  font-style: italic;
+}
+.none-yet {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
