@@ -10,12 +10,13 @@ module('Integration | Component | project-compact', function (hooks) {
 
   test('project-compact renders correctly', async function (assert) {
     const project = this.server.create('project', 'withVersions');
+
     let store = this.owner.lookup('service:store');
     this.project = await store.findRecord('project', project.id, {
       include: 'dependencyVersions,dependencyVersions.dependency',
     });
     await render(hbs`<ProjectCompact  @project={{this.project}} />`);
-
+    assert.dom('[data-test-dependency-compact]').exists();
     assert.dom(`[data-test-project-link="${this.project.id}"]`).exists();
     assert
       .dom(`[data-test-project-link="${this.project.id}"]`)
@@ -36,7 +37,9 @@ module('Integration | Component | project-compact', function (hooks) {
     this.project.status = 'UP-TO-DATE';
     await settled();
     assert.dom('span[icon=check]').exists();
-
-    assert.dom('[data-test-dependency-compact]').exists();
+    this.project.status = 'UNDEFINED';
+    this.project.dependencyVersions = [];
+    await settled();
+    assert.dom('span[icon=info]').exists();
   });
 });

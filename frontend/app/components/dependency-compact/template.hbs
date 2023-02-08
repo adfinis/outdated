@@ -1,4 +1,11 @@
 <span
   data-test-dependency-compact
-  {{uk-tooltip (concat 'EOL: ' (format-date @version.eolDate)) pos='bottom'}}
->{{@version.dependency.name}} {{@version.version}}</span>
+  {{(if
+    @version
+    (modifier
+      'uk-tooltip' (concat 'EOL: ' (format-date @version.eolDate)) pos='bottom'
+    )
+  )}}
+>
+  {{or @version.dependency.name 'No dependencies yet'}}
+  {{@version.version}}</span>

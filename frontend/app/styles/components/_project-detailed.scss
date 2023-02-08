@@ -18,9 +18,10 @@
 .project-detailed {
   table {
     margin: 0;
-    td,
-    th {
-      width: 25%;
-    }
+  }
+  th,
+  td {
+    width: 25%;
+    transition: font-size 0.1s ease 0.1s;
   }
 }
