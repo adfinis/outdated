@@ -28,18 +28,17 @@ module('Integration | Component | project-compact', function (hooks) {
       .dom('[data-test-project-status]')
       .hasClass(`text-${this.project.status}`);
 
-    this.project.status = 'OUTDATED';
-    await settled();
-    assert.dom('span[icon=bolt]').exists();
-    this.project.status = 'WARNING';
-    await settled();
-    assert.dom('span[icon=warning]').exists();
-    this.project.status = 'UP-TO-DATE';
-    await settled();
-    assert.dom('span[icon=check]').exists();
-    this.project.status = 'UNDEFINED';
-    this.project.dependencyVersions = [];
-    await settled();
-    assert.dom('span[icon=info]').exists();
+    const statusIcons = {
+      OUTDATED: 'bolt',
+      WARNING: 'warning',
+      'UP-TO-DATE': 'check',
+      UNDEFINED: 'info',
+    };
+
+    for (const [status, icon] of Object.entries(statusIcons)) {
+      this.project.status = status;
+      await settled();
+      assert.dom(`span[icon=${icon}]`).exists();
+    }
   });
 });
