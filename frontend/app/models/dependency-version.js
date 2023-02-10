@@ -1,6 +1,6 @@
 import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
 
-export default class VersionModel extends Model {
+export default class DependencyVersionModel extends Model {
   @attr version;
   @attr status;
   @attr('date') eolDate;
