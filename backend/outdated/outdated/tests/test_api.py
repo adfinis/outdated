@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-from uuid import UUID
 
 import pytest
 from django.urls import reverse
@@ -23,7 +22,7 @@ def test_dependency(
     assert resp_detailed.json()["data"]["attributes"]["name"] == gen_dependency.name
 
 
-@pytest.mark.parametrize("_status", ["OUTDATED", "WARNING", "UP_TO_DATE"])
+@pytest.mark.parametrize("_status", ["OUTDATED", "WARNING", "UP-TO-DATE"])
 def test_dependency_versions(
     client, str_to_date, dependency_factory, dependency_version_factory, _status
 ):
@@ -32,7 +31,7 @@ def test_dependency_versions(
     gen_dep_version = dependency_version_factory.create(
         outdated=_status == "OUTDATED",
         warning=_status == "WARNING",
-        up_to_date=_status == "UP_TO_DATE",
+        up_to_date=_status == "UP-TO-DATE",
     )
     url = reverse("dependencyversion-list")
     resp = client.get(url, include)
@@ -46,16 +45,14 @@ def test_dependency_versions(
     assert resp_detailed.status_code == status.HTTP_200_OK
 
     resp_dep_version = resp_detailed.json()["data"]["attributes"]
-    assert (
-        UUID(resp_detailed.json()["data"]["relationships"]["dependency"]["data"]["id"])
-        == gen_dep_version.dependency.id
-    )
+    assert resp_detailed.json()["data"]["relationships"]["dependency"]["data"][
+        "id"
+    ] == str(gen_dep_version.dependency.id)
 
-    _status = resp_dep_version["status"]
+    assert _status == gen_dep_version.status == resp_dep_version["status"]
     eol_date = str_to_date(resp_dep_version["eol-date"])
 
     today = date.today()
-    assert _status == gen_dep_version.status
     if today >= eol_date:
         assert _status == "OUTDATED"
     elif today + timedelta(days=30) >= eol_date:
@@ -103,7 +100,7 @@ def test_project(
             ],
             gen_project.dependency_versions.all(),
         ):
-            assert UUID(gen_dep_version["id"]) == resp_dep_version.id
+            assert gen_dep_version["id"] == str(resp_dep_version.id)
     else:
         assert not gen_project.dependency_versions.first()
         assert gen_project.status == "UNDEFINED"
