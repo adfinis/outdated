@@ -8,10 +8,6 @@ on:
     branches:
       - main
 
-defaults:
-  run:
-    working-directory: ./backend
-
 jobs:
   lint:
     name: "Lint"
@@ -19,40 +15,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-          cache: "poetry"
-
-      - name: Install dependencies
-        run: poetry install
-      - name: Lint the Code
-        run: |
-          poetry run black --check .
-          poetry run flake8
+      - name: Lint the backend code
+        run: make lint-backend
 
   test:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install poetry
-        run: pipx install poetry
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-          cache: "poetry"
-
-      - name: Install dependencies
-        run: poetry install
-      - name: Start Database
-        run: docker compose up -d
+      - name: Build the containers
+        run: docker compose up -d --build db backend
       - name: Check for missing migrations
-        run: poetry run ./manage.py makemigrations --check --dry-run --no-input
-      - name: Run pytests
-        run: poetry run pytest --no-cov-on-fail --cov --create-db
+        run: docker compose exec -T backend ./manage.py makemigrations --check --dry-run --no-input
+      - name: Run backend tests
+        run: make test-backend
