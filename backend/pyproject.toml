@@ -16,8 +16,6 @@ djangorestframework-jsonapi = "^6.0.0"
 django-filter = "^22.1"
 
 
-
-
 [tool.poetry.group.dev.dependencies]
 flake8 = "5.0.0"
 flake8-bugbear = "23.1.20"

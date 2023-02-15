@@ -14,12 +14,12 @@ DEBUG = True
 
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
-    default="asdfklöfiklasdjflhjasdfjlasdjfkldajfkjasdklfjldasjfkjasklöfjdlaksjfklasdlfjkadsjfkljaslfjasdk",
+    default="keykeykeykeykeykey",
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 
 # Application definition
@@ -72,11 +72,11 @@ WSGI_APPLICATION = "outdated.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DATABASE_NAME", default="db"),
+        "NAME": env("DATABASE_NAME", default="outdated"),
         "USER": env("DATABASE_USER", default="outdated"),
         "PASSWORD": env("DATABASE_PASSWORD", default="outdated"),
-        "HOST": env("DATABASE_HOST", default="localhost"),
-        "PORT": env.int("DATABASE_PORT", default=5432),
+        "HOST": env("DATABASE_HOST", default="db"),
+        "PORT": env.str("DATABASE_PORT", default=""),
     }
 }
 
