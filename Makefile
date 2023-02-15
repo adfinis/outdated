@@ -6,32 +6,43 @@ help:
 
 .PHONY: start-backend
 start-backend: ## Starts only the backend
-	@docker-compose up -d --build
-	@cd backend/ && poetry run ./manage.py runserver
+	@docker compose up -d --build
 
 .PHONY: start-frontend-using-backend
-start-frontend-using-backend: ## Start the frontend, using the API
+start-frontend-using-backend: ## Start the frontend, using the backend
 	@cd frontend/ && yarn ember server --proxy=http://localhost:8000
 
 .PHONY: start-frontend
 start-frontend: ## Start the frontend, using Mirage
 	@cd frontend/ && yarn ember s
+.PHONY: start
+start: start-backend start-frontend-using-backend ## Start the application
 
 .PHONY: lint-backend
 lint-backend: ## Lint the backend
-	@cd backend/ && poetry run black . 
-	@cd backend/ && poetry run flake8
+	@docker compose run --rm backend sh -c "black --check . && flake8"
+
+.PHONY: lint-backend-fix
+lint-backend-fix: ## Lint and fix the backend
+	@docker compose run --rm backend sh -c "black . && isort ."
 
 .PHONY: lint-frontend
 lint-frontend: ## Lint the frontend
 	@cd frontend/ && yarn lint
 
+.PHONY: lint-frontend-fix
+lint-frontend-fix: ## Lint and fix the frontend
+	@cd frontend/ && yarn lint:fix
+
 .PHONY: lint
 lint: lint-backend lint-frontend ## Lint front- & backend
 
+.PHONY: lint-fix
+lint-fix: lint-backend-fix lint-frontend-fix ## Lint and fix front- & backend
+
 .PHONY: test-backend
 test-backend: ## Test the backend
-	@cd backend/ && poetry run pytest --no-cov-on-fail --cov
+	@docker compose run --rm backend pytest --no-cov-on-fail --cov --create-db -vv
 
 .PHONY: test-frontend
 test-frontend: ## Test the frontend
@@ -42,8 +53,8 @@ test: test-backend test-frontend ## Test front- & backend
 
 .PHONY: makemigrations
 makemigrations: ## Make django migrations
-	@cd backend/ && poetry run ./manage.py makemigrations
+	@docker compose run --rm backend python ./manage.py makemigrations
 
 .PHONY: migrate
 migrate: ## Migrate django
-	@cd backend/ && poetry run ./manage.py migrate
+	@docker compose run --rm backend python ./manage.py migrate

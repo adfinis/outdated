@@ -1,13 +1,16 @@
 version: "3.9"
 services:
   db:
-    image: postgres:15.0
+    image: postgres:15.2
     restart: always
-    environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - "5432:5432"
     volumes:
-      - psqldata:/var/lib/postgresql/data
+      - dbdata:/var/lib/postgresql/data
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+
 volumes:
-  psqldata:
+  dbdata:
