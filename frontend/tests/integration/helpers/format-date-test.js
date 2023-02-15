@@ -1,7 +1,7 @@
-import { module, test } from 'qunit';
-import { setupRenderingTest } from 'outdated/tests/helpers';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
+import { setupRenderingTest } from 'outdated/tests/helpers';
+import { module, test } from 'qunit';
 
 module('Integration | Helper | format-date', function (hooks) {
   setupRenderingTest(hooks);

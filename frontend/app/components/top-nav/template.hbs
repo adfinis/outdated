@@ -5,23 +5,27 @@
   <nav class='navbar-container' uk-navbar>
     <div class='uk-navbar-left'>
       <LinkTo @route='projects' class='uk-navbar-item uk-logo'>
-        Outdated</LinkTo>
+        Outdated
+      </LinkTo>
     </div>
     <div class='uk-navbar-right'>
       <ul class='uk-navbar-nav uk-navbar-left'>
         <div class='button-nav'>
           <li>
 
-            <LinkTo @route='projects'><UkButton
-                @size='large'
-              >Overview</UkButton></LinkTo>
+            <LinkTo @route='projects'>
+              <UkButton @size='large'>
+                Overview
+              </UkButton>
+            </LinkTo>
           </li>
 
           <li>
-            <LinkTo @route='manage'><UkButton
-                @size='large'
-              >Manage</UkButton></LinkTo>
-          </li></div>
+            <LinkTo @route='manage'>
+              <UkButton @size='large'>Manage</UkButton>
+            </LinkTo>
+          </li>
+        </div>
       </ul>
     </div>
   </nav>

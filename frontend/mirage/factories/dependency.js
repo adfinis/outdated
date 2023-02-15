@@ -1,5 +1,5 @@
-import { Factory, hasMany } from 'miragejs';
 import { faker } from '@faker-js/faker';
+import { Factory, hasMany } from 'miragejs';
 export default Factory.extend({
   name: () =>
     faker.helpers.arrayElement([

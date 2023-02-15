@@ -3,23 +3,26 @@
   <div class='detailed-header'>
 
     <h1 data-test-project-name>
-
       {{@project.name}}
-
     </h1>
 
-    <a href='{{@project.repo}}' target='blank_' data-test-repo-link><UkIcon
-        @icon='github'
-        @ratio={{3}}
-      /></a>
+    <a href='{{@project.repo}}' target='blank_' data-test-repo-link>
+      <UkIcon @icon='github' @ratio={{3}} />
+    </a>
 
   </div>
 
   <p class='seperator'></p>
   {{#if @project.dependencyVersions}}
     <table>
-      <thead><tr><th>Dependency</th><th>Version</th><th>End Of Life Date</th><th
-          >Release Date</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Dependency</th>
+          <th>Version</th>
+          <th>End Of Life Date</th>
+          <th>Release Date</th>
+        </tr>
+      </thead>
 
       <tbody>
         {{#each
@@ -33,7 +36,8 @@
     </table>
   {{else}}
     <div class='none-yet' data-test-dependency-versions-none>
-      <span class='text-UNDEFINED'>No dependencies yet</span></div>
+      <span class='text-UNDEFINED'>No dependencies yet</span>
+    </div>
   {{/if}}
 
 </div>

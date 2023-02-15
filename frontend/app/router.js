@@ -6,6 +6,7 @@ export default class Router extends EmberRouter {
   rootURL = config.rootURL;
 }
 
+// eslint-disable-next-line array-callback-return
 Router.map(function () {
   this.route('projects', { path: '/' }, function () {
     this.route('project-detailed', { path: 'projects/:id' });

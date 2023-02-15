@@ -1,8 +1,8 @@
-import { module, test } from 'qunit';
-import { setupRenderingTest } from 'outdated/tests/helpers';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupMirage } from 'ember-cli-mirage/test-support';
+import { setupRenderingTest } from 'outdated/tests/helpers';
+import { module, test } from 'qunit';
 module('Integration | Component | dependency-compact', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
