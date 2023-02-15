@@ -1,8 +1,14 @@
-<tr data-test-version-status class='text-{{@version.status}}'><td
-    data-test-version-dependency-name
-  >{{@version.dependency.name}}</td><td
-    data-test-version-version
-  >{{@version.version}}</td><td data-test-version-eol-date>
-    {{format-date @version.eolDate}}</td><td
-    data-test-version-release-date
-  >{{format-date @version.releaseDate}}</td></tr>
+<tr data-test-version-status class='text-{{@version.status}}'>
+  <td data-test-version-dependency-name>
+    {{@version.dependency.name}}
+  </td>
+  <td data-test-version-version>
+    {{@version.version}}
+  </td>
+  <td data-test-version-eol-date>
+    {{format-date @version.eolDate}}
+  </td>
+  <td data-test-version-release-date>
+    {{format-date @version.releaseDate}}
+  </td>
+</tr>
