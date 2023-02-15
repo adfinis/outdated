@@ -1,6 +1,6 @@
-import { Factory, trait } from 'miragejs';
 import { faker } from '@faker-js/faker';
 import { DateTime } from 'luxon';
+import { Factory, trait } from 'miragejs';
 
 export default Factory.extend({
   version: () => faker.system.semver(),

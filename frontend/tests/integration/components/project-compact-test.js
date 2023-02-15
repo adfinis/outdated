@@ -1,8 +1,8 @@
-import { module, test } from 'qunit';
-import { setupRenderingTest } from 'outdated/tests/helpers';
 import { render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupMirage } from 'ember-cli-mirage/test-support';
+import { setupRenderingTest } from 'outdated/tests/helpers';
+import { module, test } from 'qunit';
 
 module('Integration | Component | project-compact', function (hooks) {
   setupRenderingTest(hooks);
@@ -11,7 +11,7 @@ module('Integration | Component | project-compact', function (hooks) {
   test('project-compact renders correctly', async function (assert) {
     const project = this.server.create('project', 'withVersions');
 
-    let store = this.owner.lookup('service:store');
+    const store = this.owner.lookup('service:store');
     this.project = await store.findRecord('project', project.id, {
       include: 'dependencyVersions,dependencyVersions.dependency',
     });
@@ -37,7 +37,7 @@ module('Integration | Component | project-compact', function (hooks) {
 
     for (const [status, icon] of Object.entries(statusIcons)) {
       this.project.status = status;
-      await settled();
+      await settled(); // eslint-disable-line no-await-in-loop
       assert.dom(`span[icon=${icon}]`).exists();
     }
   });

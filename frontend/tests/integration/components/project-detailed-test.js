@@ -1,15 +1,15 @@
-import { module, test } from 'qunit';
-import { setupRenderingTest } from 'outdated/tests/helpers';
 import { render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupMirage } from 'ember-cli-mirage/test-support';
+import { setupRenderingTest } from 'outdated/tests/helpers';
+import { module, test } from 'qunit';
 module('Integration | Component | project-detailed', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
 
   test('project-detailed renders correctly', async function (assert) {
     const project = await this.server.create('project', 'withVersions');
-    let store = this.owner.lookup('service:store');
+    const store = this.owner.lookup('service:store');
 
     this.project = await store.findRecord('project', project.id, {
       include: 'dependencyVersions,dependencyVersions.dependency',
