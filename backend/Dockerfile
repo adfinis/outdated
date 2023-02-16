@@ -2,24 +2,30 @@ FROM python:3.9
 
 WORKDIR /app
 
-
 RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -P /usr/local/bin \
     && chmod +x /usr/local/bin/wait-for-it.sh \
-    && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /app 
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
+    && mkdir -p /app \
+    && useradd -u 901 -r outdated --create-home \
+    # all project specific folders need to be accessible by newly created user but also for unknown users (when UID is set manually). Such users are in group root.
+    && chown -R outdated:root /home/outdated \
+    && chmod -R 770 /home/outdated \
+    && apt-get update && apt-get install -y --no-install-recommends \
     # needed for psycopg2
-    libpq-dev
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/* 
+
+# needs to be set for users with manually set UID
+ENV HOME=/home/outdated
 
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE outdated.settings
 ENV APP_HOME=/app
 
-RUN pip install -U poetry
-
 COPY pyproject.toml poetry.lock $APP_HOME/
-RUN poetry config virtualenvs.create false; poetry install
+
+RUN pip install -U poetry && poetry config virtualenvs.create false && poetry install
+
+USER outdated
 
 COPY . $APP_HOME
 
