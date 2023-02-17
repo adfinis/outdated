@@ -2,16 +2,15 @@ version: "3.9"
 services:
   db:
     image: postgres:15.2
-    restart: always
     ports:
       - "5432:5432"
     volumes:
       - dbdata:/var/lib/postgresql/data
-  backend:
-    build: ./backend
+  api:
+    build: ./api
     user: "${UID:?Set UID env variable to your user id}"
     depends_on:
       - db
-
+#TODO: add a proxy
 volumes:
   dbdata:

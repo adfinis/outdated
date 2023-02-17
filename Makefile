@@ -20,11 +20,11 @@ start: start-backend start-frontend-using-backend ## Start the application
 
 .PHONY: lint-backend
 lint-backend: ## Lint the backend
-	@docker compose run --rm backend sh -c "black --check . && flake8"
+	@docker compose run --rm api sh -c "black --check . && flake8"
 
 .PHONY: lint-backend-fix
 lint-backend-fix: ## Lint and fix the backend
-	@docker compose run --rm backend sh -c "black . && isort ."
+	@docker compose run --rm api sh -c "black . && isort ."
 
 .PHONY: lint-frontend
 lint-frontend: ## Lint the frontend
@@ -42,7 +42,7 @@ lint-fix: lint-backend-fix lint-frontend-fix ## Lint and fix front- & backend
 
 .PHONY: test-backend
 test-backend: ## Test the backend
-	@docker compose run --rm backend pytest --no-cov-on-fail --cov --create-db -vv
+	@docker compose run --rm api pytest --no-cov-on-fail --cov --create-db -vv
 
 .PHONY: test-frontend
 test-frontend: ## Test the frontend
@@ -53,8 +53,8 @@ test: test-backend test-frontend ## Test front- & backend
 
 .PHONY: makemigrations
 makemigrations: ## Make django migrations
-	@docker compose run --rm backend python ./manage.py makemigrations
+	@docker compose run --rm api python ./manage.py makemigrations
 
 .PHONY: migrate
 migrate: ## Migrate django
-	@docker compose run --rm backend python ./manage.py migrate
+	@docker compose run --rm api python ./manage.py migrate

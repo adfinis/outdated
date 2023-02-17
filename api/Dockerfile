@@ -23,6 +23,7 @@ ENV APP_HOME=/app
 
 COPY pyproject.toml poetry.lock $APP_HOME/
 
+#TODO: add --no-dev for prod ENV
 RUN pip install -U poetry && poetry config virtualenvs.create false && poetry install
 
 USER outdated
@@ -31,4 +32,4 @@ COPY . $APP_HOME
 
 EXPOSE 8000
 
-CMD /bin/sh -c "wait-for-it.sh $DATABASE_HOST:${DATABASE_PORT:-5432} -- ./manage.py migrate"
+CMD /bin/sh -c "wait-for-it.sh ${DATABASE_HOST:-db}:${DATABASE_PORT:-5432} -- ./manage.py migrate && gunicorn --bind :8000 outdated.wsgi"
