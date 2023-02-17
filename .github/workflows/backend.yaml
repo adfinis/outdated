@@ -13,7 +13,7 @@ jobs:
     name: "Lint"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3 
+      - uses: actions/checkout@v3
       - name: Set UID
         run: echo "UID=$(id --user)" > .env
       - name: Lint the backend code
@@ -27,8 +27,8 @@ jobs:
       - name: Set UID
         run: echo "UID=$(id --user)" > .env
       - name: Build the containers
-        run: docker compose up -d --build db backend
+        run: docker compose up -d --build db api
       - name: Check for missing migrations
-        run: docker compose exec -T backend ./manage.py makemigrations --check --dry-run --no-input
+        run: docker compose exec -T api ./manage.py makemigrations --check --dry-run --no-input
       - name: Run backend tests
         run: make test-backend
