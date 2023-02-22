@@ -10,7 +10,7 @@
     </div>
     <div class='uk-navbar-right'>
       <ul class='uk-navbar-nav uk-navbar-left'>
-        <div class='button-nav'>
+        {{!<div class='button-nav'>
           <li>
 
             <LinkTo @route='projects'>
@@ -25,6 +25,17 @@
               <UkButton @size='large'>Manage</UkButton>
             </LinkTo>
           </li>
+
+        </div>}}
+        <div>
+          <Dropdown @pos='bottom-right' as |dropdown|>
+            <dropdown.toggler><UkButton class='create-button'>Create new<UkIcon
+                  @icon='triangle-down'
+                /></UkButton></dropdown.toggler>
+            <dropdown.item>Dependency-Version</dropdown.item>
+            <dropdown.item @route='manage'>Dependency</dropdown.item>
+            <dropdown.item>Project</dropdown.item>
+          </Dropdown>
         </div>
       </ul>
     </div>

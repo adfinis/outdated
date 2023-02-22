@@ -1,13 +1,15 @@
-/* ember-uikit */
-@import 'ember-uikit';
-
 /* Variables */
 @import 'variables';
+
+/* ember-uikit */
+@import 'ember-uikit';
 
 /* Responsive Layout */
 @import 'responsive';
 
 /* Components */
+@import 'components/dropdown';
+@import 'components/form';
 @import 'components/project-compact';
 @import 'components/project-detailed';
 @import 'components/seperator';

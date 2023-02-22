@@ -1,0 +1,19 @@
+.uk-dropdown {
+  min-width: unset;
+}
+.dropdown-wrapper {
+  a {
+    display: block;
+    font-size: 1.3rem;
+
+    text-decoration: none;
+    color: #999;
+    padding: 4px 16px;
+    white-space: nowrap;
+    &:hover {
+      background: $global-muted-background;
+    }
+  }
+  padding: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -9,15 +9,15 @@
   @extend .uk-container-expand;
   padding: 0 30px;
   height: var(--navbar-height);
-  a {
+  a:not(.dropdown-wrapper a) {
     min-height: var(--navbar-height);
   }
 }
 
-/* nav button */
+/* button nav */
 .button-nav {
   @extend .uk-button-group;
-  button {
+  button:not(.dropdown-wrapper button) {
     @extend .uk-button-small;
 
     padding: var(--button-nav-button-padding);
@@ -26,4 +26,10 @@
   a.ember-view.active button {
     @extend .uk-button-primary;
   }
+}
+.create-button {
+  height: 100%;
+  padding: 0 10px;
+  line-height: var(--button-nav-button-line-height);
+  border: none;
 }
