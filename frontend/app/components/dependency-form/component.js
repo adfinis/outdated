@@ -15,26 +15,21 @@ export default class DependencyForm extends Component {
   @action
   async save(event) {
     event.preventDefault();
-    try {
-      if (this.args.dependency) {
-        this.dependency = await this.store.findRecord(
-          'dependency',
-          this.args.dependency.id
-        );
-        this.dependency.name = this.name;
 
-        this.router.transitionTo('manage.dependency');
-      } else {
-        this.dependency = await this.store.createRecord('dependency', {
-          name: this.name,
-        });
-      }
-      await this.dependency.save();
+    const dependency =
+      this.args.dependency ?? this.store.createRecord('dependency');
+    dependency.name = this.name;
+
+    try {
+      await dependency.save();
+
       this.name = '';
-      console.log('Success!'); // eslint-disable-line no-console
-    } catch (error) {
-      this.dependency.rollbackAttributes();
-      console.log('Error', error); // eslint-disable-line no-console
+
+      if (this.args.dependency) {
+        this.router.transitionTo('manage.dependency');
+      }
+    } catch (e) {
+      dependency.rollbackAttributes();
     }
   }
 }
