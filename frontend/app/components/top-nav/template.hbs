@@ -10,18 +10,7 @@
     </div>
     <div class='uk-navbar-right'>
       <ul class='uk-navbar-nav uk-navbar-left'>
-        <div class='uk-navbar-left'>
-          <Dropdown @pos='bottom-right' as |dropdown|>
-            <dropdown.toggler><UkButton class='create-button'>Create new<UkIcon
-                  @icon='triangle-down'
-                /></UkButton></dropdown.toggler>
-            <dropdown.item
-              @route='manage.dependency-version'
-            >Dependency-Version</dropdown.item>
-            <dropdown.item @route='manage.dependency'>Dependency</dropdown.item>
-            <dropdown.item @route='manage.project'>Project</dropdown.item>
-          </Dropdown>
-        </div>
+        <div class='uk-navbar-left'></div>
       </ul>
     </div>
   </nav>
