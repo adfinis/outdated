@@ -1,0 +1,17 @@
+{{page-title 'Track New'}}
+
+<Form
+  @name='Track new Project'
+  @model={{changeset @model.model this.ProjectValidations}}
+  as |f|
+>
+  <f.input @name='name' />
+  <f.input @name='repo' />
+  <f.input
+    @type='select'
+    @multiple={{true}}
+    @name='dependency-version'
+    @options={{@model.dependencyVersions}}
+  />
+  <f.button />
+</Form>

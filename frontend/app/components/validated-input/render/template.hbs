@@ -1,0 +1,43 @@
+<div class='uk-margin'>
+  <@labelComponent />
+  <div class='uk-form-controls'>
+
+    {{#if (eq @type 'select')}}
+      <ValidatedInput::Types::Select
+        @id={{@inputId}}
+        @isInvalid={{@isInvalid}}
+        @isValid={{@isValid}}
+        @name={{@name}}
+        @setDirty={{@setDirty}}
+        @update={{@update}}
+        @value={{@value}}
+        @options={{@options}}
+        @selectComponent={{component this.selectComponent}}
+        ...attributes
+      />
+    {{else if (eq @type 'date')}}
+      <ValidatedInput::Types::Date
+        @id={{@inputId}}
+        @isInvalid={{@isInvalid}}
+        @isValid={{@isValid}}
+        @options={{@options}}
+        @name={{@name}}
+        @setDirty={{@setDirty}}
+        @update={{@update}}
+        @value={{@value}}
+        ...attributes
+      />
+    {{else}}
+      <ValidatedInput::Types::Text
+        @id={{@inputId}}
+        @isInvalid={{@isInvalid}}
+        @isValid={{@isValid}}
+        @name={{@name}}
+        @value={{@value}}
+        @setDirty={{@setDirty}}
+        @update={{@update}}
+        ...attributes
+      />
+    {{/if}}
+    <@errorComponent />
+  </div></div>

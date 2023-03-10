@@ -4,3 +4,4 @@ __pycache__
 .vscode
 .coverage
 rest_framework
+.yarn

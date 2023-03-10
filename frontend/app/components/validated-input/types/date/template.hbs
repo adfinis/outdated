@@ -1,0 +1,12 @@
+<EmberFlatpickr
+  @name={{@name}}
+  @dateFormat={{or @dateFormat 'Y-m-d'}}
+  @placeholder={{@placeholder}}
+  @date={{or @value this.defaultDate}}
+  @onChange={{this.onUpdate}}
+  @onClose={{@setDirty}}
+  @allowInput={{or @allowInput true}}
+  class='uk-input
+    {{if @isValid "uk-form-success"}}
+    {{if @isInvalid "uk-form-danger"}}'
+/>

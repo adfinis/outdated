@@ -1,0 +1,15 @@
+<@selectComponent
+  @name={{@name}}
+  @searchEnabled={{true}}
+  @options={{@options}}
+  @selected={{@value}}
+  @onChange={{this.onUpdate}}
+  @onBlur={{@setDirty}}
+  @searchField='name'
+  @placeholder={{@placeholder}}
+  id={{@inputId}}
+  class="{{if @isValid "uk-form-success"}} {{if @isInvalid "uk-form-danger"}}'"
+  as |name|
+>
+  {{name}}
+</@selectComponent>

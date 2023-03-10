@@ -1,0 +1,25 @@
+<ValidatedInput::Render
+  @label={{or @label @name}}
+  @type={{this.type}}
+  @value={{this._val}}
+  @options={{@options}}
+  @name={{@name}}
+  @multiple={{@multiple}}
+  @inputId={{@inputId}}
+  @isValid={{this.isValid}}
+  @isInvalid={{this.isInvalid}}
+  @model={{@model}}
+  @placeholder={{@placeholder}}
+  @update={{this.update}}
+  @setDirty={{this.setDirty}}
+  @submitted={{@submitted}}
+  @errorComponent={{if
+    (and this.showValidity this.errors)
+    (component 'validated-input/error' errors=this.errors id=this.errorId)
+  }}
+  @labelComponent={{component
+    'validated-input/label'
+    label=(or @label @name)
+    inputId=@inputId
+  }}
+/>
