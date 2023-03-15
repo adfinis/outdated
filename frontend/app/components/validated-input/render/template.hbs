@@ -1,10 +1,13 @@
 <div class='uk-margin'>
-  <@labelComponent />
+  {{#if (or @label (not @placeholder))}}
+    <@labelComponent @label={{or @label @name}} />
+  {{/if}}
   <div class='uk-form-controls'>
 
     {{#if (eq @type 'select')}}
       <ValidatedInput::Types::Select
         @id={{@inputId}}
+        @disabled={{@disabled}}
         @isInvalid={{@isInvalid}}
         @isValid={{@isValid}}
         @name={{@name}}
@@ -12,12 +15,14 @@
         @update={{@update}}
         @value={{@value}}
         @options={{@options}}
+        @placeholder={{@placeholder}}
         @selectComponent={{component this.selectComponent}}
         ...attributes
       />
     {{else if (eq @type 'date')}}
       <ValidatedInput::Types::Date
         @id={{@inputId}}
+        @disabled={{@disabled}}
         @isInvalid={{@isInvalid}}
         @isValid={{@isValid}}
         @options={{@options}}
@@ -25,19 +30,23 @@
         @setDirty={{@setDirty}}
         @update={{@update}}
         @value={{@value}}
+        @placeholder={{@placeholder}}
         ...attributes
       />
     {{else}}
       <ValidatedInput::Types::Text
-        @id={{@inputId}}
+        placeholder={{@placeholder}}
+        id={{@inputId}}
+        value={{@value}}
+        disabled={{@disabled}}
         @isInvalid={{@isInvalid}}
         @isValid={{@isValid}}
         @name={{@name}}
-        @value={{@value}}
         @setDirty={{@setDirty}}
         @update={{@update}}
         ...attributes
       />
     {{/if}}
     <@errorComponent />
-  </div></div>
+  </div>
+</div>

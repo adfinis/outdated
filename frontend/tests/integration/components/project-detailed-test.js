@@ -7,7 +7,7 @@ module('Integration | Component | project-detailed', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
 
-  test('project-detailed renders correctly', async function (assert) {
+  test('it renders correctly', async function (assert) {
     const project = await this.server.create('project', 'withVersions');
     const store = this.owner.lookup('service:store');
 

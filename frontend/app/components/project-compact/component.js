@@ -13,6 +13,6 @@ export default class ProjectCompactComponent extends Component {
   }
   get version() {
     const { project } = this.args;
-    return project.dependencyVersions.toArray()[0];
+    return project.dependencyVersions.slice()[0];
   }
 }

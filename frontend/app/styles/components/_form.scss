@@ -1,0 +1,9 @@
+.is-valid,
+.is-valid:focus {
+  border: $form-border-width solid $form-success-color;
+}
+
+.is-invalid,
+.is-invalid:focus {
+  border: $form-border-width solid $form-danger-color;
+}

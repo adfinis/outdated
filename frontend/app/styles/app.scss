@@ -1,16 +1,18 @@
+/* ember-uikit */
+@import 'ember-uikit';
+
 /* Variables */
 @import 'variables';
 
 /* ember-power-select */
 @import 'ember-power-select';
 
-/* ember-uikit */
-@import 'ember-uikit';
-
 /* Responsive Layout */
 @import 'responsive';
 
 /* Components */
+@import 'components/form';
+@import 'components/power-select';
 @import 'components/project-compact';
 @import 'components/project-detailed';
 @import 'components/seperator';
