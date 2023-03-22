@@ -50,18 +50,18 @@ def test_dependency_versions(
     ] == str(gen_dep_version.dependency.id)
 
     assert _status == gen_dep_version.status == resp_dep_version["status"]
-    eol_date = str_to_date(resp_dep_version["eol-date"])
+    end_of_life_date = str_to_date(resp_dep_version["end-of-life-date"])
 
     today = date.today()
-    if today >= eol_date:
+    if today >= end_of_life_date:
         assert _status == "OUTDATED"
-    elif today + timedelta(days=30) >= eol_date:
+    elif today + timedelta(days=30) >= end_of_life_date:
         assert _status == "WARNING"
     else:
         assert _status == "UP-TO-DATE"
 
     assert resp_dep_version["version"] == gen_dep_version.version
-    assert eol_date == gen_dep_version.eol_date
+    assert end_of_life_date == gen_dep_version.end_of_life_date
     assert str_to_date(resp_dep_version["release-date"]) == gen_dep_version.release_date
 
 

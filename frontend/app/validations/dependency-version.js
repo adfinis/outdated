@@ -4,25 +4,36 @@ import {
   validateFormat,
   validateDate,
 } from 'ember-changeset-validations/validators';
+import validateOtherDate from 'outdated/validators/other-date';
 
 export default {
+  dependency: [
+    validatePresence({
+      presence: true,
+      message: 'One Dependency must be selected',
+    }),
+  ],
   version: [
-    validatePresence(true),
+    validatePresence({ presence: true, ignoreBlank: true }),
     validateLength({ max: 100 }),
     validateFormat({
       regex:
         /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/,
+      message: 'This should be a valid semantic version',
     }),
+    validateOtherDate({ after: 'releaseDate' }),
   ],
-  eolDate: [
-    validatePresence(true),
+  endOfLifeDate: [
+    validatePresence({ presence: true, ignoreBlank: true }),
     validateDate({ after: new Date('1991-02-20') }),
   ],
   releaseDate: [
-    validatePresence(true),
+    validatePresence({ presence: true, ignoreBlank: true }),
     validateDate({
       before: new Date(),
       after: new Date('1991-02-20'),
+      message: '{description} must be a valid date',
     }),
+    validateOtherDate({ before: 'endOfLifeDate' }),
   ],
 };

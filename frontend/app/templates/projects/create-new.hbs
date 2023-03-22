@@ -2,17 +2,43 @@
 
 <Form
   @name='Track new Project'
-  @model={{changeset @model.model this.ProjectValidations}}
+  @model={{changeset @model.project this.ProjectValidations}}
   as |f|
 >
   <f.input @name='name' />
   <f.input @name='repo' />
-  <f.input
-    @type='select'
-    @multiple={{true}}
-    @name='dependencyVersions'
-    @label='Dependency Versions'
-    @options={{@model.dependencyVersions}}
-  />
+  <Form
+    @model={{changeset @model.model this.DependencyVersionValidations}}
+    as |f|
+  >
+    <f.input
+      @type='select'
+      @name='dependency'
+      @searchField='name'
+      @options={{@model.dependencies}}
+    />
+    <f.input @type='date' @name='eolDate' />
+    <f.input @type='date' @name='releaseDate' />
+  </Form>
+  <DependencyTable @dependencyVersions={{@model.project.dependencyVersions}} />
+
+  <UkButton @onClick={{fn (mut this.visible) true}} @label='+' />
+  <UkModal
+    @visible={{this.visible}}
+    @onHide={{fn (mut this.visible) false}}
+    as |modal|
+  >
+
+    <modal.header>Choose dependency</modal.header>
+    <modal.body>
+      <Form @model={{changeset @model.model this.dependencyValidations}} as |f|>
+        <f.input
+          @type='select'
+          @name='dependency'
+          @searchField='name'
+          @options={{@model.dependencies}}
+        /></Form>
+    </modal.body>
+  </UkModal>
   <f.button />
 </Form>

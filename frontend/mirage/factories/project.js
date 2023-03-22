@@ -15,15 +15,15 @@ export default Factory.extend({
       faker.helpers.arrayElement(['OUTDATED', 'WARNING', 'UP-TO-DATE']),
 
     afterCreate(project, server) {
-      server.createList('dependency-version', 3, 'isEndOfLife', {
+      server.createList('dependency-version', 1, 'isEndOfLife', {
         projects: [project],
       });
 
-      server.createList('dependency-version', 3, 'isNearlyEndOfLife', {
+      server.createList('dependency-version', 2, 'isNearlyEndOfLife', {
         projects: [project],
       });
 
-      server.createList('dependency-version', 10, { projects: [project] });
+      server.createList('dependency-version', 3, { projects: [project] });
     },
   }),
 });

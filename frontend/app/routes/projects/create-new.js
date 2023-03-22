@@ -18,6 +18,9 @@ export default class ProjectsCreateNewRoute extends Route {
       model: new Model(),
       dependencies: this.store.findAll('dependency'),
       dependencyVersions: this.store.findAll('dependencyVersion'),
+      project: this.store.findRecord('project', 1, {
+        include: 'dependencyVersions,dependencyVersions.dependency',
+      }),
     });
   }
 }

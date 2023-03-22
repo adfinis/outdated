@@ -9,7 +9,6 @@ module('Integration | Component | dependency-compact', function (hooks) {
     <ValidatedInput::Render
         @labelComponent={{component 'validated-input/label'}}
       @name="test"
-
       @setDirty={{fn (mut this.dirty) true}}
     />
   `);
