@@ -15,9 +15,9 @@ export default function validateDate(options = {}) {
         });
       }
     }
-    if (options.before) {
+    if (before) {
       const beforeVal = get(changes, before) || get(content, before);
-      if (value <= beforeVal) {
+      if (value >= beforeVal) {
         return buildMessage(key, {
           type: 'before',
           value,
@@ -25,6 +25,6 @@ export default function validateDate(options = {}) {
         });
       }
     }
-    return;
+    return true;
   };
 }
