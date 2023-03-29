@@ -2,7 +2,7 @@ import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupRenderingTest } from 'outdated/tests/helpers';
 import { module, test } from 'qunit';
-module('Integration | Component | dependency-compact', function (hooks) {
+module('Integration | Component | validated-input/label', function (hooks) {
   setupRenderingTest(hooks);
   test('it renders', async function (assert) {
     await render(hbs`
@@ -14,6 +14,6 @@ module('Integration | Component | dependency-compact', function (hooks) {
   `);
 
     assert.dom('input').exists();
-    assert.dom('label').hasText('test');
+    assert.dom('label').hasText('Test');
   });
 });

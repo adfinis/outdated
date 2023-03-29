@@ -2,7 +2,6 @@ import validateOtherDate from 'outdated/validators/other-date';
 import { module, test } from 'qunit';
 
 module('Unit | Validator | other-date');
-
 test('it works with after', function (assert) {
   assert.true(
     validateOtherDate({ after: 'otherKey' })(

@@ -16,3 +16,8 @@
   padding: 0 $form-padding-horizontal;
   text-indent: 0;
 }
+
+.ember-power-select-multiple-options
+  li:not(.ember-power-select-multiple-option) {
+  width: 100%;
+}

@@ -1,0 +1,18 @@
+<UkModal
+  @visible={{@visible}}
+  @onHide={{@onHide}}
+  @bgClose={{false}}
+  @escClose={{false}}
+  @btnClose={{false}}
+  @stack={{true}}
+  as |modal|
+>
+  <modal.header>
+    <h2 class='uk-modal-title'>{{@title}}</h2>
+  </modal.header>
+
+  {{yield
+    (hash body=(component 'uk-modal/body') footer=(component 'uk-modal/footer'))
+  }}
+
+</UkModal>

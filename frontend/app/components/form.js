@@ -2,7 +2,10 @@ import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import { resolve } from 'rsvp';
+
 export default class FormComponent extends Component {
+  @tracked loading = false;
   @tracked submitted = false;
 
   constructor(...args) {
@@ -21,12 +24,20 @@ export default class FormComponent extends Component {
   async submit(e) {
     e.preventDefault();
     this.submitted = true;
-
     const model = this.args.model;
-
+    if (!model || !model.validate) {
+      return false;
+    }
     await model.validate();
-    if (model.get('isInvalid')) {
-      // implement logic here
+    if (!model.get('isInvalid')) {
+      const onSubmit = this.args['on-submit'];
+      if (typeof onSubmit !== 'function') {
+        return;
+      }
+      this.loading = true;
+      resolve(onSubmit(this.args.model)).finally(() => {
+        this.loading = false;
+      });
     }
     return false;
   }

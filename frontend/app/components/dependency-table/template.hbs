@@ -1,5 +1,5 @@
 {{#if @dependencyVersions}}
-  <table class='uk-height-small'>
+  <table>
     <thead>
       <tr>
         <th>Dependency</th>
@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each (sort-by 'eolDate:asc' @dependencyVersions) as |version|}}
+      {{#each (sort-by 'endOfLifeDate:desc' @dependencyVersions) as |version|}}
         <DependencyDetailed @version={{version}} />
       {{/each}}
 

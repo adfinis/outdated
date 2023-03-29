@@ -61,7 +61,7 @@
     "ember-source": "4.11.0",
     "ember-template-lint": "^5.3.0",
     "ember-truth-helpers": "^3.1.1",
-    "ember-uikit": "^6.1.1",
+    "ember-uikit": "^7.0.0",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-ember": "^11.4.6",
@@ -74,6 +74,7 @@
     "qunit": "^2.19.3",
     "qunit-dom": "^2.0.0",
     "sass": "^1.57.1",
+    "tracked-built-ins": "^3.1.1",
     "webpack": "^5.76.0"
   },
   "engines": {
@@ -83,6 +84,7 @@
     "edition": "octane"
   },
   "dependencies": {
+    "ember-cli-code-coverage": "^2.0.0",
     "ember-focus-trap": "^1.0.1",
     "luxon": "^3.2.1"
   }

@@ -15,12 +15,14 @@
   @searchField={{@searchField}}
   @setDirty={{this.setDirty}}
   @submitted={{@submitted}}
+  @afterOptionsComponent={{@afterOptionsComponent}}
+  @optionsComponent={{@optionsComponent}}
+  @searchMessage={{@searchMessage}}
+  @noMatchesMessage={{@noMatchesMessage}}
+  @noMatchesMessageComponent={{@noMatchesMessageComponent}}
   @errorComponent={{if
     (and this.showValidity this.errors)
     (component 'validated-input/error' errors=this.errors id=this.errorId)
   }}
-  @labelComponent={{component
-    'validated-input/label'
-    inputId=@inputId
-  }}
+  @labelComponent={{component 'validated-input/label' inputId=@inputId}}
 />

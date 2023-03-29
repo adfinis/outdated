@@ -7,19 +7,13 @@ import {
 import validateOtherDate from 'outdated/validators/other-date';
 
 export default {
-  dependency: [
-    validatePresence({
-      presence: true,
-      message: 'One Dependency must be selected',
-    }),
-  ],
   version: [
     validatePresence({ presence: true, ignoreBlank: true }),
     validateLength({ max: 100 }),
     validateFormat({
       regex:
         /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/,
-      message: 'This should be a valid semantic version',
+      message: '{description} should be a valid semantic version',
     }),
     validateOtherDate({ after: 'releaseDate' }),
   ],

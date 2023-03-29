@@ -1,44 +1,143 @@
 {{page-title 'Track New'}}
+{{#each @model.dependencyVersions as |dv|}}
+  {{dv.dependency.name}}
+  {{dv.version}}
+{{/each}}
+{{! TODO: remove this }}
 
 <Form
   @name='Track new Project'
-  @model={{changeset @model.project this.ProjectValidations}}
-  as |f|
+  @model={{this.project}}
+  @on-submit={{this.saveProject}}
+  as |projectForm|
 >
-  <f.input @name='name' />
-  <f.input @name='repo' />
-  <Form
-    @model={{changeset @model.model this.DependencyVersionValidations}}
-    as |f|
-  >
-    <f.input
-      @type='select'
-      @name='dependency'
-      @searchField='name'
-      @options={{@model.dependencies}}
-    />
-    <f.input @type='date' @name='eolDate' />
-    <f.input @type='date' @name='releaseDate' />
-  </Form>
-  <DependencyTable @dependencyVersions={{@model.project.dependencyVersions}} />
+  <projectForm.input @name='name' />
+  <projectForm.input @name='repo' />
 
-  <UkButton @onClick={{fn (mut this.visible) true}} @label='+' />
-  <UkModal
-    @visible={{this.visible}}
-    @onHide={{fn (mut this.visible) false}}
-    as |modal|
-  >
+  <DependencyTable @dependencyVersions={{this.project.dependencyVersions}} />
 
-    <modal.header>Choose dependency</modal.header>
-    <modal.body>
-      <Form @model={{changeset @model.model this.dependencyValidations}} as |f|>
+  <Modal
+    @title='Choose Dependency'
+    @visible={{this.modals.selectDependency}}
+    as |m|
+  >
+    <Form
+      @model={{this.dependencyChangeset}}
+      @on-submit={{this.selectDependency}}
+      as |f|
+    >
+      <m.body>
+
         <f.input
+          @placeholder='Select dependency'
           @type='select'
           @name='dependency'
           @searchField='name'
           @options={{@model.dependencies}}
-        /></Form>
-    </modal.body>
-  </UkModal>
-  <f.button />
+          @afterOptionsComponent={{component
+            'select-button'
+            on-click=(fn this.openModal 'addDependency')
+          }}
+        />
+
+      </m.body>
+      <m.footer>
+        <UkButton
+          @color='danger'
+          @label='Cancel'
+          @onClick={{fn this.closeModal 'selectDependency'}}
+        />
+        <UkButton @color='primary' @label='Continue' @type='submit' />
+      </m.footer>
+    </Form>
+  </Modal>
+
+  <Modal
+    @title='Choose Version for {{this.selectedDependency.name}}'
+    @visible={{this.modals.selectVersion}}
+    as |m|
+  >
+    <Form
+      @model={{this.versionChangeset}}
+      @on-submit={{this.addDependencyVersion}}
+      as |f|
+    >
+      <m.body>
+        <f.input
+          @placeholder='Select version for {{this.selectedDependency.name}}'
+          @type='select'
+          @name='version'
+          @searchField='version'
+          @options={{this.filteredDependencyVersions}}
+          @afterOptionsComponent={{component
+            'select-button'
+            on-click=(fn this.openModal 'addVersion')
+          }}
+        />
+      </m.body>
+      <m.footer>
+        <UkButton
+          @color='danger'
+          @label='Back'
+          @onClick={{fn this.closeModal 'selectVersion'}}
+        />
+        <UkButton @color='primary' @label='Save' @type='submit' />
+      </m.footer>
+    </Form>
+  </Modal>
+
+  <Modal @title='Add Dependency' @visible={{this.modals.addDependency}} as |m|>
+    <Form
+      @model={{this.addDependencyChangeset}}
+      @on-submit={{this.addDependency}}
+      as |f|
+    >
+      <m.body>
+        <f.input @name='name' />
+      </m.body>
+      <m.footer>
+        <UkButton
+          @color='danger'
+          @label='Cancel'
+          @onClick={{fn this.closeModal 'addDependency'}}
+        />
+        <UkButton @color='primary' @label='Save' @type='submit' />
+      </m.footer>
+    </Form>
+  </Modal>
+
+  <Modal
+    @title='Add Version to {{this.selectedDependency.name}}'
+    @visible={{this.modals.addVersion}}
+    as |m|
+  >
+    <Form
+      @model={{this.addVersionChangeset}}
+      @on-submit={{this.addVersion}}
+      as |f|
+    >
+      <m.body>
+        <f.input @name='version' />
+        <f.input @name='endOfLifeDate' @type='date' />
+        <f.input @name='releaseDate' @type='date' />
+
+      </m.body>
+      <m.footer>
+        <UkButton
+          @color='danger'
+          @label='Cancel'
+          @onClick={{fn this.closeModal 'addVersion'}}
+        />
+        <UkButton @color='primary' @label='Save' @type='submit' />
+      </m.footer>
+    </Form>
+  </Modal>
+  <UkButton
+    @label='+'
+    @width='1-1'
+    @onClick={{fn this.openModal 'selectDependency'}}
+    @color='primary'
+  />
+
+  <projectForm.button />
 </Form>
