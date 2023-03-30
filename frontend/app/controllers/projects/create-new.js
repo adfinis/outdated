@@ -107,22 +107,20 @@ export default class ProjectsCreateNewController extends Controller {
     this.versionChangeset.rollback();
     this.addVersionChangeset.rollback();
     this.addDependencyChangeset.rollback();
+    this.selectedDependency = null;
   }
 
   @action
   async addVersion(dependencyVersion) {
-    dependencyVersion.save();
     try {
       const depver = await this.store.createRecord(
         'dependencyVersion',
-        dependencyVersion.data
+        dependencyVersion.pendingData
       );
       depver.dependency = this.selectedDependency;
       await depver.save();
       this.project.dependencyVersions.pushObject(depver);
-
       this.closeModals();
-      this.selectedDependency = null;
     } catch (e) {
       this.notification.danger(e), { pos: 'bottom-right' };
     }
@@ -135,16 +133,16 @@ export default class ProjectsCreateNewController extends Controller {
   }
 
   @action async selectDependency(dependency) {
-    dependency.save();
     this.selectedDependency = dependency.dependency;
     this.openModal('selectVersion');
   }
 
   @action async addDependency(dependency) {
-    dependency.save();
     try {
-      const dep = await this.store.createRecord('dependency', dependency.data);
-
+      const dep = await this.store.createRecord(
+        'dependency',
+        dependency.pendingData
+      );
       this.selectedDependency = await dep.save();
       this.openModal('addVersion');
     } catch (e) {
