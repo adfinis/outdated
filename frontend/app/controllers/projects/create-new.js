@@ -62,6 +62,8 @@ export default class ProjectsCreateNewController extends Controller {
   }
 
   @action openModal(modal) {
+    // set the modal so its the highest number in the sequence
+    // then adjust the rest of the sequence to be in order
     const maxNum = Math.max(...Object.values(this.modalSequence));
 
     if (typeof this.modalSequence[modal] !== 'number') {
@@ -74,6 +76,7 @@ export default class ProjectsCreateNewController extends Controller {
     if (currentnNum === maxNum) {
       return;
     }
+
     Object.entries(this.modalSequence).forEach(([key, value]) => {
       if (value > currentnNum) {
         this.modalSequence[key] = value - 1;
@@ -86,12 +89,14 @@ export default class ProjectsCreateNewController extends Controller {
     if (typeof this.modalSequence[modal] !== 'number') {
       return;
     }
+    // adjust the sequence to be in order
     const currentnNum = this.modalSequence[modal];
     for (const [key, value] of Object.entries(this.modalSequence)) {
       if (value > currentnNum) {
         this.modalSequence[key] = value - 1;
       }
     }
+    // set the modal to false
     this.modalSequence[modal] = false;
   }
 
