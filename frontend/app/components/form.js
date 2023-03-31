@@ -25,7 +25,7 @@ export default class FormComponent extends Component {
     e.preventDefault();
     this.submitted = true;
     const model = this.args.model;
-    if (!model || !model.validate) {
+    if (!model?.validate) {
       return false;
     }
     await model.validate();
