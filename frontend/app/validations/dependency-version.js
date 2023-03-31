@@ -15,11 +15,11 @@ export default {
         /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/,
       message: '{description} should be a valid semantic version',
     }),
-    validateOtherDate({ after: 'releaseDate' }),
   ],
   endOfLifeDate: [
     validatePresence({ presence: true, ignoreBlank: true }),
     validateDate({ after: new Date('1991-02-20') }),
+    validateOtherDate({ after: 'releaseDate' }),
   ],
   releaseDate: [
     validatePresence({ presence: true, ignoreBlank: true }),

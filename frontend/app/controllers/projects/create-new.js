@@ -28,7 +28,6 @@ export default class ProjectsCreateNewController extends Controller {
   @service store;
   @service notification;
 
-  @tracked modalForm = true;
   @tracked project = getEmptyChangeset(
     ProjectValidations,
     this.store.createRecord('project')
@@ -57,6 +56,7 @@ export default class ProjectsCreateNewController extends Controller {
       return acc;
     }, {});
   }
+
   get filteredDependencyVersions() {
     const dep = this.selectedDependency;
     if (!dep) return [];
@@ -122,7 +122,7 @@ export default class ProjectsCreateNewController extends Controller {
       this.project.dependencyVersions.pushObject(depver);
       this.closeModals();
     } catch (e) {
-      this.notification.danger(e), { pos: 'bottom-right' };
+      this.notification.danger(e, { pos: 'bottom-right' });
     }
   }
 
@@ -132,7 +132,7 @@ export default class ProjectsCreateNewController extends Controller {
     this.closeModals();
   }
 
-  @action async selectDependency(dependency) {
+  @action selectDependency(dependency) {
     this.selectedDependency = dependency.dependency;
     this.openModal('selectVersion');
   }
@@ -146,7 +146,7 @@ export default class ProjectsCreateNewController extends Controller {
       this.selectedDependency = await dep.save();
       this.openModal('addVersion');
     } catch (e) {
-      this.notification.danger(e), { pos: 'bottom-right' };
+      this.notification.danger(e, { pos: 'bottom-right' });
     }
   }
 
@@ -158,7 +158,7 @@ export default class ProjectsCreateNewController extends Controller {
         pos: 'bottom-right',
       });
     } catch (e) {
-      this.notification.danger(e), { pos: 'bottom-right' };
+      this.notification.danger(e, { pos: 'bottom-right' });
     }
   }
 }
