@@ -29,7 +29,7 @@ export default class FormComponent extends Component {
     }
     await model.validate();
     if (!model.get('isInvalid')) {
-      const onSubmit = this.args['on-submit'];
+      const onSubmit = this.args.onSubmit;
       if (typeof onSubmit !== 'function') {
         return;
       }

@@ -3,7 +3,7 @@
 <Form
   @name='Track new Project'
   @model={{this.project}}
-  @on-submit={{this.saveProject}}
+  @onSubmit={{this.saveProject}}
   as |projectForm|
 >
   <projectForm.input @name='name' />
@@ -18,7 +18,7 @@
   >
     <Form
       @model={{this.dependencyChangeset}}
-      @on-submit={{this.selectDependency}}
+      @onSubmit={{this.selectDependency}}
       as |f|
     >
       <m.body>
@@ -54,7 +54,7 @@
   >
     <Form
       @model={{this.versionChangeset}}
-      @on-submit={{this.addDependencyVersion}}
+      @onSubmit={{this.addDependencyVersion}}
       as |f|
     >
       <m.body>
@@ -84,7 +84,7 @@
   <Modal @title='Add Dependency' @visible={{this.modals.addDependency}} as |m|>
     <Form
       @model={{this.addDependencyChangeset}}
-      @on-submit={{this.addDependency}}
+      @onSubmit={{this.addDependency}}
       as |f|
     >
       <m.body>
@@ -108,7 +108,7 @@
   >
     <Form
       @model={{this.addVersionChangeset}}
-      @on-submit={{this.addVersion}}
+      @onSubmit={{this.addVersion}}
       as |f|
     >
       <m.body>
