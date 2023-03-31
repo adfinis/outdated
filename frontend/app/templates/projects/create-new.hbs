@@ -28,7 +28,7 @@
           @type='select'
           @name='dependency'
           @searchField='name'
-          @options={{@model.dependencies}}
+          @options={{this.dependencies}}
           @afterOptionsComponent={{component
             'select-button'
             on-click=(fn this.openModal 'addDependency')

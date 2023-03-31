@@ -61,6 +61,10 @@ export default class ProjectsCreateNewController extends Controller {
     });
   }
 
+  get dependencies() {
+    return this.store.peekAll('dependency');
+  }
+
   @action openModal(modal) {
     // set the modal so its the highest number in the sequence
     // then adjust the rest of the sequence to be in order
