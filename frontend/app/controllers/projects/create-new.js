@@ -11,11 +11,7 @@ import SelectVersionValidations from 'outdated/validations/select-version';
 import { tracked } from 'tracked-built-ins';
 
 function getEmptyChangeset(validations, model = null) {
-  return Changeset(
-    model ?? new Object(),
-    lookupValidator(validations),
-    validations
-  );
+  return Changeset(model ?? {}, lookupValidator(validations), validations);
 }
 
 export default class ProjectsCreateNewController extends Controller {
