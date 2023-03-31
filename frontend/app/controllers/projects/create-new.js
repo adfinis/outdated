@@ -123,7 +123,7 @@ export default class ProjectsCreateNewController extends Controller {
       this.project.dependencyVersions.pushObject(depver);
       this.closeModals();
     } catch (e) {
-      this.notification.danger(e, { pos: 'bottom-right' });
+      this.notification.danger(e);
     }
   }
 
@@ -147,7 +147,7 @@ export default class ProjectsCreateNewController extends Controller {
       this.selectedDependency = await dep.save();
       this.openModal('addVersion');
     } catch (e) {
-      this.notification.danger(e, { pos: 'bottom-right' });
+      this.notification.danger(e);
     }
   }
 
@@ -159,7 +159,7 @@ export default class ProjectsCreateNewController extends Controller {
         pos: 'bottom-right',
       });
     } catch (e) {
-      this.notification.danger(e, { pos: 'bottom-right' });
+      this.notification.danger(e);
     }
   }
 }
