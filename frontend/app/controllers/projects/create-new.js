@@ -133,6 +133,7 @@ export default class ProjectsCreateNewController extends Controller {
   @action selectDependency(dependency) {
     this.selectedDependency = dependency.dependency;
     this.openModal('selectVersion');
+    this.versionChangeset.rollback();
   }
 
   @action async addDependency(dependency) {
