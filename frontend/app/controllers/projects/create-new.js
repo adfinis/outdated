@@ -1,19 +1,13 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
-import { Changeset } from 'ember-changeset';
-import lookupValidator from 'ember-changeset-validations';
+import emptyChangeset from 'outdated/utils/empty-changeset';
 import DependencyValidations from 'outdated/validations/dependency';
 import DependencyVersionValidations from 'outdated/validations/dependency-version';
 import ProjectValidations from 'outdated/validations/project';
 import SelectDependencyValidations from 'outdated/validations/select-dependency';
 import SelectVersionValidations from 'outdated/validations/select-version';
 import { tracked } from 'tracked-built-ins';
-
-function getEmptyChangeset(validations, model = null) {
-  Changeset(model ?? {}, lookupValidator(validations), validations);
-  return Changeset(model ?? {}, lookupValidator(validations), validations);
-}
 
 export default class ProjectsCreateNewController extends Controller {
   DependencyValidations = DependencyValidations;
@@ -25,17 +19,15 @@ export default class ProjectsCreateNewController extends Controller {
   @service store;
   @service notification;
 
-  @tracked project = getEmptyChangeset(
+  @tracked project = emptyChangeset(
     ProjectValidations,
     this.store.createRecord('project')
   );
 
-  @tracked addVersionChangeset = getEmptyChangeset(
-    DependencyVersionValidations
-  );
-  @tracked dependencyChangeset = getEmptyChangeset(SelectDependencyValidations);
-  @tracked versionChangeset = getEmptyChangeset(SelectVersionValidations);
-  @tracked addDependencyChangeset = getEmptyChangeset(DependencyValidations);
+  @tracked addVersionChangeset = emptyChangeset(DependencyVersionValidations);
+  @tracked dependencyChangeset = emptyChangeset(SelectDependencyValidations);
+  @tracked versionChangeset = emptyChangeset(SelectVersionValidations);
+  @tracked addDependencyChangeset = emptyChangeset(DependencyValidations);
 
   @tracked selectedDependency = null;
 
