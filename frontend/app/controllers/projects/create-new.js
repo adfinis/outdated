@@ -11,6 +11,7 @@ import SelectVersionValidations from 'outdated/validations/select-version';
 import { tracked } from 'tracked-built-ins';
 
 function getEmptyChangeset(validations, model = null) {
+  Changeset(model ?? {}, lookupValidator(validations), validations);
   return Changeset(model ?? {}, lookupValidator(validations), validations);
 }
 

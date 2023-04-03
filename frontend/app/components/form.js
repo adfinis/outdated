@@ -2,7 +2,6 @@ import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-
 export default class FormComponent extends Component {
   @tracked loading = false;
   @tracked submitted = false;
