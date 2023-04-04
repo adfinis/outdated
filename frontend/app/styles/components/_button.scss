@@ -1,0 +1,9 @@
+.select-button {
+  border: none;
+  border-top: $global-border-width solid $global-border;
+
+  &:hover {
+    background: $ember-power-select-highlighted-background;
+    color: #fff;
+  }
+}

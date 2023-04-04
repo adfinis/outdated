@@ -6,7 +6,7 @@ import { module, test } from 'qunit';
 module('Integration | Component | dependency-detailed', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
-  test('dependency-detailed renders correctly', async function (assert) {
+  test('it renders correctly', async function (assert) {
     this.version = await this.server.create('dependency-version');
 
     await render(hbs`<DependencyDetailed @version={{this.version}} />`);

@@ -1,0 +1,18 @@
+.uk-notification-message-primary {
+  background: $notification-message-primary-color;
+}
+.uk-notification-message-danger {
+  background: $notification-message-danger-color;
+}
+.uk-notification-message-warning {
+  background: $notification-message-warning-color;
+}
+.uk-notification-message-success {
+  background: $notification-message-success-color;
+}
+
+.uk-notification-message,
+.uk-notification-close,
+.uk-notification-close:hover {
+  color: #fff;
+}

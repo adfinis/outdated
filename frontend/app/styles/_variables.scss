@@ -1,4 +1,51 @@
 $breakpoint-xsmall: 419px;
+
+// uikit-colors
+$colors: 'primary', 'danger', 'warning', 'success';
+
+// Backgrounds
+$ember-power-select-background-color: $form-background;
+$ember-power-select-disabled-background-color: $form-disabled-background;
+$ember-power-select-multiple-selection-background-color: $form-background;
+$ember-power-select-highlighted-background: #5897fb;
+$ember-power-select-selected-background: #dddddd;
+
+// Texts
+$ember-power-select-text-color: $form-color;
+$ember-power-select-placeholder-color: $form-placeholder-color;
+
+// Borders
+$ember-power-select-border-color: $form-border;
+$ember-power-select-focus-border-color: $form-focus-border;
+$ember-power-select-default-border: $form-border-width solid $form-border;
+$ember-power-select-default-focus-border: $form-border-width solid
+  $form-focus-border;
+
+$ember-power-select-trigger-border: $ember-power-select-default-border;
+$ember-power-select-active-trigger-border: $ember-power-select-default-border;
+$ember-power-select-dropdown-border: $ember-power-select-default-border;
+$ember-power-select-search-field-border: $ember-power-select-default-border;
+$ember-power-select-search-field-focus-border: $ember-power-select-default-focus-border;
+
+// Borders radius
+$ember-power-select-default-border-radius: 0; // General border radius
+$ember-power-select-opened-border-radius: 0; // Border radius of the side of the dropdown and the trigger where they touch
+
+// Other
+$ember-power-select-dropdown-margin: 0; // Margin between the dropdown and the trigger
+$ember-power-select-line-height: $form-line-height;
+$ember-power-select-clear-btn-margin: 25px;
+$ember-power-select-option-padding: 8px;
+$ember-power-select-number-of-visible-options: 7;
+$ember-power-select-focus-outline: none;
+$ember-power-select-trigger-ltr-padding: 0 16px 0 0;
+$ember-power-select-trigger-rtl-padding: 0 0 0 16px;
+$ember-power-select-multiple-option-border-radius: 4px;
+$ember-power-select-multiple-option-line-height: $form-line-height;
+
+// ember-basic-dropdown
+$ember-basic-dropdown-content-background-color: $ember-power-select-background-color;
+
 /* CSS properties for responsive layout */
 
 :root {

@@ -25,16 +25,16 @@ class DependencyVersionFactory(DjangoModelFactory):
         date_start=date.today() - timedelta(days=80),
         date_end=date.today(),
     )
-    eol_date = Faker(
+    end_of_life_date = Faker(
         "date_between_dates",
         date_start=release_date,
         date_end=date.today() + timedelta(days=80),
     )
 
     class Params:
-        outdated = Trait(eol_date=date.today() - timedelta(days=80))
-        warning = Trait(eol_date=date.today() + timedelta(days=20))
-        up_to_date = Trait(eol_date=date.today() + timedelta(days=31))
+        outdated = Trait(end_of_life_date=date.today() - timedelta(days=80))
+        warning = Trait(end_of_life_date=date.today() + timedelta(days=20))
+        up_to_date = Trait(end_of_life_date=date.today() + timedelta(days=31))
 
 
 class ProjectFactory(DjangoModelFactory):

@@ -18,6 +18,11 @@ module.exports = function (environment) {
       // Here you can pass flags/options to your application instance
       // when it is created
     },
+    'ember-uikit': {
+      notification: {
+        pos: 'bottom-right',
+      },
+    },
   };
 
   if (environment === 'development') {

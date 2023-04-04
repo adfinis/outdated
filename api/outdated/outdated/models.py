@@ -28,18 +28,18 @@ class DependencyVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     version = models.CharField(max_length=100)
     release_date = models.DateField()
-    eol_date = models.DateField()
+    end_of_life_date = models.DateField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
 
     class Meta:
-        ordering = ["eol_date", "dependency__name", "version", "release_date"]
+        ordering = ["end_of_life_date", "dependency__name", "version", "release_date"]
         unique_together = ("dependency", "version")
 
     @property
     def status(self):
-        if date.today() >= self.eol_date:
+        if date.today() >= self.end_of_life_date:
             return STATUS_OPTIONS["outdated"]
-        elif date.today() + timedelta(days=30) >= self.eol_date:
+        elif date.today() + timedelta(days=30) >= self.end_of_life_date:
             return STATUS_OPTIONS["warning"]
         return STATUS_OPTIONS["up_to_date"]
 
