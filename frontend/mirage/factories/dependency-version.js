@@ -4,7 +4,7 @@ import { Factory, trait } from 'miragejs';
 
 export default Factory.extend({
   version: () => faker.system.semver(),
-  eolDate: () => faker.date.future(2),
+  endOfLifeDate: () => faker.date.future(2),
   releaseDate: () => faker.date.past(4),
 
   status() {
@@ -19,10 +19,10 @@ export default Factory.extend({
   },
 
   isEndOfLife: trait({
-    eolDate: () => faker.date.recent(),
+    endOfLifeDate: () => faker.date.recent(),
   }),
   isNearlyEndOfLife: trait({
-    eolDate: () => faker.date.soon(25),
+    endOfLifeDate: () => faker.date.soon(25),
   }),
 
   afterCreate(version, server) {

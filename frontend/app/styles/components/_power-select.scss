@@ -1,0 +1,23 @@
+.ember-power-select-search-input,
+.ember-power-select-trigger {
+  transition: 0.2s ease-in-out;
+  transition-property: color, background-color, border;
+}
+
+.ember-power-select-multiple-trigger:has(ul input:focus):not(
+    .is-valid,
+    .is-invalid
+  ) {
+  border: $ember-power-select-default-focus-border;
+}
+
+.ember-power-select-search-input,
+.ember-power-select-trigger-multiple-input {
+  padding: 0 $form-padding-horizontal;
+  text-indent: 0;
+}
+
+.ember-power-select-multiple-options
+  li:not(.ember-power-select-multiple-option) {
+  width: 100%;
+}

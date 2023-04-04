@@ -8,7 +8,7 @@ module('Integration | Component | project-compact', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
 
-  test('project-compact renders correctly', async function (assert) {
+  test('it renders correctly', async function (assert) {
     const project = this.server.create('project', 'withVersions');
 
     const store = this.owner.lookup('service:store');

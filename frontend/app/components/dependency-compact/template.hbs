@@ -3,7 +3,9 @@
   {{(if
     @version
     (modifier
-      'uk-tooltip' (concat 'EOL: ' (format-date @version.eolDate)) pos='bottom'
+      'uk-tooltip'
+      (concat 'EOL: ' (format-date @version.endOfLifeDate))
+      pos='bottom'
     )
   )}}
 >

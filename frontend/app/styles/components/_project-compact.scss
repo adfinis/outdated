@@ -1,4 +1,4 @@
-/* style how the compact projects get displayed*/
+/* style how the compact projects are displayed*/
 .compact-projects {
   @extend .uk-grid;
   @extend .uk-grid-small;
@@ -24,6 +24,7 @@
     @extend .uk-text-decoration-none;
   }
 }
+
 /* the compact-projects title*/
 .title-compact {
   @extend .uk-text-center;
