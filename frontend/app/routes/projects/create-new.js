@@ -4,7 +4,7 @@ import { service } from '@ember/service';
 
 export default class ProjectsCreateNewRoute extends Route {
   @service store;
-  model() {
+  beforeModel() {
     this.store.findAll('dependency');
     this.store.findAll('dependencyVersion');
   }
