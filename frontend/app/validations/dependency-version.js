@@ -18,14 +18,12 @@ export default {
   ],
   endOfLifeDate: [
     validatePresence({ presence: true, ignoreBlank: true }),
-    validateDate({ after: new Date('1991-02-20') }),
     validateOtherDate({ after: 'releaseDate' }),
   ],
   releaseDate: [
     validatePresence({ presence: true, ignoreBlank: true }),
     validateDate({
       before: new Date(),
-      after: new Date('1991-02-20'),
       message: '{description} must be a valid date',
     }),
     validateOtherDate({ before: 'endOfLifeDate' }),
