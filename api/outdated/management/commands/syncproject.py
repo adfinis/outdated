@@ -1,0 +1,15 @@
+from django.core.management.base import BaseCommand
+from outdated.outdated.models import Project
+
+
+class Command(BaseCommand):
+    help = "Syncs the project with the remote project"
+
+    def add_arguments(self, parser):
+        parser.add_argument("project_name", type=str)
+
+    def handle(self, *args, **options):
+        project_name = options["project_name"]
+        project = Project.objects.get(name__iexact=project_name)
+        self.stdout.write(f"Syncing project {project}")
+        # project.sync()

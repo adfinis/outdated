@@ -51,6 +51,10 @@ test-frontend: ## Test the frontend
 .PHONY: test
 test: test-backend test-frontend ## Test front- & backend
 
+.PHONY: api-bash
+api-bash: ## Shell into the django container
+	@docker-compose run --rm api bash
+
 .PHONY: makemigrations
 makemigrations: ## Make django migrations
 	@docker compose run --rm api python ./manage.py makemigrations
