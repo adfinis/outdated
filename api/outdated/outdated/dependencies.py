@@ -50,7 +50,7 @@ class ProjectSyncer:
                 nodes {{
                     filename
                         {query}
-                        }}    
+                        }}
                     }}
                 }}
             }}
@@ -102,7 +102,7 @@ class ProjectSyncer:
         }
 
     def get_dependencies_from_lock_file(self, filename) -> list[dict]:
-        """Get dependencies from a large something.lock file"""
+        """Get dependencies from a large something.lock file."""
         cur = None
         after = ""
         dependencies = []
