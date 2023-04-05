@@ -65,14 +65,6 @@ class ProjectSyncer:
         return response
 
     def get_all_manifests(self) -> list[str]:
-        print(
-            [
-                manifest["filename"]
-                for manifest in self.graphql_request(self.graphql_query())["data"][
-                    "repository"
-                ]["dependencyGraphManifests"]["nodes"]
-            ]
-        )
         return [
             manifest["filename"]
             for manifest in self.graphql_request(self.graphql_query())["data"][
@@ -173,7 +165,4 @@ class ProjectSyncer:
         ]
 
     def sync(self):
-        deps = self.get_project_dependencies()
-        print(deps)
-
-        # self.project.dependency_versions.set(self.get_project_dependencies())
+        self.project.dependency_versions.set(self.get_project_dependencies())
