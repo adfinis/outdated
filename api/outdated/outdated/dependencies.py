@@ -1,9 +1,11 @@
-import requests
-from outdated.outdated.models import Dependency, DependencyVersion, Project
-from django.conf import settings
-from dateutil.parser import parse
-from os.path import basename
 import re
+from os.path import basename
+
+import requests
+from dateutil.parser import parse
+from django.conf import settings
+
+from outdated.outdated.models import Dependency, DependencyVersion, Project
 
 headers = {
     "Authorization": f"Bearer {settings.GITHUB_TOKEN}",

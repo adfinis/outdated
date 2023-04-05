@@ -22,7 +22,7 @@ def test_dependency(
     assert resp_detailed.json()["data"]["attributes"]["name"] == gen_dependency.name
 
 
-@pytest.mark.parametrize("_status", ["OUTDATED", "WARNING", "UP-TO-DATE"])
+@pytest.mark.parametrize("_status", ["OUTDATED", "WARNING", "UP-TO-DATE", "UNDEFINED"])
 def test_dependency_versions(
     client, str_to_date, dependency_factory, dependency_version_factory, _status
 ):
@@ -32,6 +32,7 @@ def test_dependency_versions(
         outdated=_status == "OUTDATED",
         warning=_status == "WARNING",
         up_to_date=_status == "UP-TO-DATE",
+        undefined=_status == "UNDEFINED",
     )
     url = reverse("dependencyversion-list")
     resp = client.get(url, include)
@@ -53,7 +54,9 @@ def test_dependency_versions(
     end_of_life_date = str_to_date(resp_dep_version["end-of-life-date"])
 
     today = date.today()
-    if today >= end_of_life_date:
+    if not end_of_life_date:
+        assert _status == "UNDEFINED"
+    elif today >= end_of_life_date:
         assert _status == "OUTDATED"
     elif today + timedelta(days=30) >= end_of_life_date:
         assert _status == "WARNING"

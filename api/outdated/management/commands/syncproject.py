@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
-from outdated.outdated.models import Project
+
 from outdated.outdated.dependencies import ProjectSyncer
+from outdated.outdated.models import Project
 
 
 class Command(BaseCommand):

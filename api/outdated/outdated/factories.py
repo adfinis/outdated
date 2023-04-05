@@ -35,6 +35,7 @@ class DependencyVersionFactory(DjangoModelFactory):
         outdated = Trait(end_of_life_date=date.today() - timedelta(days=80))
         warning = Trait(end_of_life_date=date.today() + timedelta(days=20))
         up_to_date = Trait(end_of_life_date=date.today() + timedelta(days=31))
+        undefined = Trait(end_of_life_date=None)
 
 
 class ProjectFactory(DjangoModelFactory):

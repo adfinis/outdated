@@ -19,7 +19,9 @@ def client(db):
 
 @pytest.fixture
 def str_to_date():
-    def _str_to_date(date: str):
-        return datetime.strptime(date, "%Y-%m-%d").date()
+    def _str_to_date(date):
+        if date:
+            return datetime.strptime(date, "%Y-%m-%d").date()
+        return None
 
     return _str_to_date
