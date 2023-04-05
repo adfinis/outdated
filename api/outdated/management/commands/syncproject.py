@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from outdated.outdated.models import Project
+from outdated.outdated.dependencies import ProjectSyncer
 
 
 class Command(BaseCommand):
@@ -10,6 +11,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         project_name = options["project_name"]
-        project = Project.objects.get(name__iexact=project_name)
-        self.stdout.write(f"Syncing project {project}")
-        # project.sync()
+        try:
+            project = Project.objects.get(name__iexact=project_name)
+            self.stdout.write(f"Syncing project {project}")
+            ProjectSyncer(project).sync()
+        except Project.DoesNotExist:
+            self.stdout.write(f"Project {project} not found")
