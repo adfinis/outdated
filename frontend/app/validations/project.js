@@ -16,5 +16,4 @@ export default {
       message: '{description} must start with either http:// or https://',
     }),
   ],
-  dependencyVersions: [validatePresence(true)],
 };

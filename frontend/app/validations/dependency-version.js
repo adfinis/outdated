@@ -16,10 +16,7 @@ export default {
       message: '{description} should be a valid semantic version',
     }),
   ],
-  endOfLifeDate: [
-    validatePresence({ presence: true, ignoreBlank: true }),
-    validateOtherDate({ after: 'releaseDate' }),
-  ],
+  endOfLifeDate: [validateOtherDate({ after: 'releaseDate' })],
   releaseDate: [
     validatePresence({ presence: true, ignoreBlank: true }),
     validateDate({
