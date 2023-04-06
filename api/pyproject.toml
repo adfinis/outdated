@@ -7,7 +7,7 @@ license = "GPL-3.0-or-later"
 readme = "../README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 django = "^3.2.18"
 django-environ = "^0.9.0"
 psycopg2-binary = "^2.9.5"
@@ -32,6 +32,7 @@ pytest = "7.2.1"
 isort = "5.11.4"
 pytest-factoryboy = "2.5.1"
 pytest-cov = "^4.0.0"
+snakeviz = "^2.1.1"
 
 
 [tool.isort]
