@@ -17,4 +17,3 @@ services:
       ]
     env_file:
       - ./.envs/.local/.api
-      - ./.envs/.local-private/.api

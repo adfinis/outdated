@@ -5,4 +5,3 @@ __pycache__
 .coverage
 rest_framework
 *.prof
-.envs/.local-private
