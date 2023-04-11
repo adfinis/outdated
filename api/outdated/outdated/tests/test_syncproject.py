@@ -1,8 +1,7 @@
-from django.core.management import call_command
-
+from json import loads
 from re import compile
 
-from json import loads
+from django.core.management import call_command
 
 from outdated.outdated.models import Project
 
