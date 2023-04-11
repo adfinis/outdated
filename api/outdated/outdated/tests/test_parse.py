@@ -25,14 +25,12 @@ SAMPLE_PATH = "outdated/outdated/tests/samples/"
         ),
     ],
 )
-def test_lock_files(requests_mock, db, lockfile, manager):
-    release_date_file = loads(
-        open(SAMPLE_PATH + f"release-dates/{manager}.json").read()
-    )
+def test_lock_files(requests_mock, db, lockfile, manager, get_sample):
+    release_date_file = loads(get_sample(f"release-dates/{manager}.json"))
 
     requests_mock.get(
         lockfile,
-        text=open(SAMPLE_PATH + f"lockfiles/{manager}").read(),
+        text=get_sample(f"lockfiles/{manager}"),
     )
 
     requests_mock.get(

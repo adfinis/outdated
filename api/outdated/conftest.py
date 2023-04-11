@@ -25,3 +25,11 @@ def str_to_date():
         return None
 
     return _str_to_date
+
+
+@pytest.fixture
+def get_sample():
+    def _get_sample(name):
+        return open(f"outdated/outdated/tests/samples/{name}").read()
+
+    return _get_sample
