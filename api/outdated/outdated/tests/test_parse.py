@@ -1,5 +1,7 @@
+from json import dumps, loads
+
 import pytest
-from json import loads, dumps
+
 from outdated.outdated.models import Dependency, DependencyVersion
 from outdated.outdated.parse import parse
 

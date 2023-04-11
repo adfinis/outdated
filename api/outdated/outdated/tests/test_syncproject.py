@@ -1,5 +1,7 @@
-from django.core.management import call_command
 from time import sleep
+
+from django.core.management import call_command
+
 from outdated.outdated.models import Project
 
 
