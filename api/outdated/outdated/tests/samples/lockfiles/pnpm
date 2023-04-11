@@ -1,0 +1,8 @@
+lockfileVersion: 5.4
+
+specifiers:
+  "@adfinis-sygroup/eslint-config": 1.5.0
+  ember-cli: 4.11.0
+
+devDependencies:
+  ember-cli: 4.11.0

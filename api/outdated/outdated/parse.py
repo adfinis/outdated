@@ -32,10 +32,6 @@ class _ParseLockFile:
         }
         self.provider = self._get_provider()
 
-    def _get_lockfile(self):
-        """Validate the lockfile."""
-        return self.session.get(self.lockfile).text
-
     def _get_provider(self):
         if self.lockfile["name"] in NPM_FILES:
             return "NPM"
@@ -63,7 +59,7 @@ class _ParseLockFile:
 
         if release_date:
             return parser.parse(release_date).date()
-        return None
+        return None  # pragma: no cover
 
     def _parse(
         self,
@@ -86,7 +82,7 @@ class _ParseLockFile:
                 and (not whitelisted or dependency[0] in whitelisted)
             ]
         else:
-            raise ValueError("lockfile not supported yet")
+            raise ValueError("lockfile not supported yet")  # pragma: no cover
         return [
             self._get_dependency(dependency)
             for dependency in findall(regex, self.lockfile["data"])

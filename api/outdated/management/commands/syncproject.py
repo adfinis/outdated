@@ -26,7 +26,7 @@ class Command(BaseCommand):
             self.stdout.write(f"Project {project_name} not found")
 
     def handle(self, *args, **options):
-        if options["profile"]:
+        if options["profile"]:  # pragma: no cover
             profiler = Profile()
             profiler.runcall(self._handle, *args, **options)
             profiler.dump_stats("syncproject.prof")

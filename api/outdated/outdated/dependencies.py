@@ -44,6 +44,7 @@ class ProjectSyncer:
                 "https://api.github.com/search/code", params={"q": q}
             ).json()["items"]
         ]
+        print(lockfiles)
         return parse(lockfiles, whitelisted=INCLUDE_DEPENDENCIES)
 
     def sync(self):
