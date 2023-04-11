@@ -4,7 +4,7 @@ from typing import Union
 
 from dateutil import parser
 from requests import Session
-from yaml import load
+from yaml import safe_load
 
 from outdated.outdated.models import Dependency, DependencyVersion
 
@@ -81,7 +81,7 @@ class _ParseLockFile:
         elif lockfile_name == "pnpm-lock.yaml":
             return [
                 self._get_dependency(dependency)
-                for dependency in load(self.lockfile["data"])["specifiers"].items()
+                for dependency in safe_load(self.lockfile["data"])["specifiers"].items()
                 if dependency[0] not in blacklisted
                 and (not whitelisted or dependency[0] in whitelisted)
             ]
