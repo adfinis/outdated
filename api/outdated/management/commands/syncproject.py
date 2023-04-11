@@ -11,7 +11,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("project_name", type=str)
-        # add profile option
         parser.add_argument(
             "--profile", action="store_true", help="Profile the command"
         )
@@ -22,6 +21,7 @@ class Command(BaseCommand):
             project = Project.objects.get(name__iexact=project_name)
             self.stdout.write(f"Syncing project {project}")
             ProjectSyncer(project).sync()
+            self.stdout.write(f"Finished syncing {project}")
         except Project.DoesNotExist:
             self.stdout.write(f"Project {project} not found")
 
