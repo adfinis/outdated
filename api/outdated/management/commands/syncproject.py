@@ -23,7 +23,7 @@ class Command(BaseCommand):
             ProjectSyncer(project).sync()
             self.stdout.write(f"Finished syncing {project}")
         except Project.DoesNotExist:
-            self.stdout.write(f"Project {project} not found")
+            self.stdout.write(f"Project {project_name} not found")
 
     def handle(self, *args, **options):
         if options["profile"]:
