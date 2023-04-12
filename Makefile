@@ -62,11 +62,3 @@ makemigrations: ## Make django migrations
 .PHONY: migrate
 migrate: ## Migrate django
 	@docker compose run --rm api python ./manage.py migrate
-
-.PHONY: test-syncproject
-test-syncproject: ## Test the syncproject command
-	@docker compose run --rm api sh -c "./manage.py syncproject outdated"
-
-.PHONY: profile-syncproject
-profile-syncproject: ## Profile the syncproject command
-	@docker compose run --rm api sh -c "./manage.py syncproject mysagw --profile"; cd api; poetry run snakeviz syncproject.prof; cd ..
