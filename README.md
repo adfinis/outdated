@@ -7,12 +7,11 @@ An application to track the dependencies of projects.
 - Git
 - Node.js
 - yarn
-- docker-compose
+- docker compose
 
 ## Running
 
 To run the entire application:
-- `make start`
 
-To run just the frontend:
-- `make start-frontend`
+- `echo "UID=$(id -u)" > .env`
+- `make start`
