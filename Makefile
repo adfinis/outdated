@@ -62,3 +62,7 @@ makemigrations: ## Make django migrations
 .PHONY: migrate
 migrate: ## Migrate django
 	@docker compose run --rm api python ./manage.py migrate
+
+.PHONY: cleanup
+cleanup: ## Cleanup all docker containers, images, volumes and networks from the project
+	@docker compose down -v --timeout 0
