@@ -1,4 +1,4 @@
 ENV=dev
 
 # Github
-GITHUB_API_TOKEN=<your github api token>
+GITHUB_API_TOKEN=<your_github_api_token>
