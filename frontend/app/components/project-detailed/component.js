@@ -12,7 +12,7 @@ export default class ProjectDetailedComponent extends Component {
   async syncProject() {
     try {
       this.loading = true;
-      const request = await fetch(`/projects/sync/${this.args.project.id}`);
+      const request = await fetch(`/projects/${this.args.project.id}/sync`);
       if (request.ok) {
         this.notification.success('Project synced successfully');
       } else if (request.status === 404) {

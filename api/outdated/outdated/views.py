@@ -1,4 +1,6 @@
-from rest_framework import views, viewsets
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from outdated.outdated.dependencies import ProjectSyncer
 from outdated.outdated.models import Dependency, DependencyVersion, Project
@@ -13,6 +15,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
+    @action(detail=True)
+    def sync(self, request, pk=None):
+        try:
+            project = self.get_object()
+            ProjectSyncer(project).sync()
+            return Response(status=204)
+        except KeyError:
+            return Response(
+                status=429,
+                data={"error": "Github API rate limit exceeded"},  # pragma: no cover
+            )
+
 
 class DependencyVersionViewSet(viewsets.ModelViewSet):
     queryset = DependencyVersion.objects.all()
@@ -22,15 +36,3 @@ class DependencyVersionViewSet(viewsets.ModelViewSet):
 class DependencyViewSet(viewsets.ModelViewSet):
     queryset = Dependency.objects.all()
     serializer_class = DependencySerializer
-
-
-class SyncProjectView(views.APIView):
-    """Syncproject endpoint."""
-
-    def get(self, request, id):
-        try:
-            project = Project.objects.get(id=id)
-            ProjectSyncer(project).sync()
-            return views.Response(status=204)
-        except Project.DoesNotExist:
-            return views.Response(status=404, data={"error": "Project does not exist"})

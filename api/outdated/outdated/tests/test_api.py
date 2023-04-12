@@ -109,10 +109,10 @@ def test_project(
 
 
 def test_sync_project(client, mocked_project):
-    url = reverse("sync-project", args=[mocked_project.id])
+    url = reverse("project-sync", args=[mocked_project.id])
     resp = client.get(url)
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     assert mocked_project.dependency_versions.count() > 0
 
-    url = reverse("sync-project", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
+    url = reverse("project-sync", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
     assert client.get(url).status_code == status.HTTP_404_NOT_FOUND
