@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from django.db import models
+from django.db.models.functions import Lower
 
 from outdated.models import UUIDModel
 
@@ -24,7 +25,6 @@ class Dependency(UUIDModel):
 
 
 class DependencyVersion(UUIDModel):
-
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     version = models.CharField(max_length=100)
     release_date = models.DateField()
@@ -50,14 +50,22 @@ class DependencyVersion(UUIDModel):
 
 
 class Project(UUIDModel):
-
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(
+        max_length=100,
+    )
     repo = models.URLField(max_length=100, unique=True)
     dependency_versions = models.ManyToManyField(DependencyVersion, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
 
     class Meta:
         ordering = ["name", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"],
+                condition=models.Q(name__iexact=Lower("name")),
+                name="unique_project_name",
+            )
+        ]
 
     @property
     def status(self) -> str:
