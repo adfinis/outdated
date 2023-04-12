@@ -75,14 +75,17 @@ class _ParseLockFile:
         elif lockfile_name == "poetry.lock":
             regex = r'\[\[package]]\nname = "(.+)"\nversion = "(.+)"'
         elif lockfile_name == "pnpm-lock.yaml":
+            lockfile = safe_load(self.lockfile["data"])
+            if float(lockfile["lockfileVersion"]) < 6.0:
+                regex = r"\/([^\s_]+)\/([^_\s]+).*"
+            else:
+                regex = r"\/(@?[^\s@]+)@([^()]+).*"
             return [
                 self._get_dependency(dependency)
                 for dependency_string in safe_load(self.lockfile["data"])[
                     "packages"
                 ].keys()
-                for dependency in findall(
-                    r"[/](@?[^\s@]+)@([^()]+).*", dependency_string
-                )
+                for dependency in findall(regex, dependency_string)
                 if dependency[0] not in blacklisted
                 and (not whitelisted or dependency[0] in whitelisted)
             ]

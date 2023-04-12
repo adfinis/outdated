@@ -28,8 +28,9 @@ class SyncProjectView(views.APIView):
     """Syncproject endpoint."""
 
     def get(self, request, id):
-        project = Project.objects.get(id=id)
-        if project:
+        try:
+            project = Project.objects.get(id=id)
             ProjectSyncer(project).sync()
             return views.Response(status=204)
-        return views.Response(status=404)
+        except Project.DoesNotExist:
+            return views.Response(status=404, data={"error": "Project does not exist"})

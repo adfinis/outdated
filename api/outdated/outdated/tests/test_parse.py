@@ -20,6 +20,10 @@ SAMPLE_PATH = "outdated/outdated/tests/samples/"
             "pnpm",
         ),
         (
+            "https://raw.githubusercontent.com/projectcaluma/ember-caluma/d6ca2c4f5bdd0055126d672127af98986bca086f/pnpm-lock.yaml",
+            "pnpm-v6",
+        ),
+        (
             "https://raw.githubusercontent.com/adfinis/Outdated/f4dafa49a0c0357214647e7cd79dcd0aad811a91/api/poetry.lock",
             "poetry",
         ),
