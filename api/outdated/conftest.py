@@ -21,6 +21,8 @@ def client(db):
 
 @pytest.fixture
 def str_to_date():
+    """Convert a string to a date."""
+
     def _str_to_date(date):
         if date:
             return datetime.strptime(date, "%Y-%m-%d").date()
@@ -31,6 +33,8 @@ def str_to_date():
 
 @pytest.fixture
 def get_sample():
+    """Get a sample file."""
+
     def _get_sample(name):
         return open(f"outdated/outdated/tests/samples/{name}").read()
 
@@ -39,6 +43,7 @@ def get_sample():
 
 @pytest.fixture
 def mocked_project(db, requests_mock, get_sample, project_factory):
+    """Return a mocked project."""
     project = project_factory.create(repo="https://github.com/adfinis/outdated")
     yarn_lock_url = (
         "https://api.github.com/repositories/560760559/contents/frontend/yarn.lock"

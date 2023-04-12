@@ -13,6 +13,7 @@ PYPI_FILES = ["poetry.lock"]
 
 
 def parse(lockfile: Union[str, list[str]], **kwargs) -> list[dict]:
+    """Parse one or more lockfiles and return a list of dependencies."""
     if isinstance(lockfile, list):
         return [
             dependency
@@ -23,6 +24,8 @@ def parse(lockfile: Union[str, list[str]], **kwargs) -> list[dict]:
 
 
 class _ParseLockFile:
+    """Parse a lockfile and return a list of dependencies."""
+
     def __init__(self, lockfile: str):
         self.lockfile = lockfile
         self.session = Session()
@@ -33,6 +36,7 @@ class _ParseLockFile:
         self.provider = self._get_provider()
 
     def _get_provider(self):
+        """Get the provider of the lockfile."""
         if self.lockfile["name"] in NPM_FILES:
             return "NPM"
         return "PIP"
@@ -45,6 +49,7 @@ class _ParseLockFile:
         )[0]
 
     def _get_release_date(self, dependency: tuple):
+        """Get the release date of a dependency."""
         name = dependency[0]
         version = dependency[1]
         if self.provider == "NPM":

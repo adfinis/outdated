@@ -37,6 +37,7 @@ class ProjectSyncer:
         self.session.headers.update(headers)
 
     def get_dependencies(self):
+        """Get the dependencies from the lockfiles."""
         q = f"{' '.join(['filename:'+lockfile for lockfile in LOCK_FILES])} repo:{self.owner}/{self.name}"
         lockfiles = [
             self.session.get(lockfile["url"]).json()["download_url"]
@@ -47,6 +48,7 @@ class ProjectSyncer:
         return parse(lockfiles, whitelisted=INCLUDE_DEPENDENCIES)
 
     def sync(self):
+        """Sync the project with the remote project."""
         dependencies = self.get_dependencies()
         if dependencies:
             self.project.dependency_versions.set(dependencies)
