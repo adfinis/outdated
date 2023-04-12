@@ -11,3 +11,11 @@ def test_syncproject(mocked_project):
     call_command("syncproject", project.name)
 
     assert project.dependency_versions.count() == 1
+
+
+def test_syncprojects(mocked_project):
+    project = mocked_project
+
+    call_command("syncprojects")
+
+    assert project.dependency_versions.count() == 1
