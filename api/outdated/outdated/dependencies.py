@@ -44,7 +44,11 @@ class ProjectSyncer:
                 "https://api.github.com/search/code", params={"q": q}
             ).json()["items"]
         ]
-        return parse(lockfiles, whitelisted=INCLUDE_DEPENDENCIES)
+        if lockfiles:
+            return parse(lockfiles, whitelisted=INCLUDE_DEPENDENCIES)
+        return []
 
     def sync(self):
-        self.project.dependency_versions.set(self.get_dependencies())
+        dependencies = self.get_dependencies()
+        if dependencies:
+            self.project.dependency_versions.set(dependencies)

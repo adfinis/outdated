@@ -77,15 +77,22 @@ class _ParseLockFile:
         elif lockfile_name == "pnpm-lock.yaml":
             return [
                 self._get_dependency(dependency)
-                for dependency in safe_load(self.lockfile["data"])["specifiers"].items()
+                for dependency_string in safe_load(self.lockfile["data"])[
+                    "packages"
+                ].keys()
+                for dependency in findall(
+                    r"[/](@?[^\s@]+)@([^()]+).*", dependency_string
+                )
                 if dependency[0] not in blacklisted
                 and (not whitelisted or dependency[0] in whitelisted)
             ]
+
         else:
-            raise ValueError("lockfile not supported yet")  # pragma: no cover
-        return [
+            raise ValueError("Lockfile not supported yet")  # pragma: no cover
+        dependencies = [
             self._get_dependency(dependency)
             for dependency in findall(regex, self.lockfile["data"])
             if dependency[0] not in blacklisted
             and (not whitelisted or dependency[0] in whitelisted)
         ]
+        return dependencies
