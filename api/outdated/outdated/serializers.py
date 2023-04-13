@@ -4,6 +4,9 @@ from outdated.outdated.models import Dependency, DependencyVersion, Project
 
 
 class DependencySerializer(serializers.ModelSerializer):
+    latest = serializers.ReadOnlyField()
+    last_checked = serializers.ReadOnlyField()
+
     class Meta:
         model = Dependency
         fields = "__all__"
