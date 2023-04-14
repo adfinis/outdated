@@ -25,24 +25,30 @@ PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()
 
 
 class Dependency(UUIDModel):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=100)
     latest = models.CharField(max_length=100, editable=False, default="0.0.0")
-    last_checked = models.DateTimeField(editable=False, default=timezone.now())
+    last_checked = models.DateTimeField(editable=False, auto_now=True)
     provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
 
     class Meta:
         ordering = ["name", "id"]
         unique_together = ("name", "provider")
+        indexes = [
+            models.Index(fields=["name", "provider"], name="name_provider_idx"),
+        ]
 
     @property
     def latest(self):
-        if self.last_checked + timedelta(days=1) > timezone.now():
+        if (
+            not self.last_checked
+            or self.last_checked - timedelta(days=1) < timezone.now()
+        ):
             url = PROVIDER_OPTIONS[self.provider]["url"] % self.name
             response = get(url).json()
             if response.get("message") == "Not Found":
+                self.delete()
                 raise Http404
             latest = PROVIDER_OPTIONS[self.provider]["latest"]
-            self.last_checked = timezone.now()
             return response[latest[0]][latest[1]]
 
         return self.latest
@@ -54,22 +60,29 @@ class Dependency(UUIDModel):
 class DependencyVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     version = models.CharField(max_length=100)
-    release_date = models.DateField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
+    release_date = models.DateField()
 
     class Meta:
         ordering = [
+            "release_date",
             "dependency__name",
             "version",
-            "release_date",
         ]
         unique_together = ("dependency", "version")
+        indexes = [
+            models.Index(
+                fields=["dependency", "version"], name="dependency_version_idx"
+            ),
+        ]
 
     @property
     def status(self):
-        if compare(self.version, self.dependency.latest) != 0:
+        if self.dependency.latest == "0.0.0":
+            return STATUS_OPTIONS["undefined"]
+        elif compare(self.version, self.dependency.latest) != 0:
             return STATUS_OPTIONS["outdated"]
-        elif date.today() + timedelta(years=1) >= self.release_date:
+        elif date.today() + timedelta(days=365) <= self.release_date:
             return STATUS_OPTIONS["warning"]
         return STATUS_OPTIONS["up_to_date"]
 
@@ -78,9 +91,7 @@ class DependencyVersion(UUIDModel):
 
 
 class Project(UUIDModel):
-    name = models.CharField(
-        max_length=100,
-    )
+    name = models.CharField(max_length=100, db_index=True)
     repo = models.URLField(max_length=100, unique=True)
     dependency_versions = models.ManyToManyField(DependencyVersion, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)

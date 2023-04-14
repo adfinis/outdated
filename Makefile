@@ -10,7 +10,7 @@ start-backend: ## Starts only the backend
 
 .PHONY: start-frontend-using-backend
 start-frontend-using-backend: ## Start the frontend, using the backend
-	@cd frontend/ && yarn ember server --proxy=http://localhost:8000
+	@cd frontend/ && yarn && yarn ember server --proxy=http://localhost:8000
 
 .PHONY: start-frontend
 start-frontend: ## Start the frontend, using Mirage
