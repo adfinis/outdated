@@ -9,6 +9,7 @@ from outdated.outdated.serializers import (
     DependencyVersionSerializer,
     ProjectSerializer,
 )
+from asyncio import run
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -19,7 +20,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def sync(self, request, pk=None):
         try:
             project = self.get_object()
-            ProjectSyncer(project).sync()
+            run(ProjectSyncer(project).sync())
             return Response(status=204)
         except KeyError:
             return Response(

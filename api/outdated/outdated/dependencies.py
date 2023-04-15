@@ -1,161 +1,166 @@
 from datetime import datetime
 from os.path import basename
 from re import findall
-from time import sleep
 
 from dateutil import parser
 from django.conf import settings
-from requests import Session
 from yaml import safe_load
+from aiohttp import ClientSession, client_exceptions
+from asyncio import gather, sleep
+from asgiref.sync import sync_to_async
 
 from outdated.outdated.models import Dependency, DependencyVersion, Project
 
-headers = {
-    "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-}
 NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
 PYPI_FILES = ["poetry.lock"]
 
 LOCK_FILES = [*NPM_FILES, *PYPI_FILES]
-
-INCLUDE_DEPENDENCIES = [
-    "@embroider/core",
-    "ember-source",
-    "ember-data",
-    "ember-cli",
-    "django",
-    "djangorestframework",
-    "djangorestframeworkjson-api",
-    "django-filter",
-    "django-hurricane",
-    "gunicorn",
-    "python",
-]
 
 
 class ProjectSyncer:
     def __init__(self, project: Project):
         self.project = project
         self.owner, self.name = findall(r"\/([^\/]+)\/([^\/]+)$", self.project.repo)[0]
-        self.session = Session()
-        self.session.headers.update(headers)
 
-    def get_dependencies(self):
+    async def _get_lockfile_data(self, lockfile):
+        async with ClientSession(
+            headers={
+                "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+            }
+        ) as session:
+            async with session.get(lockfile["url"]) as response:
+                url = (await response.json())["download_url"]
+                name = basename(url)
+                async with session.get(url) as lockfile_response:
+                    return {
+                        "name": name,
+                        "data": await lockfile_response.text(),
+                    }
+
+    async def _get_dependencies(self):
         """Get the dependencies from the lockfiles."""
         q = f"{' '.join(['filename:'+lockfile for lockfile in LOCK_FILES])} repo:{self.owner}/{self.name}"
-        response = self.session.get(
-            "https://api.github.com/search/code", params={"q": q}
-        )
-        json = response.json()
-        headers = response.headers
-        if headers.get("X-RateLimit-Remaining") == "0":
-            t = int(headers.get("X-RateLimit-Reset")) - int(
-                datetime.utcnow().timestamp()
-            )
-            print(f"Rate limit exceeded. Sleeping for {t} seconds.")
-            sleep(t)
-            return self.get_dependencies()
-        print(response.headers, response.status_code, json)
+        async with ClientSession(
+            headers={
+                "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+            }
+        ) as session:
+            async with session.get(
+                "https://api.github.com/search/code", params={"q": q}
+            ) as response:
+                json = await response.json()
+                headers = response.headers
+                if headers.get("X-RateLimit-Remaining") == "0":
+                    t = int(headers.get("X-RateLimit-Reset")) - int(
+                        datetime.utcnow().timestamp()
+                    )
+                    print(f"Rate limit exceeded. Sleeping for {t} seconds.")
+                    await sleep(t)
+                    return await self._get_dependencies()
+                lockfiles = []
+                lockfile_tasks = []
+                for lockfile in json["items"]:
+                    print(f"Getting lockfile {lockfile['url']}")
+                    lockfile_tasks.append(session.get(lockfile["url"]))
+                for lockfile_task in await gather(*lockfile_tasks):
+                    lockfile = await lockfile_task.json()
+                    lockfile_data = await self._get_lockfile_data(lockfile)
+                    lockfiles.append(lockfile_data)
+                return await LockFileParser(lockfiles).parse()
 
-        lockfiles = [
-            self.session.get(lockfile["url"]).json()["download_url"]
-            for lockfile in json["items"]
-        ]
-
-        return self.parse_lockfiles(lockfiles)
-
-    def sync(self):
+    async def sync(self):
         """Sync the project with the remote project."""
-        dependencies = self.get_dependencies()
-        if dependencies:
-            self.project.dependency_versions.set(dependencies)
-
-    def parse_lockfiles(self, lockfiles: list[str]) -> list[dict]:
-        """Parse one or more lockfiles and return a list of dependencies."""
-        return [
-            dependency
-            for lockfile in lockfiles
-            for dependency in LockFileParser(lockfile)._parse()
-        ]
+        dependencies = await self._get_dependencies()
+        await sync_to_async(self.project.dependency_versions.set)(
+            dependencies
+        )  # use aset once DRF supports Django 4.2
 
 
 class LockFileParser:
     """Parse a lockfile and return a list of dependencies."""
 
-    def __init__(self, lockfile: str):
-        self.lockfile = lockfile
-        self.session = Session()
-        self.lockfile = {
-            "name": basename(self.lockfile),
-            "data": self.session.get(self.lockfile).text,
-        }
-        self.provider = self._get_provider()
+    def __init__(self, lockfiles: list[dict]):
+        self.lockfiles = lockfiles
 
-    def _get_provider(self):
+    def _get_provider(self, name: str):
         """Get the provider of the lockfile."""
-        if self.lockfile["name"] in NPM_FILES:
+        if name in NPM_FILES:
             return "NPM"
         return "PIP"
 
-    def _get_version(self, dependency: tuple):
-        try:
-            version = DependencyVersion.objects.get(
-                dependency__name=dependency[0],
-                dependency__provider=self.provider,
-                version=dependency[1],
+    async def _get_version(self, dependency_version: tuple, provider: str):
+        release_date = None
+        dependency = await Dependency.objects.aget_or_create(
+            name=dependency_version[0], provider=provider
+        )
+        dependency_version = await DependencyVersion.objects.aget_or_create(
+            dependency=dependency[0],
+            version=dependency_version[1],
+        )
+        if dependency[1] or dependency_version[1]:
+            release_date = await self._get_release_date(
+                dependency=dependency_version, provider=provider
             )
-        except DependencyVersion.DoesNotExist:
-            version = DependencyVersion.objects.create(
-                dependency=Dependency.objects.get_or_create(
-                    name=dependency[0], provider=self.provider
-                )[0],
-                version=dependency[1],
-                release_date=self._get_release_date(dependency),
-            )
-        return version
+            dependency_version[0].release_date = release_date
 
-    def _get_release_date(self, dependency: tuple):
+        return dependency_version[0]
+
+    async def _get_release_date(self, **kwargs):
         """Get the release date of a dependency."""
+        dependency = kwargs["dependency"]
+        provider = kwargs["provider"]
         name = dependency[0]
         version = dependency[1]
-        if self.provider == "NPM":
-            release_date = self.session.get(
-                f"https://registry.npmjs.org/{name}"
-            ).json()["time"][version]
+        try:
+            if provider == "NPM":
+                async with ClientSession() as session:
+                    async with session.get(
+                        f"https://registry.npmjs.org/{name}"
+                    ) as response:
+                        release_date = (await response.json())["time"][version]
 
-        elif self.provider == "PIP":
-            release_date = self.session.get(
-                f"https://pypi.org/pypi/{name}/{version}/json"
-            ).json()["urls"][1]["upload_time"]
+            elif provider == "PIP":
+                async with ClientSession() as session:
+                    async with session.get(
+                        f"https://pypi.org/pypi/{name}/{version}/json"
+                    ) as response:
+                        release_date = (await response.json())["urls"][1]["upload_time"]
+            return parser.parse(release_date).date()
+        except (
+            client_exceptions.ClientOSError,
+            client_exceptions.ServerDisconnectedError,
+        ):
+            await sleep(1)
+            return await self._get_release_date(**kwargs)
 
-        return parser.parse(release_date).date()
-
-    def _parse(self):
+    async def parse(self):
         """Parse the lockfile and return a dictionary of dependencies."""
-        lockfile_name = self.lockfile["name"]
-        data = self.lockfile["data"]
-        dependencies = []
-        if lockfile_name == "yarn.lock":
-            regex = r'"?([\S@]+)@.*:\n  version "(.+)"'
-        elif lockfile_name == "poetry.lock":
-            regex = r'\[\[package]]\nname = "(.+)"\nversion = "(.+)"'
-        elif lockfile_name == "pnpm-lock.yaml":
-            lockfile = safe_load(data)
-            if float(lockfile["lockfileVersion"]) < 6.0:
-                regex = r"\/([^\s_]+)\/([^_\s]+).*"
-            else:
-                regex = r"\/(@?[^\s@]+)@([^()]+).*"
-            print(lockfile["packages"].keys())
-            dependencies = [
-                findall(regex, dependency)[0]
-                for dependency in lockfile["packages"].keys()
-            ]
-            print(dependencies)
-        else:
-            raise ValueError("Lockfile not supported yet")  # pragma: no cover
-        return [
-            self._get_version(dependency)
-            for dependency in dependencies or findall(regex, data)
-        ]
+        tasks = []
+        for lockfile in self.lockfiles:
+            name = lockfile["name"]
+            data = lockfile["data"]
+            provider = self._get_provider(name)
+
+            dependencies = []
+            if name == "yarn.lock":
+                regex = r'"?([\S@]+)@.*:\n  version "(.+)"'
+            elif name == "poetry.lock":
+                regex = r'\[\[package]]\nname = "(.+)"\nversion = "(.+)"'
+            elif name == "pnpm-lock.yaml":
+                lockfile = safe_load(data)
+                if float(lockfile["lockfileVersion"]) < 6.0:
+                    regex = r"\/([^\s_]+)\/([^_\s]+)_([^_\s]+)"
+                else:
+                    regex = r'(?m)^(.+):$[\n^\s]+version "(.+)"'
+                dependencies = [
+                    findall(regex, dependency)[0]
+                    for dependency in lockfile["packages"].keys()
+                ]
+            matches = dependencies or findall(regex, data)
+            for match in matches:
+                tasks.append(self._get_version(match, provider))
+        return await gather(*tasks)

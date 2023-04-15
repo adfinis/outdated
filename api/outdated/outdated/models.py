@@ -2,12 +2,13 @@ from datetime import date, timedelta
 
 from django.db import models
 from django.db.models.functions import Lower
-from django.http import Http404
+import time
 from django.utils import timezone
 from requests import get
 from semver import compare
 
 from outdated.models import UUIDModel
+
 
 STATUS_OPTIONS = {
     "outdated": "OUTDATED",
@@ -26,9 +27,9 @@ PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()
 
 class Dependency(UUIDModel):
     name = models.CharField(max_length=100)
-    latest = models.CharField(max_length=100, editable=False, default="0.0.0")
-    last_checked = models.DateTimeField(editable=False, auto_now=True)
+    last_checked = models.DateTimeField(editable=False, null=True, blank=True)
     provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
+    latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
 
     class Meta:
         ordering = ["name", "id"]
@@ -37,20 +38,18 @@ class Dependency(UUIDModel):
             models.Index(fields=["name", "provider"], name="name_provider_idx"),
         ]
 
-    @property
-    def latest(self):
+    def latest(self) -> str:
         if (
             not self.last_checked
-            or self.last_checked - timedelta(days=1) < timezone.now()
+            or self.last_checked - timedelta(days=1) > timezone.now()
         ):
             url = PROVIDER_OPTIONS[self.provider]["url"] % self.name
-            response = get(url).json()
-            if response.get("message") == "Not Found":
-                self.delete()
-                raise Http404
             latest = PROVIDER_OPTIONS[self.provider]["latest"]
-            return response[latest[0]][latest[1]]
-
+            self.last_checked = timezone.now()
+            self.save()
+            return get(url).json()[latest[0]][latest[1]]
+        else:
+            print(self.last_checked)
         return self.latest
 
     def __str__(self):
@@ -61,7 +60,7 @@ class DependencyVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     version = models.CharField(max_length=100)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
-    release_date = models.DateField()
+    release_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = [

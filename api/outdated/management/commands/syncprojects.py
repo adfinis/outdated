@@ -1,18 +1,19 @@
-from django.core.management.base import BaseCommand
-
+from outdated.outdated.commands import AsyncCommand
 from outdated.outdated.dependencies import ProjectSyncer
 from outdated.outdated.models import Project
 
+from asgiref.sync import sync_to_async
 
-class Command(BaseCommand):
+
+class Command(AsyncCommand):
     help = "Syncs all projects with their remote counterparts."
 
-    def handle(self, *args, **options):
-        projects = Project.objects.all()
-        for project in projects:
+    async def _handle(self, *args, **options):
+        projects = await sync_to_async(Project.objects.all())
+        async for project in projects:
             try:
                 self.stdout.write(f"Syncing project {project}")
-                ProjectSyncer(project).sync()
+                await ProjectSyncer(project).sync()
             except KeyError:  # pragma: no cover
                 self.stdout.write(f"Error syncing {project}")
         self.stdout.write("Finished syncing all projects")
