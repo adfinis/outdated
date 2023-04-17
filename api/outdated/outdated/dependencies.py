@@ -1,13 +1,13 @@
+from asyncio import gather, run, sleep
 from datetime import datetime
 from os.path import basename
 from re import findall
 
+from aiohttp import ClientSession, client_exceptions
+from asgiref.sync import sync_to_async
 from dateutil import parser
 from django.conf import settings
 from yaml import safe_load
-from aiohttp import ClientSession, client_exceptions
-from asyncio import gather, sleep, run
-from asgiref.sync import sync_to_async
 
 from outdated.outdated.models import Dependency, DependencyVersion, Project
 

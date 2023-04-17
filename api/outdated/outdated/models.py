@@ -2,13 +2,11 @@ from datetime import date, timedelta
 
 from django.db import models
 from django.db.models.functions import Lower
-import time
 from django.utils import timezone
 from requests import get
 from semver import compare
 
 from outdated.models import UUIDModel
-
 
 STATUS_OPTIONS = {
     "outdated": "OUTDATED",
@@ -25,11 +23,26 @@ PROVIDER_OPTIONS = {
 PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()]
 
 
+def get_yesterday():
+    return timezone.now() - timedelta(days=1)
+
+
+def get_latest_version(dependency):
+    url = PROVIDER_OPTIONS[dependency.provider]["url"] % dependency.name
+    latest = PROVIDER_OPTIONS[dependency.provider]["latest"]
+    return get(url).json()[latest[0]][latest[1]]
+
+
 class Dependency(UUIDModel):
     name = models.CharField(max_length=100)
-    last_checked = models.DateTimeField(editable=False, null=True, blank=True)
+    last_checked = models.DateTimeField(
+        editable=False,
+        null=True,
+        blank=True,
+        default=get_yesterday,
+    )
     provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
-    # latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
+    latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
 
     class Meta:
         ordering = ["name", "id"]
@@ -38,20 +51,14 @@ class Dependency(UUIDModel):
             models.Index(fields=["name", "provider"], name="name_provider_idx"),
         ]
 
-    # @property
-    # def latest(self) -> str:
-    #     if (
-    #         not self.last_checked
-    #         or self.last_checked - timedelta(days=1) > timezone.now()
-    #     ):
-    #         url = PROVIDER_OPTIONS[self.provider]["url"] % self.name
-    #         latest = PROVIDER_OPTIONS[self.provider]["latest"]
-    #         self.last_checked = timezone.now()
-    #         self.save()
-    #         return get(url).json()[latest[0]][latest[1]]
-    #     else:
-    #         print(self.last_checked)
-    #     return self.latest
+    @property
+    def latest(self):
+        if self.last_checked < timezone.now() - timedelta(days=1):
+            self.last_checked = timezone.now()
+            self.save()
+            return get_latest_version(self)
+        else:
+            return super().latest
 
     def __str__(self):
         return self.name

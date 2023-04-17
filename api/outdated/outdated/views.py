@@ -1,3 +1,5 @@
+from asyncio import run
+
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,7 +11,6 @@ from outdated.outdated.serializers import (
     DependencyVersionSerializer,
     ProjectSerializer,
 )
-from asyncio import run
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
