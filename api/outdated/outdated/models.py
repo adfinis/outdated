@@ -29,7 +29,7 @@ class Dependency(UUIDModel):
     name = models.CharField(max_length=100)
     last_checked = models.DateTimeField(editable=False, null=True, blank=True)
     provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
-    latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
+    # latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
 
     class Meta:
         ordering = ["name", "id"]
@@ -38,19 +38,20 @@ class Dependency(UUIDModel):
             models.Index(fields=["name", "provider"], name="name_provider_idx"),
         ]
 
-    def latest(self) -> str:
-        if (
-            not self.last_checked
-            or self.last_checked - timedelta(days=1) > timezone.now()
-        ):
-            url = PROVIDER_OPTIONS[self.provider]["url"] % self.name
-            latest = PROVIDER_OPTIONS[self.provider]["latest"]
-            self.last_checked = timezone.now()
-            self.save()
-            return get(url).json()[latest[0]][latest[1]]
-        else:
-            print(self.last_checked)
-        return self.latest
+    # @property
+    # def latest(self) -> str:
+    #     if (
+    #         not self.last_checked
+    #         or self.last_checked - timedelta(days=1) > timezone.now()
+    #     ):
+    #         url = PROVIDER_OPTIONS[self.provider]["url"] % self.name
+    #         latest = PROVIDER_OPTIONS[self.provider]["latest"]
+    #         self.last_checked = timezone.now()
+    #         self.save()
+    #         return get(url).json()[latest[0]][latest[1]]
+    #     else:
+    #         print(self.last_checked)
+    #     return self.latest
 
     def __str__(self):
         return self.name
@@ -77,7 +78,7 @@ class DependencyVersion(UUIDModel):
 
     @property
     def status(self):
-        if self.dependency.latest == "0.0.0":
+        if not self.dependency.latest:
             return STATUS_OPTIONS["undefined"]
         elif compare(self.version, self.dependency.latest) != 0:
             return STATUS_OPTIONS["outdated"]

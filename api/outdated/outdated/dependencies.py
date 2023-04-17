@@ -6,7 +6,7 @@ from dateutil import parser
 from django.conf import settings
 from yaml import safe_load
 from aiohttp import ClientSession, client_exceptions
-from asyncio import gather, sleep
+from asyncio import gather, sleep, run
 from asgiref.sync import sync_to_async
 
 from outdated.outdated.models import Dependency, DependencyVersion, Project
@@ -74,7 +74,11 @@ class ProjectSyncer:
                     lockfiles.append(lockfile_data)
                 return await LockFileParser(lockfiles).parse()
 
-    async def sync(self):
+    def sync(self):
+        """Sync the project with the remote project."""
+        run(self.a_sync())
+
+    async def a_sync(self):
         """Sync the project with the remote project."""
         dependencies = await self._get_dependencies()
         await sync_to_async(self.project.dependency_versions.set)(dependencies)
