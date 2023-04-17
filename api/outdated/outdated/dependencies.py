@@ -53,6 +53,8 @@ class ProjectSyncer:
                 "https://api.github.com/search/code", params={"q": q}
             ) as response:
                 json = await response.json()
+                if json.get("message") == "Bad credentials":
+                    raise ValueError("API Token is not set")
                 headers = response.headers
                 if headers.get("X-RateLimit-Remaining") == "0":
                     t = int(headers.get("X-RateLimit-Reset")) - int(
@@ -61,10 +63,10 @@ class ProjectSyncer:
                     print(f"Rate limit exceeded. Sleeping for {t} seconds.")
                     await sleep(t)
                     return await self._get_dependencies()
+
                 lockfiles = []
                 lockfile_tasks = []
                 for lockfile in json["items"]:
-                    print(f"Getting lockfile {lockfile['url']}")
                     lockfile_tasks.append(session.get(lockfile["url"]))
                 for lockfile_task in await gather(*lockfile_tasks):
                     lockfile = await lockfile_task.json()
@@ -75,9 +77,7 @@ class ProjectSyncer:
     async def sync(self):
         """Sync the project with the remote project."""
         dependencies = await self._get_dependencies()
-        await sync_to_async(self.project.dependency_versions.set)(
-            dependencies
-        )  # use aset once DRF supports Django 4.2
+        await sync_to_async(self.project.dependency_versions.set)(dependencies)
 
 
 class LockFileParser:
@@ -92,36 +92,38 @@ class LockFileParser:
             return "NPM"
         return "PIP"
 
-    async def _get_version(self, dependency_version: tuple, provider: str):
+    async def _get_version(self, dependency_name_version: tuple, provider: str):
         release_date = None
         dependency = await Dependency.objects.aget_or_create(
-            name=dependency_version[0], provider=provider
+            name=dependency_name_version[0], provider=provider
         )
+
         dependency_version = await DependencyVersion.objects.aget_or_create(
             dependency=dependency[0],
-            version=dependency_version[1],
+            version=dependency_name_version[1],
         )
         if dependency[1] or dependency_version[1]:
-            release_date = await self._get_release_date(
-                dependency=dependency_version, provider=provider
-            )
+            release_date = await self._get_release_date(dependency_version[0])
             dependency_version[0].release_date = release_date
 
         return dependency_version[0]
 
-    async def _get_release_date(self, **kwargs):
+    async def _get_release_date(self, dependency_version: DependencyVersion):
         """Get the release date of a dependency."""
-        dependency = kwargs["dependency"]
-        provider = kwargs["provider"]
-        name = dependency[0]
-        version = dependency[1]
+        name = dependency_version.dependency.name
+        version = dependency_version.version
+        provider = dependency_version.dependency.provider
+
         try:
             if provider == "NPM":
                 async with ClientSession() as session:
                     async with session.get(
                         f"https://registry.npmjs.org/{name}"
                     ) as response:
-                        release_date = (await response.json())["time"][version]
+                        json = await response.json()
+                        if json.get("error") == "Not Found":
+                            raise ValueError(f"Package {name}@{version} not found")
+                        release_date = json["time"][version]
 
             elif provider == "PIP":
                 async with ClientSession() as session:
@@ -135,7 +137,7 @@ class LockFileParser:
             client_exceptions.ServerDisconnectedError,
         ):
             await sleep(1)
-            return await self._get_release_date(**kwargs)
+            return await self._get_release_date(dependency_version)
 
     async def parse(self):
         """Parse the lockfile and return a dictionary of dependencies."""
@@ -147,7 +149,7 @@ class LockFileParser:
 
             dependencies = []
             if name == "yarn.lock":
-                regex = r'"?([\S@]+)@.*:\n  version "(.+)"'
+                regex = r'"?([\S]+)@.*:\n  version "(.+)"'
             elif name == "poetry.lock":
                 regex = r'\[\[package]]\nname = "(.+)"\nversion = "(.+)"'
             elif name == "pnpm-lock.yaml":
