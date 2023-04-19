@@ -5,16 +5,14 @@ from outdated.outdated.models import Dependency, DependencyVersion, Project
 
 class DependencySerializer(serializers.ModelSerializer):
     latest = serializers.ReadOnlyField()
-    last_checked = serializers.ReadOnlyField()
 
     class Meta:
         model = Dependency
-        fields = "__all__"
+        exclude = ("_latest", "last_checked")
 
 
 class DependencyVersionSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
-    release_date = serializers.ReadOnlyField()
     included_serializers = {
         "dependency": "outdated.outdated.serializers.DependencySerializer"
     }

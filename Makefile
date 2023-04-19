@@ -22,7 +22,7 @@ api-start: ## Start the API
 
 .PHONY: api-test
 api-test: ## Test the API
-	@docker compose run --rm api pytest --no-cov-on-fail --cov --create-db -vv
+	@docker compose run --rm api pytest --no-cov-on-fail --cov -vvv -s
 
 .PHONY: cleanup
 cleanup: ## Cleanup all docker containers, images, volumes and networks from the project

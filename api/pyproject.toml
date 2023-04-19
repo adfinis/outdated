@@ -8,7 +8,7 @@ readme = "../README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-django = "^4.1.8"
+django = "^4.1.0"
 django-environ = "^0.9.0"
 psycopg2-binary = "^2.9.5"
 djangorestframework = "^3.14.0"
@@ -32,12 +32,13 @@ flake8-docstrings = "1.6.0"
 flake8-string-format = "0.3.0"
 black = "22.12.0"
 pytest-django = "4.5.2"
-pytest = "7.2.1"
+pytest = "7.3.1"
 isort = "5.11.4"
 pytest-factoryboy = "2.5.1"
 pytest-cov = "^4.0.0"
-requests-mock = "^1.10.0"
 snakeviz = "^2.1.1"
+pdbpp = "^0.10.3"
+pytest-vcr = "^1.0.2"
 
 
 [tool.isort]
@@ -53,7 +54,7 @@ line_length = 88
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "outdated.settings"
-
+addopts = "--create-db --vcr-record=none" 
 
 [tool.coverage.run]
 source = ["."]

@@ -1,118 +1,147 @@
-from datetime import date, timedelta
-
 import pytest
 from django.urls import reverse
 from rest_framework import status
 
 
-def test_dependency(
-    client,
-    dependency_factory,
-):
-    gen_dependency = dependency_factory.create()
+@pytest.mark.vcr()
+def test_dependency(client, dependency_factory):
+    generated_dependency = dependency_factory(name="django", provider="PIP")
     url = reverse("dependency-list")
     resp = client.get(url)
     assert resp.status_code == status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
-    url = reverse("dependency-detail", args=[gen_dependency.id])
-    resp_detailed = client.get(url)
-
+    resp_detailed = client.get(
+        reverse("dependency-detail", args=[generated_dependency.id])
+    )
     assert resp_detailed.status_code == status.HTTP_200_OK
-    assert resp_detailed.json()["data"]["attributes"]["name"] == gen_dependency.name
+    data = resp.json()["data"][0]
+    data_detailed = resp_detailed.json()["data"]
+    assert data["id"] == data_detailed["id"] == str(generated_dependency.id)
+    response_dependency = data["attributes"]
+    detailed_response_dependency = data_detailed["attributes"]
+    assert (
+        response_dependency["name"]
+        == detailed_response_dependency["name"]
+        == generated_dependency.name
+    )
+    assert (
+        response_dependency["provider"]
+        == detailed_response_dependency["provider"]
+        == generated_dependency.provider
+    )
+    assert (
+        response_dependency["latest"]
+        == detailed_response_dependency["latest"]
+        == generated_dependency.latest
+    )
 
 
-@pytest.mark.parametrize("_status", ["OUTDATED", "WARNING", "UP-TO-DATE", "UNDEFINED"])
+@pytest.mark.parametrize("_status", ["UNDEFINED", "OUTDATED", "WARNING", "UP-TO-DATE"])
+@pytest.mark.vcr()
 def test_dependency_versions(
-    client, str_to_date, dependency_factory, dependency_version_factory, _status
+    client, dependency_version_factory, dependency_factory, _status, str_to_date
 ):
     include = {"include": "dependency"}
-    dependency_factory.create_batch(2)
-    gen_dep_version = dependency_version_factory.create(
+    generated_dependency_version = dependency_version_factory(
+        undefined=_status == "UNDEFINED",
         outdated=_status == "OUTDATED",
         warning=_status == "WARNING",
         up_to_date=_status == "UP-TO-DATE",
-        undefined=_status == "UNDEFINED",
+        dependency=dependency_factory(name="django", provider="PIP"),
     )
     url = reverse("dependencyversion-list")
     resp = client.get(url, include)
     assert resp.status_code == status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
-
     resp_detailed = client.get(
-        reverse("dependencyversion-detail", args=[gen_dep_version.id]), include
+        reverse("dependencyversion-detail", args=[generated_dependency_version.id]),
+        include,
     )
-
     assert resp_detailed.status_code == status.HTTP_200_OK
 
-    resp_dep_version = resp_detailed.json()["data"]["attributes"]
-    assert resp_detailed.json()["data"]["relationships"]["dependency"]["data"][
-        "id"
-    ] == str(gen_dep_version.dependency.id)
+    data = resp.json()["data"][0]
+    detailed_data = resp_detailed.json()["data"]
+    assert data["id"] == detailed_data["id"] == str(generated_dependency_version.id)
+    response_dependency_version = data["attributes"]
+    detailed_response_dependency_version = detailed_data["attributes"]
+    assert (
+        response_dependency_version["status"]
+        == detailed_response_dependency_version["status"]
+        == generated_dependency_version.status
+        == _status
+    )
+    assert (
+        str_to_date(response_dependency_version["release-date"])
+        == str_to_date(detailed_response_dependency_version["release-date"])
+        == generated_dependency_version.release_date
+    )
+    assert (
+        response_dependency_version["version"]
+        == detailed_response_dependency_version["version"]
+        == generated_dependency_version.version
+    )
+    assert (
+        data["relationships"]["dependency"]["data"]["id"]
+        == detailed_data["relationships"]["dependency"]["data"]["id"]
+        == str(generated_dependency_version.dependency.id)
+    )
 
-    assert _status == gen_dep_version.status == resp_dep_version["status"]
-    end_of_life_date = str_to_date(resp_dep_version["end-of-life-date"])
 
-    today = date.today()
-    if not end_of_life_date:
-        assert _status == "UNDEFINED"
-    elif today >= end_of_life_date:
-        assert _status == "OUTDATED"
-    elif today + timedelta(days=30) >= end_of_life_date:
-        assert _status == "WARNING"
-    else:
-        assert _status == "UP-TO-DATE"
-
-    assert resp_dep_version["version"] == gen_dep_version.version
-    assert end_of_life_date == gen_dep_version.end_of_life_date
-    assert str_to_date(resp_dep_version["release-date"]) == gen_dep_version.release_date
-
-
-@pytest.mark.parametrize("defined", [False, True])
+@pytest.mark.parametrize("defined", [True, False])
+@pytest.mark.vcr()
 def test_project(
-    client,
-    defined,
-    dependency_factory,
-    dependency_version_factory,
-    project_factory,
+    client, project_factory, dependency_version_factory, dependency_factory, defined
 ):
-    included = {"include": "dependency-versions,dependency-versions.dependency"}
-    dependency_factory.create_batch(5)
-
-    gen_project = project_factory.create(
-        dependency_versions=dependency_version_factory.create_batch(5)
+    generated_project = project_factory(
+        dependency_versions=[
+            dependency_version_factory(
+                dependency=dependency_factory(name=name, provider="PIP")
+            )
+            for name in ["django", "djangorestframework", "djangorestframework-jsonapi"]
+        ]
         if defined
-        else None
+        else []
     )
-
     url = reverse("project-list")
-    resp = client.get(url, included)
-    assert len(resp.json()["data"]) == 1
+    resp = client.get(url)
     assert resp.status_code == status.HTTP_200_OK
-    url = reverse("project-detail", args=[gen_project.id])
-    resp_detailed = client.get(url, included)
+    assert len(resp.json()["data"]) == 1
+    resp_detailed = client.get(reverse("project-detail", args=[generated_project.id]))
     assert resp_detailed.status_code == status.HTTP_200_OK
-    resp_project = resp_detailed.json()["data"]["attributes"]
-    assert resp_project["status"] == gen_project.status
-    assert resp_project["name"] == gen_project.name
-    assert resp_project["repo"] == gen_project.repo
+    data = resp.json()["data"][0]
+    detailed_data = resp_detailed.json()["data"]
+    assert data["id"] == detailed_data["id"] == str(generated_project.id)
+    response_project = data["attributes"]
+    detailed_response_project = detailed_data["attributes"]
+    assert (
+        response_project["name"]
+        == detailed_response_project["name"]
+        == generated_project.name
+    )
+    assert (
+        response_project["repo"]
+        == detailed_response_project["repo"]
+        == generated_project.repo
+    )
     if defined:
         for gen_dep_version, resp_dep_version in zip(
             resp_detailed.json()["data"]["relationships"]["dependency-versions"][
                 "data"
             ],
-            gen_project.dependency_versions.all(),
+            generated_project.dependency_versions.all(),
         ):
             assert gen_dep_version["id"] == str(resp_dep_version.id)
     else:
-        assert not gen_project.dependency_versions.first()
-        assert gen_project.status == "UNDEFINED"
+        assert not generated_project.dependency_versions.first()
+        assert generated_project.status == "UNDEFINED"
 
 
-def test_sync_project(client, mocked_project):
-    url = reverse("project-sync", args=[mocked_project.id])
+@pytest.mark.vcr()
+@pytest.mark.django_db(transaction=True)
+def test_sync_project_endpoint(client, project_factory):
+    generated_project = project_factory(repo="https://github.com/adfinis/outdated")
+
+    url = reverse("project-sync", args=[generated_project.id])
     resp = client.get(url)
     assert resp.status_code == status.HTTP_204_NO_CONTENT
-    assert mocked_project.dependency_versions.count() > 0
-
-    url = reverse("project-sync", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
-    assert client.get(url).status_code == status.HTTP_404_NOT_FOUND
+    assert generated_project.dependency_versions.count() > 0

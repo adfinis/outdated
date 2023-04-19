@@ -11,32 +11,6 @@ if os.path.exists(ENV_FILE):
 
 ENV = env.str("ENV", "prod")
 
-# Logging level DEBUG
-
-LOGGING = {
-    "version": 1,
-    "formatters": {
-        "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
-        },
-        "simple": {"format": "%(levelname)s %(message)s"},
-    },
-    "handlers": {
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-    },
-}
-
 
 def default(default_dev=env.NOTSET, default_prod=env.NOTSET):
     """Environment aware default."""

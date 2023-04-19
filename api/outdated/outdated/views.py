@@ -1,5 +1,3 @@
-from asyncio import run
-
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -19,15 +17,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def sync(self, request, pk=None):
-        try:
-            project = self.get_object()
-            run(ProjectSyncer(project).sync())
-            return Response(status=204)
-        except KeyError:
-            return Response(
-                status=429,
-                data={"error": "Github API rate limit exceeded"},  # pragma: no cover
-            )
+        project = self.get_object()
+        ProjectSyncer(project).sync()
+        return Response(status=204)
 
 
 class DependencyVersionViewSet(viewsets.ModelViewSet):

@@ -6,9 +6,40 @@ from factory.django import DjangoModelFactory
 
 from . import models
 
+DEPENDENCIES = [
+    ("django", "PIP"),
+    ("djangorestframework", "PIP"),
+    ("djangorestframework-jsonapi", "PIP"),
+    ("django-filter", "PIP"),
+    ("django-cors-headers", "PIP"),
+    ("django-extensions", "PIP"),
+    ("django-debug-toolbar", "PIP"),
+    ("django-environ", "PIP"),
+    ("flake8", "PIP"),
+    ("flake8-bugbear", "PIP"),
+    ("flake8-tuple", "PIP"),
+    ("flake8-isort", "PIP"),
+    ("flake8-debugger", "PIP"),
+    ("pytest", "PIP"),
+    ("pytest-django", "PIP"),
+    ("pytest-cov", "PIP"),
+    ("pytest-vcr", "PIP"),
+    ("pytest-factoryboy", "PIP"),
+    ("python-dateutil", "PIP"),
+    ("ember-source", "NPM"),
+    ("ember-cli", "NPM"),
+    ("ember-data", "NPM"),
+    ("ember-cli-htmlbars", "NPM"),
+    ("ember-cli-htmlbars-inline-precompile", "NPM"),
+    ("ember-cli-babel", "NPM"),
+    ("ember-cli-qunit", "NPM"),
+    ("@glimmer/component", "NPM"),
+    ("@glimmer/tracking", "NPM"),
+]
+
 
 class DependencyFactory(DjangoModelFactory):
-    name = Faker("name")
+    name, provider = random.choice(DEPENDENCIES)
 
     class Meta:
         model = models.Dependency
@@ -25,17 +56,28 @@ class DependencyVersionFactory(DjangoModelFactory):
         date_start=date.today() - timedelta(days=80),
         date_end=date.today(),
     )
-    end_of_life_date = Faker(
-        "date_between_dates",
-        date_start=release_date,
-        date_end=date.today() + timedelta(days=80),
-    )
 
     class Params:
-        outdated = Trait(end_of_life_date=date.today() - timedelta(days=80))
-        warning = Trait(end_of_life_date=date.today() + timedelta(days=20))
-        up_to_date = Trait(end_of_life_date=date.today() + timedelta(days=31))
-        undefined = Trait(end_of_life_date=None)
+        undefined = Trait(release_date=None)
+        outdated = Trait(version="0.0.0")
+        warning = Trait(
+            version="4.2.0",
+            release_date=date.today() - timedelta(days=365),
+            dependency=SubFactory(
+                DependencyFactory,
+                name="django",
+                provider="PIP",
+            ),
+        )
+        up_to_date = Trait(
+            version="4.2.0",
+            release_date=date.today(),
+            dependency=SubFactory(
+                DependencyFactory,
+                name="django",
+                provider="PIP",
+            ),
+        )
 
 
 class ProjectFactory(DjangoModelFactory):
@@ -44,9 +86,11 @@ class ProjectFactory(DjangoModelFactory):
 
     @post_generation
     def dependency_versions(self, create, extracted, **kwargs):
-        if not create or not extracted:
-            return
-        self.dependency_versions.add(*extracted)
+        if not create:
+            return  # pragma: no cover
+        if extracted:
+            for dependency_version in extracted:
+                self.dependency_versions.add(dependency_version)
 
     class Meta:
         model = models.Project

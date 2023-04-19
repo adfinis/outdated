@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.utils import timezone
 from requests import get
-from semver import compare
+from semver import Version, compare
 
 from outdated.models import UUIDModel
 
@@ -27,10 +27,19 @@ def get_yesterday():
     return timezone.now() - timedelta(days=1)
 
 
+def get_version(version: str):
+    if not Version.is_valid(version):
+        # turn invalid semver valid e.g. 4.2 into 4.2.0
+        version_list = version.split(".")
+        version = ".".join(version_list[:3] + ["0"] * (3 - len(version_list)))
+    return version
+
+
 def get_latest_version(dependency):
     url = PROVIDER_OPTIONS[dependency.provider]["url"] % dependency.name
     latest = PROVIDER_OPTIONS[dependency.provider]["latest"]
-    return get(url).json()[latest[0]][latest[1]]
+    version = get(url).json()[latest[0]][latest[1]]
+    return get_version(version)
 
 
 class Dependency(UUIDModel):
@@ -42,7 +51,7 @@ class Dependency(UUIDModel):
         default=get_yesterday,
     )
     provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
-    latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
+    _latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
 
     class Meta:
         ordering = ["name", "id"]
@@ -55,10 +64,11 @@ class Dependency(UUIDModel):
     def latest(self):
         if self.last_checked < timezone.now() - timedelta(days=1):
             self.last_checked = timezone.now()
+            self._latest = get_latest_version(self)
             self.save()
             return get_latest_version(self)
         else:
-            return super().latest
+            return self._latest
 
     def __str__(self):
         return self.name
@@ -85,11 +95,11 @@ class DependencyVersion(UUIDModel):
 
     @property
     def status(self):
-        if not self.dependency.latest:
+        if not self.release_date:
             return STATUS_OPTIONS["undefined"]
-        elif compare(self.version, self.dependency.latest) != 0:
+        elif compare(get_version(self.version), self.dependency.latest) != 0:
             return STATUS_OPTIONS["outdated"]
-        elif date.today() + timedelta(days=365) <= self.release_date:
+        elif date.today() - timedelta(days=365) >= self.release_date:
             return STATUS_OPTIONS["warning"]
         return STATUS_OPTIONS["up_to_date"]
 

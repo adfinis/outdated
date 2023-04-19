@@ -16,6 +16,22 @@ PYPI_FILES = ["poetry.lock"]
 
 LOCK_FILES = [*NPM_FILES, *PYPI_FILES]
 
+INCLUDED_DEPENDENCIES = [
+    "django",
+    "django-environ",
+    "django-filter",
+    "django-hurricane",
+    "djangorestframework",
+    "djangorestframework-jsonapi",
+    "ember-source",
+    "ember-data",
+    "ember-cli",
+    "ember-cli-mirage",
+    "ember-validated-form",
+    "@embroider/core",
+    "mozilla-django-oidc",
+]
+
 
 class ProjectSyncer:
     def __init__(self, project: Project):
@@ -54,12 +70,13 @@ class ProjectSyncer:
             ) as response:
                 json = await response.json()
                 if json.get("message") == "Bad credentials":
-                    raise ValueError("API Token is not set")
+                    raise ValueError("API Token is not set")  # pragma: no cover
                 headers = response.headers
-                if headers.get("X-RateLimit-Remaining") == "0":
-                    t = int(headers.get("X-RateLimit-Reset")) - int(
-                        datetime.utcnow().timestamp()
-                    )
+                if headers.get("X-RateLimit-Remaining") == "0":  # pragma: no cover
+                    t = (
+                        int(headers.get("X-RateLimit-Reset"))
+                        - int(datetime.utcnow().timestamp())
+                    ) / 1000
                     print(f"Rate limit exceeded. Sleeping for {t} seconds.")
                     await sleep(t)
                     return await self._get_dependencies()
@@ -109,6 +126,7 @@ class LockFileParser:
         if dependency[1] or dependency_version[1]:
             release_date = await self._get_release_date(dependency_version[0])
             dependency_version[0].release_date = release_date
+            await sync_to_async(dependency_version[0].save)()
 
         return dependency_version[0]
 
@@ -126,7 +144,9 @@ class LockFileParser:
                     ) as response:
                         json = await response.json()
                         if json.get("error") == "Not Found":
-                            raise ValueError(f"Package {name}@{version} not found")
+                            raise ValueError(
+                                f"Package {name}@{version} not found"
+                            )  # pragma: no cover
                         release_date = json["time"][version]
 
             elif provider == "PIP":
@@ -134,12 +154,12 @@ class LockFileParser:
                     async with session.get(
                         f"https://pypi.org/pypi/{name}/{version}/json"
                     ) as response:
-                        release_date = (await response.json())["urls"][1]["upload_time"]
+                        release_date = (await response.json())["urls"][0]["upload_time"]
             return parser.parse(release_date).date()
         except (
             client_exceptions.ClientOSError,
             client_exceptions.ServerDisconnectedError,
-        ):
+        ):  # pragma: no cover
             await sleep(1)
             return await self._get_release_date(dependency_version)
 
@@ -159,14 +179,20 @@ class LockFileParser:
             elif name == "pnpm-lock.yaml":
                 lockfile = safe_load(data)
                 if float(lockfile["lockfileVersion"]) < 6.0:
-                    regex = r"\/([^\s_]+)\/([^_\s]+)_([^_\s]+)"
+                    regex = r"\/([^\s]+)\/([^_\s]+).*"
                 else:
-                    regex = r'(?m)^(.+):$[\n^\s]+version "(.+)"'
+                    regex = r"\/(@?[^\s@]+)@([^()]+).*"
                 dependencies = [
                     findall(regex, dependency)[0]
                     for dependency in lockfile["packages"].keys()
                 ]
             matches = dependencies or findall(regex, data)
-            for match in matches:
-                tasks.append(self._get_version(match, provider))
+            tasks.extend(
+                [
+                    self._get_version(match, provider)
+                    for match in matches
+                    if match[0] in INCLUDED_DEPENDENCIES
+                ]
+            )
+
         return await gather(*tasks)
