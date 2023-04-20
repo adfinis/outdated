@@ -15,9 +15,10 @@ module('Integration | Component | dependency-compact', function (hooks) {
       .dom('[data-test-dependency-compact]')
       .hasText(`${this.version.dependency.name} ${this.version.version}`);
   });
+
   test('it renders correctly without dependency-version', async function (assert) {
     await render(hbs`<DependencyCompact />`);
 
-    assert.dom('[data-test-dependency-compact]').doesNotHaveAria('describedby');
+    assert.dom('[data-test-dependency-compact]').hasText('No dependencies yet');
   });
 });

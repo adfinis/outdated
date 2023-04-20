@@ -14,7 +14,8 @@ STATUS_OPTIONS = {
     "up_to_date": "UP-TO-DATE",
     "undefined": "UNDEFINED",
 }
-STATUS_CHOICES = [(i, status) for i, status in enumerate(STATUS_OPTIONS.keys())]
+
+STATUS_CHOICES = [(_, _) for _ in STATUS_OPTIONS.keys()]
 
 PROVIDER_OPTIONS = {
     "PIP": {"url": "https://pypi.org/pypi/%s/json", "latest": ("info", "version")},
@@ -125,8 +126,13 @@ class Project(UUIDModel):
 
     @property
     def status(self) -> str:
-        first = self.dependency_versions.first()
-        return first.status if first else STATUS_OPTIONS["undefined"]
+        for status in STATUS_OPTIONS.values():
+            if any(
+                dependency_version.status == status
+                for dependency_version in self.dependency_versions.all()
+            ):
+                return status
+        return STATUS_OPTIONS["undefined"]
 
     def __str__(self):
         return self.name

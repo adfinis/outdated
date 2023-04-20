@@ -17,7 +17,6 @@ module('Integration | Component | dependency-detailed', function (hooks) {
       .dom('[data-test-version-dependency-name]')
       .hasText(this.version.dependency.name);
     assert.dom('[data-test-version-version]').hasText(this.version.version);
-    assert.dom('[data-test-version-eol-date]').exists();
     assert.dom('[data-test-version-release-date]').exists();
   });
 });

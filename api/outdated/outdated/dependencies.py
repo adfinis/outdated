@@ -71,6 +71,8 @@ class ProjectSyncer:
                 json = await response.json()
                 if json.get("message") == "Bad credentials":
                     raise ValueError("API Token is not set")  # pragma: no cover
+                elif json.get("message") == "Validation Failed":
+                    raise ValueError("Repo does not exist")  # pragma: no cover
                 headers = response.headers
                 if headers.get("X-RateLimit-Remaining") == "0":  # pragma: no cover
                     t = (

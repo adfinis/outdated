@@ -1,13 +1,3 @@
-<span
-  data-test-dependency-compact
-  {{(if
-    @version
-    (modifier
-      'uk-tooltip'
-      (concat 'EOL: ' (format-date @version.endOfLifeDate))
-      pos='bottom'
-    )
-  )}}
->
+<span data-test-dependency-compact>
   {{or @version.dependency.name 'No dependencies yet'}}
   {{@version.version}}</span>

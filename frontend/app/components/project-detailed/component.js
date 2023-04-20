@@ -6,6 +6,7 @@ import fetch from 'fetch';
 export default class ProjectDetailedComponent extends Component {
   @service notification;
   @service store;
+  @service router;
   @tracked loading = false;
 
   @action
@@ -24,6 +25,6 @@ export default class ProjectDetailedComponent extends Component {
       this.notification.danger(e);
     }
     this.loading = false;
-    this.store.findRecord('project', this.args.project.id);
+    this.router.refresh();
   }
 }

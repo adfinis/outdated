@@ -4,12 +4,11 @@
       <tr>
         <th>Dependency</th>
         <th>Version</th>
-        <th>End Of Life Date</th>
         <th>Release Date</th>
       </tr>
     </thead>
     <tbody>
-      {{#each (sort-by 'endOfLifeDate:desc' @dependencyVersions) as |version|}}
+      {{#each @dependencyVersions as |version|}}
         <DependencyDetailed @version={{version}} />
       {{/each}}
 
