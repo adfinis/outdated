@@ -14,5 +14,7 @@ services:
   ember:
     build:
       context: ./ember/
+    ports:
+      - "4200:80"
 volumes:
   dbdata:

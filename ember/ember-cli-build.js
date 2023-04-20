@@ -1,5 +1,6 @@
 'use strict';
 
+const BrotliPlugin = require('brotli-webpack-plugin');
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
@@ -27,5 +28,10 @@ module.exports = function (defaults) {
         package: 'qunit',
       },
     ],
+    packagerOptions: {
+      webpackConfig: {
+        plugins: [new BrotliPlugin()],
+      },
+    },
   });
 };
