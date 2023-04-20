@@ -24,29 +24,25 @@ api-start: ## Start the API
 api-test: ## Test the API
 	@docker compose run --rm api pytest --no-cov-on-fail --cov -vvv -s
 
+.PHONY: build
+build: ## Build the containers
+	@docker compose build
+
 .PHONY: cleanup
 cleanup: ## Cleanup all docker containers, images, volumes and networks from the project
 	@docker compose down -v --timeout 0
 
 .PHONY: ember-lint
-ember-lint: ## Lint ember
-	@cd frontend/ && yarn lint
+ember-lint: ## lint the frontend
+	@docker-compose run --rm ember yarn lint
 
 .PHONY: ember-lint-fix
-ember-lint-fix: ## Lint and fix ember
-	@cd frontend/ && yarn lint:fix
-
-.PHONY: ember-start
-ember-start: ## Start ember using Mirage
-	@cd frontend/ && yarn ember s
-
-.PHONY: ember-start-using-api
-ember-start-using-api: ## Start ember using the API
-	@cd frontend/ && yarn && yarn ember server --proxy=http://localhost:8000
+ember-lint-fix: ## lint and fix the frontend
+	@docker-compose run --rm ember yarn lint:js --fix
 
 .PHONY: ember-test
-ember-test: ## Test ember
-	@cd frontend/ && yarn test
+ember-test: ## test the frontend
+	@docker-compose run --rm ember yarn test:ember
 
 .PHONY: lint
 lint: api-lint ember-lint ## Lint the API and ember
@@ -67,7 +63,8 @@ migrate-zero: ## Unapply all django migrations
 	@docker compose run --rm api python ./manage.py migrate outdated zero
 
 .PHONY: start
-start: api-start ember-start-using-api ## Start the application
+start: ## Start the application
+	@docker compose up -d --build
 
 .PHONY: test
 test: api-test ember-test ## Test the API and ember
