@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 
 if ENV == "dev":
     INSTALLED_APPS.append("django.contrib.staticfiles")
-    STATIC_URL = "/static/"
+    STATIC_URL = "/api/static/"
     STATIC_ROOT = "/app/static"
 
 

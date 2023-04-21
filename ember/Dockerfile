@@ -1,14 +1,21 @@
-FROM danlynn/ember-cli:4.11.0 as build
+FROM node:18.14.2 as build
 
-COPY package.json yarn.lock /myapp/
+
+EXPOSE 4200 
+
+WORKDIR /ember
+
+COPY package.json yarn.lock ./
 
 RUN yarn install
 
-COPY . /myapp/
+COPY . .
 
 RUN yarn build
 
+CMD ["yarn", "start"]
+
 FROM nginx:alpine
 
-COPY --from=build /myapp/dist /usr/share/nginx/html
+COPY --from=build /ember/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf

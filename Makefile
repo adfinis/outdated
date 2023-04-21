@@ -33,16 +33,20 @@ cleanup: ## Cleanup all docker containers, images, volumes and networks from the
 	@docker compose down -v --timeout 0
 
 .PHONY: ember-lint
-ember-lint: ## lint the frontend
-	@docker-compose run --rm ember yarn lint
+ember-lint: ## lint ember
+	@cd ember && yarn lint
 
 .PHONY: ember-lint-fix
-ember-lint-fix: ## lint and fix the frontend
-	@docker-compose run --rm ember yarn lint:js --fix
+ember-lint-fix: ## lint and fix ember
+	@cd ember && yarn lint:fix
+
+.PHONY: ember-start
+ember-start: ## Start ember
+	@docker compose up ember --build -d
 
 .PHONY: ember-test
 ember-test: ## test the frontend
-	@docker-compose run --rm ember yarn test:ember
+	@cd ember && yarn test:ember
 
 .PHONY: lint
 lint: api-lint ember-lint ## Lint the API and ember

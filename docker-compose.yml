@@ -14,7 +14,18 @@ services:
   ember:
     build:
       context: ./ember/
+
+  caddy:
+    image: caddy:2.6-alpine
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
     ports:
-      - "4200:80"
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+
 volumes:
   dbdata:
+  caddy_data:
+  caddy_config:
