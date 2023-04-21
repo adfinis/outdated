@@ -19,17 +19,17 @@ LOCK_FILES = [*NPM_FILES, *PYPI_FILES]
 
 INCLUDED_DEPENDENCIES = [
     "django",
-    "django-environ",
-    "django-filter",
-    "django-hurricane",
+    # "django-environ",
+    # "django-filter",
+    # "django-hurricane",
     "djangorestframework",
     "djangorestframework-jsonapi",
     "ember-source",
     "ember-data",
     "ember-cli",
-    "ember-cli-mirage",
+    # "ember-cli-mirage",
     "ember-validated-form",
-    "@embroider/core",
+    # "@embroider/core",
     "mozilla-django-oidc",
 ]
 
