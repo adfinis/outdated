@@ -2,6 +2,7 @@ from asyncio import gather, run, sleep
 from datetime import datetime
 from os.path import basename
 from re import findall
+from sys import stdout
 
 from aiohttp import ClientSession, client_exceptions
 from asgiref.sync import sync_to_async
