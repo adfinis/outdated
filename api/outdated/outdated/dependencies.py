@@ -2,7 +2,6 @@ from asyncio import gather, run, sleep
 from datetime import datetime
 from os.path import basename
 from re import findall
-from sys import stdout
 
 from aiohttp import ClientSession, client_exceptions
 from asgiref.sync import sync_to_async
@@ -19,18 +18,12 @@ LOCK_FILES = [*NPM_FILES, *PYPI_FILES]
 
 INCLUDED_DEPENDENCIES = [
     "django",
-    # "django-environ",
-    # "django-filter",
-    # "django-hurricane",
     "djangorestframework",
     "djangorestframework-jsonapi",
     "ember-source",
     "ember-data",
     "ember-cli",
-    # "ember-cli-mirage",
     "ember-validated-form",
-    # "@embroider/core",
-    "mozilla-django-oidc",
 ]
 
 
