@@ -9,7 +9,7 @@ from dateutil import parser
 from django.conf import settings
 from yaml import safe_load
 
-from outdated.outdated.models import Dependency, DependencyVersion, Project
+from outdated.outdated.models import Dependency, Version, Project
 
 NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
 PYPI_FILES = ["poetry.lock"]
@@ -94,7 +94,7 @@ class ProjectSyncer:
     async def a_sync(self):
         """Sync the project with the remote project."""
         dependencies = await self._get_dependencies()
-        await sync_to_async(self.project.dependency_versions.set)(dependencies)
+        await sync_to_async(self.project.versioned_dependencies.set)(dependencies)
 
 
 class LockFileParser:
@@ -115,10 +115,11 @@ class LockFileParser:
             name=dependency_name_version[0], provider=provider
         )
 
-        dependency_version = await DependencyVersion.objects.aget_or_create(
+        dependency_version = await Version.aget_or_create_full_dependency(
             dependency=dependency[0],
             version=dependency_name_version[1],
         )
+
         if dependency[1] or dependency_version[1]:
             release_date = await self._get_release_date(dependency_version[0])
             dependency_version[0].release_date = release_date
@@ -126,11 +127,11 @@ class LockFileParser:
 
         return dependency_version[0]
 
-    async def _get_release_date(self, dependency_version: DependencyVersion):
+    async def _get_release_date(self, dependency_version: Version):
         """Get the release date of a dependency."""
-        name = dependency_version.dependency.name
-        version = dependency_version.version
-        provider = dependency_version.dependency.provider
+        name = dependency_version.release_version.dependency.name
+        version = dependency_version.full_version
+        provider = dependency_version.release_version.dependency.provider
 
         try:
             if provider == "NPM":

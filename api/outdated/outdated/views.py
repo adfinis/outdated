@@ -3,10 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from outdated.outdated.dependencies import ProjectSyncer
-from outdated.outdated.models import Dependency, DependencyVersion, Project
+from outdated.outdated.models import Dependency, ReleaseVersion, Version, Project
 from outdated.outdated.serializers import (
     DependencySerializer,
-    DependencyVersionSerializer,
+    VersionSerializer,
+    ReleaseVersionSerializer,
     ProjectSerializer,
 )
 
@@ -22,9 +23,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(status=204)
 
 
-class DependencyVersionViewSet(viewsets.ModelViewSet):
-    queryset = DependencyVersion.objects.all()
-    serializer_class = DependencyVersionSerializer
+class ReleaseVersionViewSet(viewsets.ModelViewSet):
+    queryset = ReleaseVersion.objects.all()
+    serializer_class = ReleaseVersionSerializer
+
+
+class VersionViewSet(viewsets.ModelViewSet):
+    queryset = Version.objects.all()
+    serializer_class = VersionSerializer
 
 
 class DependencyViewSet(viewsets.ModelViewSet):

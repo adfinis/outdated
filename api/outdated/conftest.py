@@ -7,7 +7,8 @@ from rest_framework.test import APIClient
 from .outdated import factories
 
 register(factories.DependencyFactory)
-register(factories.DependencyVersionFactory)
+register(factories.VersionFactory)
+register(factories.ReleaseVersionFactory)
 register(factories.ProjectFactory)
 
 

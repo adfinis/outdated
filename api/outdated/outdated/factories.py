@@ -45,9 +45,9 @@ class DependencyFactory(DjangoModelFactory):
         model = models.Dependency
 
 
-class DependencyVersionFactory(DjangoModelFactory):
+class ReleaseVersionFactory(DjangoModelFactory):
     class Meta:
-        model = models.DependencyVersion
+        model = models.ReleaseVersion
 
     dependency = SubFactory(DependencyFactory)
     version = ".".join([str(random.randint(0, 9)) for _ in range(3)])
@@ -78,6 +78,11 @@ class DependencyVersionFactory(DjangoModelFactory):
                 provider="PIP",
             ),
         )
+
+
+class VersionFactory(DjangoModelFactory):
+    class Meta:
+        model = models.Version
 
 
 class ProjectFactory(DjangoModelFactory):

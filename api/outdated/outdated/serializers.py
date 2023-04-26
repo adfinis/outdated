@@ -1,31 +1,39 @@
 from rest_framework_json_api import serializers
 
-from outdated.outdated.models import Dependency, DependencyVersion, Project
+from outdated.outdated.models import Dependency, Version, ReleaseVersion, Project
 
 
 class DependencySerializer(serializers.ModelSerializer):
-    latest = serializers.ReadOnlyField()
-
     class Meta:
         model = Dependency
-        exclude = ("_latest", "last_checked")
+        fields = "__all__"
 
 
-class DependencyVersionSerializer(serializers.ModelSerializer):
+class ReleaseVersionSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
     included_serializers = {
         "dependency": "outdated.outdated.serializers.DependencySerializer"
     }
 
     class Meta:
-        model = DependencyVersion
+        model = ReleaseVersion
+        exclude = ("_latest_patch_version", "last_checked")
+
+
+class VersionSerializer(serializers.ModelSerializer):
+    included_serializers = {
+        "release_version": "outdated.outdated.serializers.ReleaseVersionSerializer"
+    }
+
+    class Meta:
+        model = Version
         fields = "__all__"
 
 
 class ProjectSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
     included_serializers = {
-        "dependency_versions": "outdated.outdated.serializers.DependencyVersionSerializer",
+        "versioned_dependencies": "outdated.outdated.serializers.VersionSerializer",
     }
 
     class Meta:

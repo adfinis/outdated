@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.utils import timezone
 from requests import get
-from semver import Version, compare
+from semver import Version as SemVer
 
 from outdated.models import UUIDModel
 
@@ -21,6 +21,7 @@ PROVIDER_OPTIONS = {
     "PIP": {"url": "https://pypi.org/pypi/%s/json", "latest": ("info", "version")},
     "NPM": {"url": "https://registry.npmjs.org/%s", "latest": ("dist-tags", "latest")},
 }
+
 PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()]
 
 
@@ -29,7 +30,7 @@ def get_yesterday():
 
 
 def get_version(version: str):
-    if not Version.is_valid(version):
+    if not SemVer.is_valid(version):
         # turn invalid semver valid e.g. 4.2 into 4.2.0
         version_list = version.split(".")
         version = ".".join(version_list[:3] + ["0"] * (3 - len(version_list)))
@@ -43,16 +44,24 @@ def get_latest_version(dependency):
     return get_version(version)
 
 
+def get_latest_patch_version(lts_version):
+    url = (
+        PROVIDER_OPTIONS[lts_version.dependency.provider]["url"]
+        % lts_version.dependency.name
+    )
+    return sorted(
+        [
+            version
+            for version in get(url).json().get("releases").keys()
+            or get(url).json().get("versions").keys()
+            if version.startswith(f"{lts_version.major}.{lts_version.minor}")
+        ],
+    )[-1]
+
+
 class Dependency(UUIDModel):
     name = models.CharField(max_length=100)
-    last_checked = models.DateTimeField(
-        editable=False,
-        null=True,
-        blank=True,
-        default=get_yesterday,
-    )
     provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
-    _latest = models.CharField(max_length=100, editable=False, null=True, blank=True)
 
     class Meta:
         ordering = ["name", "id"]
@@ -61,57 +70,100 @@ class Dependency(UUIDModel):
             models.Index(fields=["name", "provider"], name="name_provider_idx"),
         ]
 
-    @property
-    def latest(self):
-        if self.last_checked < timezone.now() - timedelta(days=1):
-            self.last_checked = timezone.now()
-            self._latest = get_latest_version(self)
-            self.save()
-            return get_latest_version(self)
-        else:
-            return self._latest
-
     def __str__(self):
         return self.name
 
 
-class DependencyVersion(UUIDModel):
+class ReleaseVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
-    version = models.CharField(max_length=100)
+    major_version = models.CharField(max_length=100)
+    minor_version = models.CharField(max_length=100)
+    _latest_patch_version = models.CharField(max_length=100, editable=False)
+    last_checked = models.DateTimeField(
+        editable=False,
+        null=True,
+        blank=True,
+        default=get_yesterday,
+    )
+
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
-    release_date = models.DateField(null=True, blank=True)
+    end_of_life = models.DateField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.dependency.name} {self.version}"
+
+    @property
+    def version(self):
+        return f"{self.major_version}.{self.minor_version}"
+
+    @property
+    def newest_patch_version(self):
+        if self.last_checked < timezone.now() - timedelta(days=1):
+            self.last_checked = timezone.now()
+            self._latest_patch_version = get_latest_patch_version(self)
+            self.save()
+        return self._latest_patch_version
 
     class Meta:
         ordering = [
-            "release_date",
+            "end_of_life",
             "dependency__name",
-            "version",
+            "major_version",
+            "minor_version",
         ]
-        unique_together = ("dependency", "version")
+        unique_together = ("dependency", "major_version", "minor_version")
+
         indexes = [
             models.Index(
-                fields=["dependency", "version"], name="dependency_version_idx"
+                fields=["dependency", "major_version", "minor_version"],
+                name="dependency_version_idx",
             ),
         ]
 
     @property
     def status(self):
-        if not self.release_date:
+        if not self.end_of_life:
             return STATUS_OPTIONS["undefined"]
-        elif compare(get_version(self.version), self.dependency.latest) != 0:
+        elif date.today() >= self.end_of_life:
             return STATUS_OPTIONS["outdated"]
-        elif date.today() - timedelta(days=365) >= self.release_date:
+        elif date.today() - timedelta(days=150) >= self.end_of_life:
             return STATUS_OPTIONS["warning"]
         return STATUS_OPTIONS["up_to_date"]
 
+
+class Version(UUIDModel):
+    release_version = models.ForeignKey(ReleaseVersion, on_delete=models.CASCADE)
+    patch_version = models.CharField(max_length=100)
+    release_date = models.DateField(null=True, blank=True)
+
     def __str__(self):
-        return self.dependency.name + self.version
+        return f"{self.release_version.dependency.name} {self.full_version}"
+
+    @property
+    def full_version(self):
+        return f"{self.release_version.version}.{self.patch_version}"
+
+    @classmethod
+    async def aget_or_create_full_dependency(cls, **kwargs):
+        major, minor, patch = SemVer.parse(kwargs.get("version")).to_tuple()[0:3]
+        dependency = kwargs.get("dependency")
+        release_version = (
+            await ReleaseVersion.objects.aget_or_create(
+                dependency=dependency,
+                major_version=major,
+                minor_version=minor,
+            )
+        )[0]
+        return await cls.objects.aget_or_create(
+            release_version=release_version,
+            patch_version=patch,
+        )
 
 
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
     repo = models.URLField(max_length=100, unique=True)
-    dependency_versions = models.ManyToManyField(DependencyVersion, blank=True)
+    versioned_dependencies = models.ManyToManyField(Version, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
 
     class Meta:
