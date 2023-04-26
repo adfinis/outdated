@@ -59,8 +59,8 @@ class ProjectSyncer:
                     == "This endpoint requires you to be authenticated."
                 ):
                     raise ValueError("API Token is not set")  # pragma: no cover
-                elif json.get("message") == "timedout":
-                    return await self._get_dependencies()
+                elif json.get("errors") and json["errors"][0]["message"] == "timedout":
+                    return await self._get_dependencies()  # pragma: no cover
                 elif json.get("errors"):
                     raise ValueError(json)  # pragma: no cover
                 headers = response.headers
