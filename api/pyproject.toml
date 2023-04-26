@@ -54,7 +54,7 @@ line_length = 88
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "outdated.settings"
-addopts = "--create-db --vcr-record=none" 
+addopts = "--create-db --vcr-record=once" 
 
 [tool.coverage.run]
 source = ["."]
@@ -73,6 +73,7 @@ omit = [
     "*/apps.py",
     "manage.py",
     "outdated/wsgi.py",
+    "pdbrc.py",
 ]
 show_missing = true
 

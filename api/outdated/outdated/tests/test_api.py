@@ -5,7 +5,7 @@ from rest_framework import status
 
 @pytest.mark.vcr()
 def test_dependency(client, dependency_factory):
-    generated_dependency = dependency_factory(name="django", provider="PIP")
+    generated_dependency = dependency_factory()
     url = reverse("dependency-list")
     resp = client.get(url)
     assert resp.status_code == status.HTTP_200_OK
@@ -29,78 +29,101 @@ def test_dependency(client, dependency_factory):
         == detailed_response_dependency["provider"]
         == generated_dependency.provider
     )
-    assert (
-        response_dependency["latest"]
-        == detailed_response_dependency["latest"]
-        == generated_dependency.latest
-    )
 
 
 @pytest.mark.parametrize("_status", ["UNDEFINED", "OUTDATED", "WARNING", "UP-TO-DATE"])
 @pytest.mark.vcr()
-def test_dependency_versions(
-    client, dependency_version_factory, dependency_factory, _status, str_to_date
-):
+def test_release_version(client, release_version_factory, _status):
     include = {"include": "dependency"}
-    generated_dependency_version = dependency_version_factory(
+    generated_release_version = release_version_factory(
         undefined=_status == "UNDEFINED",
         outdated=_status == "OUTDATED",
         warning=_status == "WARNING",
         up_to_date=_status == "UP-TO-DATE",
-        dependency=dependency_factory(name="django", provider="PIP"),
     )
-    url = reverse("dependencyversion-list")
+    url = reverse("releaseversion-list")
     resp = client.get(url, include)
     assert resp.status_code == status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
     resp_detailed = client.get(
-        reverse("dependencyversion-detail", args=[generated_dependency_version.id]),
+        reverse("releaseversion-detail", args=[generated_release_version.id]),
         include,
     )
     assert resp_detailed.status_code == status.HTTP_200_OK
 
     data = resp.json()["data"][0]
     detailed_data = resp_detailed.json()["data"]
-    assert data["id"] == detailed_data["id"] == str(generated_dependency_version.id)
-    response_dependency_version = data["attributes"]
-    detailed_response_dependency_version = detailed_data["attributes"]
+    assert data["id"] == detailed_data["id"] == str(generated_release_version.id)
+    response_release_version = data["attributes"]
+    detailed_response_release_version = detailed_data["attributes"]
     assert (
-        response_dependency_version["status"]
-        == detailed_response_dependency_version["status"]
-        == generated_dependency_version.status
+        response_release_version["status"]
+        == detailed_response_release_version["status"]
+        == generated_release_version.status
         == _status
     )
+
     assert (
-        str_to_date(response_dependency_version["release-date"])
-        == str_to_date(detailed_response_dependency_version["release-date"])
-        == generated_dependency_version.release_date
+        response_release_version["end-of-life"]
+        == detailed_response_release_version["end-of-life"]
+        == (
+            str(generated_release_version.end_of_life)
+            if not _status == "UNDEFINED"
+            else None
+        )
     )
     assert (
-        response_dependency_version["version"]
-        == detailed_response_dependency_version["version"]
-        == generated_dependency_version.version
+        response_release_version["major-version"]
+        == detailed_response_release_version["major-version"]
+        == generated_release_version.major_version
+    )
+    assert (
+        response_release_version["minor-version"]
+        == detailed_response_release_version["minor-version"]
+        == generated_release_version.minor_version
     )
     assert (
         data["relationships"]["dependency"]["data"]["id"]
         == detailed_data["relationships"]["dependency"]["data"]["id"]
-        == str(generated_dependency_version.dependency.id)
+        == str(generated_release_version.dependency.id)
+    )
+
+
+def test_version(client, version_factory):
+    generated_version = version_factory()
+    url = reverse("version-list")
+    resp = client.get(url)
+    assert resp.status_code == status.HTTP_200_OK
+    assert len(resp.json()["data"]) == 1
+    resp_detailed = client.get(reverse("version-detail", args=[generated_version.id]))
+    assert resp_detailed.status_code == status.HTTP_200_OK
+    data = resp.json()["data"][0]
+    detailed_data = resp_detailed.json()["data"]
+    assert data["id"] == detailed_data["id"] == str(generated_version.id)
+    response_version = data["attributes"]
+    detailed_response_version = detailed_data["attributes"]
+    assert (
+        response_version["patch-version"]
+        == detailed_response_version["patch-version"]
+        == generated_version.patch_version
+    )
+    assert (
+        response_version["release-date"]
+        == detailed_response_version["release-date"]
+        == str(generated_version.release_date)
+    )
+    assert (
+        data["relationships"]["release-version"]["data"]["id"]
+        == detailed_data["relationships"]["release-version"]["data"]["id"]
+        == str(generated_version.release_version.id)
     )
 
 
 @pytest.mark.parametrize("defined", [True, False])
 @pytest.mark.vcr()
-def test_project(
-    client, project_factory, dependency_version_factory, dependency_factory, defined
-):
+def test_project(client, project_factory, version_factory, defined):
     generated_project = project_factory(
-        dependency_versions=[
-            dependency_version_factory(
-                dependency=dependency_factory(name=name, provider="PIP")
-            )
-            for name in ["django", "djangorestframework", "djangorestframework-jsonapi"]
-        ]
-        if defined
-        else []
+        versioned_dependencies=[version_factory()] if defined else []
     )
     url = reverse("project-list")
     resp = client.get(url)
@@ -125,14 +148,14 @@ def test_project(
     )
     if defined:
         for gen_dep_version, resp_dep_version in zip(
-            resp_detailed.json()["data"]["relationships"]["dependency-versions"][
+            resp_detailed.json()["data"]["relationships"]["versioned-dependencies"][
                 "data"
             ],
-            generated_project.dependency_versions.all(),
+            generated_project.versioned_dependencies.all(),
         ):
             assert gen_dep_version["id"] == str(resp_dep_version.id)
     else:
-        assert not generated_project.dependency_versions.first()
+        assert not generated_project.versioned_dependencies.first()
         assert generated_project.status == "UNDEFINED"
 
 
@@ -140,8 +163,7 @@ def test_project(
 @pytest.mark.django_db(transaction=True)
 def test_sync_project_endpoint(client, project_factory):
     generated_project = project_factory(repo="https://github.com/adfinis/outdated")
-
     url = reverse("project-sync", args=[generated_project.id])
     resp = client.get(url)
     assert resp.status_code == status.HTTP_204_NO_CONTENT
-    assert generated_project.dependency_versions.count() > 0
+    assert generated_project.versioned_dependencies.count() > 0
