@@ -8,7 +8,6 @@ from asgiref.sync import sync_to_async
 from dateutil import parser
 from django.conf import settings
 from yaml import safe_load
-
 from outdated.outdated.models import Dependency, Version, Project
 
 NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
@@ -31,41 +30,39 @@ class ProjectSyncer:
         self.project = project
         self.owner, self.name = findall(r"\/([^\/]+)\/([^\/]+)$", self.project.repo)[0]
 
-    async def _get_lockfile_data(self, lockfile):
-        async with ClientSession(
-            headers={
-                "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
-                "Accept": "application/vnd.github+json",
-                "X-GitHub-Api-Version": "2022-11-28",
-            }
-        ) as session:
-            async with session.get(lockfile["url"]) as response:
-                url = (await response.json())["download_url"]
-                name = basename(url)
-                async with session.get(url) as lockfile_response:
-                    return {
-                        "name": name,
-                        "data": await lockfile_response.text(),
-                    }
-
     async def _get_dependencies(self):
         """Get the dependencies from the lockfiles."""
-        q = f"{' '.join(['filename:'+lockfile for lockfile in LOCK_FILES])} repo:{self.owner}/{self.name}"
-        async with ClientSession(
-            headers={
-                "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
-                "Accept": "application/vnd.github+json",
-                "X-GitHub-Api-Version": "2022-11-28",
-            }
-        ) as session:
-            async with session.get(
-                "https://api.github.com/search/code", params={"q": q}
+        q = f"""
+        {{
+            repository(owner: "{self.owner}", name: "{self.name}") {{
+                dependencyGraphManifests {{
+                    nodes {{
+                        blobPath
+                    }}
+                }}
+            }}
+        }}
+        """
+
+        async with ClientSession() as session:
+            async with session.post(
+                "https://api.github.com/graphql",
+                headers={
+                    "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
+                    "Accept": "application/vnd.github.hawkgirl-preview+json",
+                },
+                json={"query": q},
             ) as response:
                 json = await response.json()
-                if json.get("message") == "Bad credentials":
+                if (
+                    json.get("message")
+                    == "This endpoint requires you to be authenticated."
+                ):
                     raise ValueError("API Token is not set")  # pragma: no cover
-                elif json.get("message") == "Validation Failed":
-                    raise ValueError("Repo does not exist")  # pragma: no cover
+                elif json.get("message") == "timedout":
+                    return await self._get_dependencies()
+                elif json.get("errors"):
+                    raise ValueError(json)  # pragma: no cover
                 headers = response.headers
                 if headers.get("X-RateLimit-Remaining") == "0":  # pragma: no cover
                     t = (
@@ -78,12 +75,20 @@ class ProjectSyncer:
 
                 lockfiles = []
                 lockfile_tasks = []
-                for lockfile in json["items"]:
-                    lockfile_tasks.append(session.get(lockfile["url"]))
+                for lockfile in json["data"]["repository"]["dependencyGraphManifests"][
+                    "nodes"
+                ]:
+                    if basename(lockfile["blobPath"]) in LOCK_FILES:
+                        url = f"https://raw.githubusercontent.com/{lockfile['blobPath'].replace(f'blob/', f'')}"
+                        lockfile_tasks.append(session.get(url))
                 for lockfile_task in await gather(*lockfile_tasks):
-                    lockfile = await lockfile_task.json()
-                    lockfile_data = await self._get_lockfile_data(lockfile)
-                    lockfiles.append(lockfile_data)
+                    lockfiles.append(
+                        {
+                            "name": basename(str(lockfile_task.url)),
+                            "data": await lockfile_task.text(),
+                        }
+                    )
+
                 return await LockFileParser(lockfiles).parse()
 
     def sync(self):
@@ -138,9 +143,9 @@ class LockFileParser:
                         json = await response.json()
                         if json.get("error") == "Not Found":
                             raise ValueError(
-                                f"Package {name}@{version} not found"
+                                f"Package {version} not found"
                             )  # pragma: no cover
-                        release_date = json["time"][version]
+                        release_date = json["time"][version.full_version]
 
             elif provider == "PIP":
                 async with ClientSession() as session:
@@ -169,7 +174,7 @@ class LockFileParser:
                 regex = r'"?([\S]+)@.*:\n  version "(.+)"'
             elif name == "poetry.lock":
                 regex = r'\[\[package]]\nname = "(.+)"\nversion = "(.+)"'
-            elif name == "pnpm-lock.yaml":
+            elif name == "pnpm-lock.yaml":  # pragma: no cover
                 lockfile = safe_load(data)
                 if float(lockfile["lockfileVersion"]) < 6.0:
                     regex = r"\/([^\s]+)\/([^_\s]+).*"
