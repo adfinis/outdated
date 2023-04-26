@@ -189,8 +189,8 @@ class Project(UUIDModel):
     def status(self) -> str:
         for status in STATUS_OPTIONS.values():
             if any(
-                dependency_version.status == status
-                for dependency_version in self.dependency_versions.all()
+                versioned_dependency.status == status
+                for versioned_dependency in self.versioned_dependencies.all()
             ):
                 return status
         return STATUS_OPTIONS["undefined"]
