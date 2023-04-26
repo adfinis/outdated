@@ -50,37 +50,26 @@ class ReleaseVersionFactory(DjangoModelFactory):
         model = models.ReleaseVersion
 
     dependency = SubFactory(DependencyFactory)
-    version = ".".join([str(random.randint(0, 9)) for _ in range(3)])
-    release_date = Faker(
-        "date_between_dates",
-        date_start=date.today() - timedelta(days=80),
-        date_end=date.today(),
-    )
+    end_of_life = Faker("date_this_year")
+    major_version = random.randint(0, 10)
+    minor_version = random.randint(0, 10)
 
     class Params:
-        undefined = Trait(release_date=None)
-        outdated = Trait(version="0.0.0")
+        undefined = Trait(end_of_life=None)
+        outdated = Trait(end_of_life=date.today())
         warning = Trait(
-            version="4.2.0",
-            release_date=date.today() - timedelta(days=365),
-            dependency=SubFactory(
-                DependencyFactory,
-                name="django",
-                provider="PIP",
-            ),
+            end_of_life=date.today() + timedelta(days=150),
         )
         up_to_date = Trait(
-            version="4.2.0",
-            release_date=date.today(),
-            dependency=SubFactory(
-                DependencyFactory,
-                name="django",
-                provider="PIP",
-            ),
+            end_of_life=date.today() + timedelta(days=365),
         )
 
 
 class VersionFactory(DjangoModelFactory):
+    release_version = SubFactory(ReleaseVersionFactory)
+    patch_version = random.randint(0, 28)
+    release_date = Faker("date_this_year")
+
     class Meta:
         model = models.Version
 
@@ -90,12 +79,12 @@ class ProjectFactory(DjangoModelFactory):
     repo = Sequence(lambda n: "https://github.com/userorcompany/%s/" % n)
 
     @post_generation
-    def dependency_versions(self, create, extracted, **kwargs):
+    def versioned_dependencies(self, create, extracted, **kwargs):
         if not create:
             return  # pragma: no cover
         if extracted:
-            for dependency_version in extracted:
-                self.dependency_versions.add(dependency_version)
+            for versioned_dependency in extracted:
+                self.versioned_dependencies.add(versioned_dependency)
 
     class Meta:
         model = models.Project
