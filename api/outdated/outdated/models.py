@@ -126,7 +126,7 @@ class ReleaseVersion(UUIDModel):
             return STATUS_OPTIONS["undefined"]
         elif date.today() >= self.end_of_life:
             return STATUS_OPTIONS["outdated"]
-        elif date.today() - timedelta(days=150) >= self.end_of_life:
+        elif date.today() + timedelta(days=150) >= self.end_of_life:
             return STATUS_OPTIONS["warning"]
         return STATUS_OPTIONS["up_to_date"]
 
