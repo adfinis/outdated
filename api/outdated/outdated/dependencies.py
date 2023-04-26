@@ -23,7 +23,6 @@ INCLUDED_DEPENDENCIES = [
     "ember-source",
     "ember-data",
     "ember-cli",
-    "ember-validated-form",
 ]
 
 
@@ -109,29 +108,26 @@ class LockFileParser:
             return "NPM"
         return "PIP"
 
-    async def _get_version(self, dependency_name_version: tuple, provider: str):
-        release_date = None
+    async def _get_version(self, requirements: tuple, provider: str):
         dependency = await Dependency.objects.aget_or_create(
-            name=dependency_name_version[0], provider=provider
+            name=requirements[0], provider=provider
         )
 
-        dependency_version = await Version.aget_or_create_full_dependency(
+        version = await Version.aget_or_create_full_dependency(
             dependency=dependency[0],
-            version=dependency_name_version[1],
+            version=requirements[1],
         )
 
-        if dependency[1] or dependency_version[1]:
-            release_date = await self._get_release_date(dependency_version[0])
-            dependency_version[0].release_date = release_date
-            await sync_to_async(dependency_version[0].save)()
+        if dependency[1] or version[1]:
+            version[0].release_date = await self._get_release_date(version[0])
+            await sync_to_async(version[0].save)()
 
-        return dependency_version[0]
+        return version[0]
 
-    async def _get_release_date(self, dependency_version: Version):
+    async def _get_release_date(self, version: Version):
         """Get the release date of a dependency."""
-        name = dependency_version.release_version.dependency.name
-        version = dependency_version.full_version
-        provider = dependency_version.release_version.dependency.provider
+        name = version.release_version.dependency.name
+        provider = version.release_version.dependency.provider
 
         try:
             if provider == "NPM":
@@ -149,7 +145,7 @@ class LockFileParser:
             elif provider == "PIP":
                 async with ClientSession() as session:
                     async with session.get(
-                        f"https://pypi.org/pypi/{name}/{version}/json"
+                        f"https://pypi.org/pypi/{name}/{version.full_version}/json"
                     ) as response:
                         release_date = (await response.json())["urls"][0]["upload_time"]
             return parser.parse(release_date).date()
@@ -158,7 +154,7 @@ class LockFileParser:
             client_exceptions.ServerDisconnectedError,
         ):  # pragma: no cover
             await sleep(1)
-            return await self._get_release_date(dependency_version)
+            return await self._get_release_date(version)
 
     async def parse(self):
         """Parse the lockfile and return a dictionary of dependencies."""
