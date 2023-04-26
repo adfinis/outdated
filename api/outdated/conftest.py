@@ -18,18 +18,6 @@ def client(db):
     return APIClient()
 
 
-@pytest.fixture
-def str_to_date():
-    """Convert a string to a date."""
-
-    def _str_to_date(date):
-        if date:
-            return datetime.strptime(date, "%Y-%m-%d").date()
-        return None  # pragma: no cover
-
-    return _str_to_date
-
-
 @pytest.fixture(scope="module")
 def vcr_config():
     return {
