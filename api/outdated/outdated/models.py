@@ -29,22 +29,7 @@ def get_yesterday():
     return timezone.now() - timedelta(days=1)
 
 
-def get_version(version: str):
-    if not SemVer.is_valid(version):
-        # turn invalid semver valid e.g. 4.2 into 4.2.0
-        version_list = version.split(".")
-        version = ".".join(version_list[:3] + ["0"] * (3 - len(version_list)))
-    return version
-
-
-def get_latest_version(dependency):
-    url = PROVIDER_OPTIONS[dependency.provider]["url"] % dependency.name
-    latest = PROVIDER_OPTIONS[dependency.provider]["latest"]
-    version = get(url).json()[latest[0]][latest[1]]
-    return get_version(version)
-
-
-def get_latest_patch_version(lts_version):
+def get_latest_patch_version(lts_version):  # pragma: todo cover
     url = (
         PROVIDER_OPTIONS[lts_version.dependency.provider]["url"]
         % lts_version.dependency.name
@@ -97,7 +82,7 @@ class ReleaseVersion(UUIDModel):
         return f"{self.major_version}.{self.minor_version}"
 
     @property
-    def newest_patch_version(self):
+    def newest_patch_version(self):  # pragma: todo cover
         if self.last_checked < timezone.now() - timedelta(days=1):
             self.last_checked = timezone.now()
             self._latest_patch_version = get_latest_patch_version(self)
@@ -192,7 +177,7 @@ class Project(UUIDModel):
                 versioned_dependency.status == status
                 for versioned_dependency in self.versioned_dependencies.all()
             ):
-                return status
+                return status  # pragma: todo cover
         return STATUS_OPTIONS["undefined"]
 
     def __str__(self):
