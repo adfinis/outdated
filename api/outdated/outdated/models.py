@@ -76,8 +76,8 @@ class Dependency(UUIDModel):
 
 class ReleaseVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
-    major_version = models.CharField(max_length=100)
-    minor_version = models.CharField(max_length=100)
+    major_version = models.IntegerField()
+    minor_version = models.IntegerField()
     _latest_patch_version = models.CharField(max_length=100, editable=False)
     last_checked = models.DateTimeField(
         editable=False,
@@ -133,8 +133,17 @@ class ReleaseVersion(UUIDModel):
 
 class Version(UUIDModel):
     release_version = models.ForeignKey(ReleaseVersion, on_delete=models.CASCADE)
-    patch_version = models.CharField(max_length=100)
+    patch_version = models.IntegerField()
     release_date = models.DateField(null=True, blank=True)
+
+    class Meta:
+        ordering = [
+            "release_version__end_of_life",
+            "release_version__dependency__name",
+            "release_version__major_version",
+            "release_version__minor_version",
+            "patch_version",
+        ]
 
     def __str__(self):
         return f"{self.release_version.dependency.name} {self.full_version}"
