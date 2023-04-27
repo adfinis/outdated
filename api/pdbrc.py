@@ -1,5 +1,5 @@
-import pdb
+from pdb import DefaultConfig
 
 
-class Config(pdb.DefaultConfig):
+class Config(DefaultConfig):
     sticky_by_default = True

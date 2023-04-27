@@ -23,20 +23,19 @@ asgiref = "^3.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "5.0.0"
-flake8-bugbear = "23.1.20"
-flake8-debugger = "4.1.2"
-flake8-tuple = "0.4.1"
-flake8-isort = "5.0.3"
-flake8-docstrings = "1.6.0"
-flake8-string-format = "0.3.0"
-black = "22.12.0"
-pytest-django = "4.5.2"
-pytest = "7.3.1"
-isort = "5.11.4"
-pytest-factoryboy = "2.5.1"
-pytest-cov = "^4.0.0"
-snakeviz = "^2.1.1"
+flake8 = "~6.0.0"
+flake8-bugbear = "~23.3.23"
+flake8-debugger = "~4.1.2"
+flake8-tuple = "~0.4.1"
+flake8-isort = "~6.0.0"
+flake8-docstrings = "~1.7.0"
+flake8-string-format = "~0.3.0"
+black = "~23.3.0"
+pytest-django = "~4.5.2"
+pytest = "~7.3.1"
+isort = "~5.12.0"
+pytest-factoryboy = "~2.5.1"
+pytest-cov = "~4.0.0"
 pdbpp = "^0.10.3"
 pytest-vcr = "^1.0.2"
 
@@ -54,7 +53,7 @@ line_length = 88
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "outdated.settings"
-addopts = "--create-db --vcr-record=once" 
+addopts = "--create-db --vcr-record=none" 
 
 [tool.coverage.run]
 source = ["."]
