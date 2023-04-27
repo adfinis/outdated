@@ -3,12 +3,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from outdated.outdated.dependencies import ProjectSyncer
-from outdated.outdated.models import Dependency, ReleaseVersion, Version, Project
+from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
 from outdated.outdated.serializers import (
     DependencySerializer,
-    VersionSerializer,
-    ReleaseVersionSerializer,
     ProjectSerializer,
+    ReleaseVersionSerializer,
+    VersionSerializer,
 )
 
 

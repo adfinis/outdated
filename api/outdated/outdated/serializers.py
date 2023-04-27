@@ -1,6 +1,6 @@
 from rest_framework_json_api import serializers
 
-from outdated.outdated.models import Dependency, Version, ReleaseVersion, Project
+from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
 
 
 class DependencySerializer(serializers.ModelSerializer):
