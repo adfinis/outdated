@@ -29,19 +29,24 @@ def get_yesterday():
     return timezone.now() - timedelta(days=1)
 
 
-def get_latest_patch_version(lts_version):  # pragma: todo cover
+def get_latest_patch_version(release_version):  # pragma: todo cover
     url = (
-        PROVIDER_OPTIONS[lts_version.dependency.provider]["url"]
-        % lts_version.dependency.name
+        PROVIDER_OPTIONS[release_version.dependency.provider]["url"]
+        % release_version.dependency.name
     )
-    return sorted(
-        [
-            version
-            for version in get(url).json().get("releases").keys()
-            or get(url).json().get("versions").keys()
-            if version.startswith(f"{lts_version.major}.{lts_version.minor}")
-        ],
-    )[-1]
+    json: dict = get(url).json()
+    try:
+        return SemVer.parse(
+            sorted(
+                [
+                    version
+                    for version in (json.get("releases") or json.get("versions")).keys()
+                    if version.startswith(release_version.version + ".")
+                ],
+            )[-1]
+        ).patch
+    except IndexError:
+        return 0
 
 
 class Dependency(UUIDModel):
@@ -63,7 +68,7 @@ class ReleaseVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     major_version = models.IntegerField()
     minor_version = models.IntegerField()
-    _latest_patch_version = models.CharField(max_length=100, editable=False)
+    _latest_patch_version = models.IntegerField(editable=False, null=True, blank=True)
     last_checked = models.DateTimeField(
         editable=False,
         null=True,
@@ -82,7 +87,7 @@ class ReleaseVersion(UUIDModel):
         return f"{self.major_version}.{self.minor_version}"
 
     @property
-    def newest_patch_version(self):  # pragma: todo cover
+    def latest_patch_version(self):  # pragma: todo cover
         if self.last_checked < timezone.now() - timedelta(days=1):
             self.last_checked = timezone.now()
             self._latest_patch_version = get_latest_patch_version(self)

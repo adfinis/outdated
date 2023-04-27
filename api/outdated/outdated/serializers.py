@@ -11,6 +11,7 @@ class DependencySerializer(serializers.ModelSerializer):
 
 class ReleaseVersionSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
+    latest_patch_version = serializers.ReadOnlyField()
     included_serializers = {
         "dependency": "outdated.outdated.serializers.DependencySerializer"
     }

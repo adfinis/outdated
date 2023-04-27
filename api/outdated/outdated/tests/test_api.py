@@ -3,7 +3,6 @@ from django.urls import reverse
 from rest_framework import status
 
 
-@pytest.mark.vcr()
 def test_dependency(client, dependency_factory):
     generated_dependency = dependency_factory()
     url = reverse("dependency-list")
