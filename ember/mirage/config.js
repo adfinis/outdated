@@ -21,6 +21,7 @@ export default function () {
   */
   this.namespace = '/api';
   this.resource('projects');
-  this.resource('dependency-versions');
+  this.resource('versions');
+  this.resource('release-versions');
   this.resource('dependencies');
 }
