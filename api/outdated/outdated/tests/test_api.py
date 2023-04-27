@@ -31,7 +31,6 @@ def test_dependency(client, dependency_factory):
 
 
 @pytest.mark.parametrize("_status", ["UNDEFINED", "OUTDATED", "WARNING", "UP-TO-DATE"])
-@pytest.mark.vcr()
 def test_release_version(client, release_version_factory, _status):
     include = {"include": "dependency"}
     generated_release_version = release_version_factory(
