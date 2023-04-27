@@ -1,7 +1,6 @@
-import Model, { attr, hasMany } from '@ember-data/model';
+import Model, { attr } from '@ember-data/model';
 
 export default class DependencyModel extends Model {
   @attr name;
-  @attr latest;
-  @hasMany('dependency-version') versions;
+  @attr status;
 }
