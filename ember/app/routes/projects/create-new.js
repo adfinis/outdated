@@ -5,7 +5,8 @@ export default class ProjectsCreateNewRoute extends Route {
   @service store;
   beforeModel() {
     this.store.findAll('dependency');
-    this.store.findAll('dependencyVersion');
+    this.store.findAll('releaseVersion');
+    this.store.findAll('version');
   }
 
   deactivate() {
