@@ -1,14 +1,15 @@
-{{#if @dependencyVersions}}
+{{#if @versionedDependencies}}
   <table>
     <thead>
       <tr>
         <th>Dependency</th>
         <th>Version</th>
+        <th>End of Life</th>
         <th>Release Date</th>
       </tr>
     </thead>
     <tbody>
-      {{#each @dependencyVersions as |version|}}
+      {{#each @versionedDependencies as |version|}}
         <DependencyDetailed @version={{version}} />
       {{/each}}
 

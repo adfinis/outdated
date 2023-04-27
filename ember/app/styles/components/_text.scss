@@ -8,8 +8,11 @@
   @extend .uk-text-success;
 }
 .text-UNDEFINED {
-  @extend .uk-text-muted;
-  font-style: italic;
+  &:not(tr),
+  td[data-test-version-end-of-life] {
+    @extend .uk-text-muted;
+    font-style: italic;
+  }
 }
 .none-yet {
   width: 100%;
