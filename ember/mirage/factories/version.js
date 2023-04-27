@@ -6,7 +6,9 @@ export default Factory.extend({
   releaseDate: () => faker.date.past(2),
 
   afterCreate(version, server) {
-    version.update({ releaseVersion: server.create('release-version') });
+    if (!version.releaseVersion) {
+      version.update({ releaseVersion: server.create('release-version') });
+    }
   },
 
   isEndOfLife: trait({

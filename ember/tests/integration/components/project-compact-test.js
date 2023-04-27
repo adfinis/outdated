@@ -13,9 +13,10 @@ module('Integration | Component | project-compact', function (hooks) {
 
     const store = this.owner.lookup('service:store');
     this.project = await store.findRecord('project', project.id, {
-      include: 'dependencyVersions,dependencyVersions.dependency',
+      include:
+        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
     });
-    await render(hbs`<ProjectCompact  @project={{this.project}} />`);
+    await render(hbs`<ProjectCompact @project={{this.project}} />`);
     assert.dom('[data-test-dependency-compact]').exists();
     assert.dom(`[data-test-project-link="${this.project.id}"]`).exists();
     assert
