@@ -16,3 +16,9 @@ services:
         "wait-for-it.sh db:5432 -- ./manage.py migrate && ./manage.py collectstatic --no-input && ./manage.py runserver 0.0.0.0:8000",
       ]
     env_file: ./.envs/.local/.api
+  caddy:
+    env_file: ./.envs/.local/.caddy
+    networks:
+      default:
+        aliases:
+          - outdated.local

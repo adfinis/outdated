@@ -1,0 +1,17 @@
+{$DOMAIN_NAME} {
+    reverse_proxy /api* http://api:8000
+    reverse_proxy /* http://ember:80
+
+    log {
+        output stdout
+    }
+    encode gzip
+
+    header / Strict-Transport-Security "max-age=63072000"
+
+    # Due to a lack of DHE support, you -must- use an ECDSA cert to support IE 11 on Windows 7
+    tls {
+        protocols tls1.2 tls1.3
+        ciphers TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+    }
+}
