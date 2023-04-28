@@ -85,6 +85,7 @@
     "edition": "octane"
   },
   "dependencies": {
+    "brotli-webpack-plugin": "^1.1.0",
     "ember-cli-code-coverage": "^2.0.0",
     "ember-focus-trap": "^1.0.1",
     "luxon": "^3.2.1"
