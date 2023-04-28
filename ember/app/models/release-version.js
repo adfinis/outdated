@@ -7,4 +7,11 @@ export default class ReleaseVersionModel extends Model {
   @attr latestPatchVersion;
   @attr('django-date') endOfLife;
   @belongsTo('dependency') dependency;
+
+  get releaseVersion() {
+    return `${this.majorVersion}.${this.minorVersion}`;
+  }
+  get name() {
+    return `${this.dependency.get('name')} ${this.releaseVersion}`;
+  }
 }

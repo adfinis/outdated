@@ -6,9 +6,42 @@
     {{@version.version}}
   </td>
   <td data-test-version-end-of-life>
-    {{or (format-date @version.endOfLife) 'missing'}}
+    {{#if @version.endOfLife}}
+      {{format-date @version.endOfLife}}
+    {{else}}
+      missing
+      <UkButton @color='link' @onClick={{fn this.openModal @version}}><UkIcon
+          @icon='pencil'
+        /></UkButton>
+    {{/if}}
+
   </td>
   <td data-test-version-release-date>
     {{format-date @version.releaseDate}}
   </td>
 </tr>
+
+<Modal
+  @visible={{this.editModal}}
+  @title='{{this.selected.releaseVersion.name}}'
+  as |m|
+>
+  <Form @model={{this.changeset}} @onSubmit={{this.save}} as |f|>
+    <m.body>
+      <f.input @name='endOfLife' @type='date' />
+    </m.body>
+    <m.footer>
+      <UkButton
+        @disabled={{this.loading}}
+        @onClick={{this.cancel}}
+        @color='danger'
+      >Cancel</UkButton>
+      <UkButton
+        @type='submit'
+        @loading={{this.loading}}
+        @disabled={{this.loading}}
+        @color='primary'
+      >Save</UkButton>
+    </m.footer>
+  </Form>
+</Modal>

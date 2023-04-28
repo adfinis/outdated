@@ -14,9 +14,7 @@ export default class VersionModel extends Model {
 
   get version() {
     const releaseVersion = this.releaseVersion;
-    return `${releaseVersion.get('majorVersion')}.${releaseVersion.get(
-      'minorVersion'
-    )}.${this.patchVersion}`;
+    return `${releaseVersion.get('releaseVersion')}.${this.patchVersion}`;
   }
   get requirements() {
     return `${this.name} ${this.version}`;
