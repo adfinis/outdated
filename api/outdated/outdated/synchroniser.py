@@ -49,7 +49,7 @@ class Synchroniser:
             async with session.post(
                 "https://api.github.com/graphql",
                 headers={
-                    "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
+                    "Authorization": f"Bearer {settings.GITHUB_API_TOKEN}",
                     "Accept": "application/vnd.github.hawkgirl-preview+json",
                 },
                 json={"query": q},

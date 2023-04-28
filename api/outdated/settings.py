@@ -152,3 +152,6 @@ if ENV == "dev":
 JSON_API_FORMAT_FIELD_NAMES = "dasherize"
 JSON_API_FORMAT_TYPES = "dasherize"
 JSON_API_PLURALIZE_TYPES = True
+
+# Github API
+GITHUB_API_TOKEN = env.str("GITHUB_API_TOKEN")
