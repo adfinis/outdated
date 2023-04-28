@@ -4,52 +4,55 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort -k 1,1 | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: start-backend
-start-backend: ## Starts only the backend
-	@docker compose up -d --build
+.PHONY: api-bash
+api-bash: ## Shell into the API
+	@docker-compose run --rm api bash
 
-.PHONY: start-frontend-using-backend
-start-frontend-using-backend: ## Start the frontend, using the backend
-	@cd frontend/ && yarn ember server --proxy=http://localhost:8000
-
-.PHONY: start-frontend
-start-frontend: ## Start the frontend, using Mirage
-	@cd frontend/ && yarn ember s
-.PHONY: start
-start: start-backend start-frontend-using-backend ## Start the application
-
-.PHONY: lint-backend
-lint-backend: ## Lint the backend
+.PHONY: api-lint
+api-lint: ## Lint the backend
 	@docker compose run --rm api sh -c "black --check . && flake8"
 
-.PHONY: lint-backend-fix
-lint-backend-fix: ## Lint and fix the backend
+.PHONY: api-lint-fix
+api-lint-fix: ## Lint and fix the API
 	@docker compose run --rm api sh -c "black . && isort ."
 
-.PHONY: lint-frontend
-lint-frontend: ## Lint the frontend
-	@cd frontend/ && yarn lint
+.PHONY: api-start
+api-start: ## Start the API
+	@docker compose up db api -d --build
 
-.PHONY: lint-frontend-fix
-lint-frontend-fix: ## Lint and fix the frontend
-	@cd frontend/ && yarn lint:fix
+.PHONY: api-test
+api-test: ## Test the API
+	@docker compose run --rm api pytest --no-cov-on-fail --cov -vvv -s
+
+.PHONY: build
+build: ## Build the containers
+	@docker compose build
+
+.PHONY: cleanup
+cleanup: ## Cleanup all docker containers, images, volumes and networks from the project
+	@docker compose down -v --timeout 0
+
+.PHONY: ember-lint
+ember-lint: ## lint ember
+	@cd ember && yarn lint
+
+.PHONY: ember-lint-fix
+ember-lint-fix: ## lint and fix ember
+	@cd ember && yarn lint:fix
+
+.PHONY: ember-start
+ember-start: ## Start ember
+	@docker compose up ember --build -d
+
+.PHONY: ember-test
+ember-test: ## test the frontend
+	@cd ember && yarn test:ember
 
 .PHONY: lint
-lint: lint-backend lint-frontend ## Lint front- & backend
+lint: api-lint ember-lint ## Lint the API and ember
 
 .PHONY: lint-fix
-lint-fix: lint-backend-fix lint-frontend-fix ## Lint and fix front- & backend
-
-.PHONY: test-backend
-test-backend: ## Test the backend
-	@docker compose run --rm api pytest --no-cov-on-fail --cov --create-db -vv
-
-.PHONY: test-frontend
-test-frontend: ## Test the frontend
-	@cd frontend/ && yarn test
-
-.PHONY: test
-test: test-backend test-frontend ## Test front- & backend
+lint-fix: api-lint-fix ember-lint-fix ## Lint and fix the API and ember
 
 .PHONY: makemigrations
 makemigrations: ## Make django migrations
@@ -58,3 +61,14 @@ makemigrations: ## Make django migrations
 .PHONY: migrate
 migrate: ## Migrate django
 	@docker compose run --rm api python ./manage.py migrate
+
+.PHONY: migrate-zero
+migrate-zero: ## Unapply all django migrations
+	@docker compose run --rm api python ./manage.py migrate outdated zero
+
+.PHONY: start
+start: ## Start the application
+	@docker compose up -d --build
+
+.PHONY: test
+test: api-test ember-test ## Test the API and ember
