@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import response, status, viewsets
+from rest_framework.decorators import action
 
 from outdated.outdated.models import Dependency, DependencyVersion, Project
 from outdated.outdated.serializers import (
@@ -6,11 +7,18 @@ from outdated.outdated.serializers import (
     DependencyVersionSerializer,
     ProjectSerializer,
 )
+from outdated.outdated.synchroniser import Synchroniser
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+    @action(detail=True, methods=["post"])
+    def sync(self, request, pk=None):
+        project = self.get_object()
+        Synchroniser(project).sync()
+        return response.Response(status=status.HTTP_200_OK)
 
 
 class DependencyVersionViewSet(viewsets.ModelViewSet):

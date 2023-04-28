@@ -10,21 +10,27 @@ STATUS_OPTIONS = {
     "up_to_date": "UP-TO-DATE",
     "undefined": "UNDEFINED",
 }
-STATUS_CHOICES = [(status, status) for _, status in STATUS_OPTIONS.items()]
+STATUS_CHOICES = [(_, _) for _ in STATUS_OPTIONS.values()]
+PROVIDER_OPTIONS = {
+    "PIP": {"url": "https://pypi.org/pypi/%s/json"},
+    "NPM": {"url": "https://registry.npmjs.org/%s"},
+}
+PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()]
 
 
 class Dependency(UUIDModel):
     name = models.CharField(max_length=100, unique=True)
+    provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
 
     class Meta:
         ordering = ["name", "id"]
+        unique_together = ("name", "provider")
 
     def __str__(self):
         return self.name
 
 
 class DependencyVersion(UUIDModel):
-
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     version = models.CharField(max_length=100)
     release_date = models.DateField()
@@ -48,7 +54,6 @@ class DependencyVersion(UUIDModel):
 
 
 class Project(UUIDModel):
-
     name = models.CharField(max_length=100, unique=True)
     repo = models.URLField(max_length=200, unique=True)
     dependency_versions = models.ManyToManyField(DependencyVersion, blank=True)
