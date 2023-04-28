@@ -11,5 +11,9 @@ services:
     user: "${UID:?Set UID env variable to your user id}"
     depends_on:
       - db
+  ember:
+    build:
+      context: ./ember/
+
 volumes:
   dbdata:
