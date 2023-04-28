@@ -143,12 +143,12 @@ class LockFileParser:
                             raise ValueError(
                                 f"Package {version} not found"
                             )  # pragma: no cover
-                        release_date = json["time"][version.full_version]
+                        release_date = json["time"][version.version]
 
             elif provider == "PIP":
                 async with ClientSession() as session:
                     async with session.get(
-                        f"https://pypi.org/pypi/{name}/{version.full_version}/json"
+                        f"https://pypi.org/pypi/{name}/{version.version}/json"
                     ) as response:
                         release_date = (await response.json())["urls"][0]["upload_time"]
             return parser.parse(release_date).date()
