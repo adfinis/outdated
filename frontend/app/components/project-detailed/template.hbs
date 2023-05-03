@@ -14,4 +14,9 @@
 
   <p class='seperator'></p>
   <DependencyTable @dependencyVersions={{@project.dependencyVersions}} />
+  <UkButton
+    @label='Sync'
+    @loading={{this.loading}}
+    @onClick={{this.syncProject}}
+  />
 </div>
