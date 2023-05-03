@@ -16,15 +16,6 @@ PYPI_FILES = ["poetry.lock"]
 
 LOCK_FILES = [*NPM_FILES, *PYPI_FILES]
 
-INCLUDED_DEPENDENCIES = [
-    "django",
-    "djangorestframework",
-    "djangorestframework-jsonapi",
-    "ember-source",
-    "ember-data",
-    "ember-cli",
-]
-
 
 class Synchroniser:
     def __init__(self, project: Project):
@@ -187,7 +178,7 @@ class LockFileParser:
                 [
                     self._get_version(match, provider)
                     for match in matches
-                    if match[0] in INCLUDED_DEPENDENCIES
+                    if match[0] in settings.RELEVANT_DEPENDENCIES
                 ]
             )
 
