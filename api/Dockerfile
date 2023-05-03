@@ -23,6 +23,8 @@ ENV APP_HOME=/app
 
 COPY pyproject.toml poetry.lock $APP_HOME/
 
+COPY pdbrc.py $HOME/.pdbrc.py
+
 #TODO: add --no-dev for prod ENV
 RUN pip install -U poetry && poetry config virtualenvs.create false && poetry install
 
