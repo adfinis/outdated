@@ -27,16 +27,19 @@ module.exports = function (defaults) {
         package: 'qunit',
       },
     ],
+
     packagerOptions: {
       webpackConfig: {
-        plugins: [
-          new BrotliPlugin({
-            asset: '[path].br[query]',
-            test: /\.(js|css|html|svg)$/,
-            threshold: 10240,
-            minRatio: 0.8,
-          }),
-        ],
+        plugins:
+          app.env === 'production'
+            ? [
+                new BrotliPlugin({
+                  asset: '[path].br[query]',
+                  test: /\.(js|css|html|svg)$/,
+                  minRatio: 0.8,
+                }),
+              ]
+            : [],
       },
     },
   });
