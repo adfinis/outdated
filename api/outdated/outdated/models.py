@@ -63,6 +63,13 @@ class Project(UUIDModel):
 
     class Meta:
         ordering = ["name", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"],
+                name="unique_name",
+                condition=models.Q(name__iexact=models.F("name")),
+            ),
+        ]
 
     @property
     def status(self) -> str:
