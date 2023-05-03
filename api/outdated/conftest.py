@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
@@ -17,9 +15,10 @@ def client(db):
     return APIClient()
 
 
-@pytest.fixture
-def str_to_date():
-    def _str_to_date(date: str):
-        return datetime.strptime(date, "%Y-%m-%d").date()
-
-    return _str_to_date
+@pytest.fixture(scope="module")
+def vcr_config():
+    return {
+        # Replace the Authorization header with a dummy value
+        "filter_headers": [("Authorization", "DUMMY")],
+        "ignore_localhost": True,
+    }
