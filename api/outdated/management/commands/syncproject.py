@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from outdated.outdated.synchroniser import Synchroniser
 from outdated.outdated.models import Project
+from outdated.outdated.synchroniser import Synchroniser
 
 
 class Command(BaseCommand):

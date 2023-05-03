@@ -1,8 +1,8 @@
 from asyncio import gather
 
 from outdated.commands import AsyncCommand
-from outdated.outdated.synchroniser import Synchroniser
 from outdated.outdated.models import Project
+from outdated.outdated.synchroniser import Synchroniser
 
 
 class Command(AsyncCommand):
