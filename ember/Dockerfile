@@ -1,4 +1,4 @@
-FROM node:18.14.2 as build
+FROM node:lts-slim as build
 
 
 EXPOSE 4200 
