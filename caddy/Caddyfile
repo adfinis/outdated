@@ -1,0 +1,11 @@
+{$DOMAIN_NAME} {
+    reverse_proxy /api* http://api:8000
+    reverse_proxy /* http://ember:80
+
+    log {
+        output stdout
+    }
+    encode gzip
+
+    header / Strict-Transport-Security "max-age=63072000"
+}
