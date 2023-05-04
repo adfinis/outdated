@@ -1,10 +1,11 @@
 from rest_framework import viewsets
 
-from outdated.outdated.models import Dependency, DependencyVersion, Project
+from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
 from outdated.outdated.serializers import (
     DependencySerializer,
-    DependencyVersionSerializer,
     ProjectSerializer,
+    ReleaseVersionSerializer,
+    VersionSerializer,
 )
 
 
@@ -13,9 +14,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
 
-class DependencyVersionViewSet(viewsets.ModelViewSet):
-    queryset = DependencyVersion.objects.all()
-    serializer_class = DependencyVersionSerializer
+class ReleaseVersionViewSet(viewsets.ModelViewSet):
+    queryset = ReleaseVersion.objects.all()
+    serializer_class = ReleaseVersionSerializer
+
+
+class VersionViewSet(viewsets.ModelViewSet):
+    queryset = Version.objects.all()
+    serializer_class = VersionSerializer
 
 
 class DependencyViewSet(viewsets.ModelViewSet):
