@@ -3,12 +3,12 @@ import { DateTime } from 'luxon';
 import { Factory, trait } from 'miragejs';
 
 export default Factory.extend({
-  version: () => faker.system.semver(),
-  endOfLifeDate: () => faker.date.future(2),
-  releaseDate: () => faker.date.past(4),
+  majorVersion: () => faker.datatype.number({ min: 1, max: 10 }),
+  minorVersion: () => faker.datatype.number({ min: 0, max: 10 }),
+  endOfLife: () => faker.date.future(2),
 
   status() {
-    const eolDateTime = DateTime.fromJSDate(this.eolDate);
+    const eolDateTime = DateTime.fromJSDate(this.endOfLife);
     const now = DateTime.now();
     if (eolDateTime < now) {
       return 'OUTDATED';
@@ -22,10 +22,10 @@ export default Factory.extend({
     endOfLifeDate: () => faker.date.recent(),
   }),
   isNearlyEndOfLife: trait({
-    endOfLifeDate: () => faker.date.soon(25),
+    endOfLifeDate: () => faker.date.soon(80),
   }),
 
-  afterCreate(version, server) {
-    server.create('dependency', { versions: [version] });
+  afterCreate(releaseVersion, server) {
+    releaseVersion.update({ dependency: server.create('dependency') });
   },
 });
