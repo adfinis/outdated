@@ -3,8 +3,6 @@ from datetime import date, timedelta
 from django.db import models
 from django.db.models.functions import Lower
 from django.utils import timezone
-from requests import get
-from semver import Version as SemVer
 
 from outdated.models import UUIDModel
 
@@ -42,7 +40,6 @@ class ReleaseVersion(UUIDModel):
     major_version = models.IntegerField()
     minor_version = models.IntegerField()
 
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
     end_of_life = models.DateField(null=True, blank=True)
 
     def __str__(self) -> str:
@@ -94,7 +91,6 @@ class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
     repo = models.URLField(max_length=100, unique=True)
     versioned_dependencies = models.ManyToManyField(Version, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
 
     class Meta:
         ordering = ["name", "id"]
