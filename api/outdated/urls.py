@@ -6,6 +6,7 @@ from outdated.outdated import views
 router = DefaultRouter(trailing_slash=False)
 router.register(r"projects", views.ProjectViewSet)
 router.register(r"dependencies", views.DependencyViewSet)
-router.register(r"dependency-versions", views.DependencyVersionViewSet)
+router.register(r"release-versions", views.ReleaseVersionViewSet)
+router.register(r"versions", views.VersionViewSet)
 
 urlpatterns = [path("", include(router.urls))]
