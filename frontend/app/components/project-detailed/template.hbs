@@ -13,5 +13,12 @@
   </div>
 
   <p class='seperator'></p>
-  <DependencyTable @dependencyVersions={{@project.dependencyVersions}} />
+  <DependencyTable @versionedDependencies={{@project.versionedDependencies}} />
+  <UkButton
+    @label='Sync'
+    @type='primary'
+    @loading={{this.loading}}
+    @onClick={{this.syncProject}}
+    @disabled={{this.loading}}
+  />
 </div>
