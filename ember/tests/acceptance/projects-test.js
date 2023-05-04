@@ -22,6 +22,6 @@ module('Acceptance | projects', function (hooks) {
 
     assert
       .dom('tbody>tr')
-      .exists({ count: project.dependencyVersions.models.length });
+      .exists({ count: project.versionedDependencies.models.length });
   });
 });
