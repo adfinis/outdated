@@ -1,12 +1,12 @@
 <tr data-test-version-status class='text-{{@version.status}}'>
   <td data-test-version-dependency-name>
-    {{@version.dependency.name}}
+    {{@version.name}}
   </td>
   <td data-test-version-version>
     {{@version.version}}
   </td>
-  <td data-test-version-eol-date>
-    {{format-date @version.endOfLifeDate}}
+  <td data-test-version-end-of-life>
+    {{or (format-date @version.endOfLife) 'missing'}}
   </td>
   <td data-test-version-release-date>
     {{format-date @version.releaseDate}}

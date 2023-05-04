@@ -1,22 +1,22 @@
-{{#if @dependencyVersions}}
+{{#if @versionedDependencies}}
   <table>
     <thead>
       <tr>
         <th>Dependency</th>
         <th>Version</th>
-        <th>End Of Life Date</th>
+        <th>End of Life</th>
         <th>Release Date</th>
       </tr>
     </thead>
     <tbody>
-      {{#each (sort-by 'endOfLifeDate:desc' @dependencyVersions) as |version|}}
+      {{#each @versionedDependencies as |version|}}
         <DependencyDetailed @version={{version}} />
       {{/each}}
 
     </tbody>
   </table>
 {{else}}
-  <div class='none-yet' data-test-dependency-versions-none>
+  <div class='none-yet' data-test-versioned-dependencies-none>
     <span class='text-UNDEFINED'>No dependencies yet</span>
   </div>
 {{/if}}
