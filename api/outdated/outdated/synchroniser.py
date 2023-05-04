@@ -7,10 +7,10 @@ from aiohttp import ClientSession, client_exceptions
 from asgiref.sync import sync_to_async
 from dateutil import parser
 from django.conf import settings
-from yaml import safe_load
 from semver import Version as SemVer
+from yaml import safe_load
 
-from outdated.outdated.models import Dependency, ReleaseVersion, Version, Project
+from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
 
 NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
 PYPI_FILES = ["poetry.lock"]
