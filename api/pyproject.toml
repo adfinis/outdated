@@ -16,6 +16,9 @@ djangorestframework-jsonapi = "^6.0.0"
 django-filter = "^22.1"
 gunicorn = "^20.1.0"
 semver = "^3.0.0"
+aiohttp = {extras = ["speedups"], version = "^3.8.4"}
+pyaml = "^21.10.1"
+pytest-vcr = "^1.0.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -48,7 +51,7 @@ line_length = 88
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "outdated.settings"
-
+addopts = "--create-db --vcr-record=once"
 
 [tool.coverage.run]
 source = ["."]

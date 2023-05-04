@@ -85,6 +85,10 @@ class Version(UUIDModel):
     def __str__(self):
         return f"{self.release_version}.{self.patch_version}"
 
+    @property
+    def version(self):
+        return f"{self.release_version.version}.{self.patch_version}"
+
 
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
