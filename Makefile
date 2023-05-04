@@ -42,7 +42,7 @@ lint-fix: lint-backend-fix lint-frontend-fix ## Lint and fix front- & backend
 
 .PHONY: test-backend
 test-backend: ## Test the backend
-	@docker compose run --rm api pytest --no-cov-on-fail --cov --create-db -vv
+	@docker compose run --rm api pytest --no-cov-on-fail --cov -vv
 
 .PHONY: test-frontend
 test-frontend: ## Test the frontend
