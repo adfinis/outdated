@@ -7,6 +7,7 @@ services:
     build: ./api/
     volumes:
       - ./api:/app
+      - ./api/pdbrc.py:/home/outdated/.pdbrc.py
     ports:
       - "8000:8000"
     command:
