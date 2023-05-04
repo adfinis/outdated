@@ -9,4 +9,4 @@ router.register(r"dependencies", views.DependencyViewSet)
 router.register(r"release-versions", views.ReleaseVersionViewSet)
 router.register(r"versions", views.VersionViewSet)
 
-urlpatterns = [path("", include(router.urls))]
+urlpatterns = [path("api/", include(router.urls))]

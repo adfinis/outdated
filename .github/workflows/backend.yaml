@@ -17,7 +17,7 @@ jobs:
       - name: Set UID
         run: echo "UID=$(id --user)" > .env
       - name: Lint the backend code
-        run: make lint-backend
+        run: make api-lint
 
   test:
     name: "Test"
@@ -31,4 +31,4 @@ jobs:
       - name: Check for missing migrations
         run: docker compose exec -T api ./manage.py makemigrations --check --dry-run --no-input
       - name: Run backend tests
-        run: make test-backend
+        run: make api-test
