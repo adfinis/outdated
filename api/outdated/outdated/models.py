@@ -84,7 +84,7 @@ class Version(UUIDModel):
         ]
 
     def __str__(self):
-        return f"{self.release_version.dependency.name} {self.release_version.version}.{self.patch_version}"
+        return f"{self.release_version}.{self.patch_version}"
 
 
 class Project(UUIDModel):
