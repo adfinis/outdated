@@ -25,30 +25,6 @@ PROVIDER_OPTIONS = {
 PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()]
 
 
-def get_yesterday():
-    return timezone.now() - timedelta(days=1)
-
-
-def get_latest_patch_version(release_version):
-    url = (
-        PROVIDER_OPTIONS[release_version.dependency.provider]
-        % release_version.dependency.name
-    )
-    json = get(url).json()
-    try:
-        return SemVer.parse(
-            sorted(
-                [
-                    version
-                    for version in (json.get("releases") or json.get("versions")).keys()
-                    if version.startswith(release_version.version + ".")
-                ],
-            )[-1]
-        ).patch
-    except IndexError:
-        return 0
-
-
 class Dependency(UUIDModel):
     name = models.CharField(max_length=100)
     provider = models.CharField(max_length=10, choices=PROVIDER_CHOICES)
@@ -65,13 +41,6 @@ class ReleaseVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     major_version = models.IntegerField()
     minor_version = models.IntegerField()
-    _latest_patch_version = models.IntegerField(editable=False, null=True, blank=True)
-    last_checked = models.DateTimeField(
-        editable=False,
-        null=True,
-        blank=True,
-        default=get_yesterday,
-    )
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, editable=False)
     end_of_life = models.DateField(null=True, blank=True)
@@ -81,15 +50,7 @@ class ReleaseVersion(UUIDModel):
 
     @property
     def version(self):
-        return f"{self.major_version}.{self.minor_version}"
-
-    @property
-    def latest_patch_version(self):  # pragma: todo cover
-        if self.last_checked < timezone.now() - timedelta(days=1):
-            self.last_checked = timezone.now()
-            self._latest_patch_version = get_latest_patch_version(self)
-            self.save()
-        return self._latest_patch_version
+        return f"{self.major_version}.{self.minor_version}"  # pragma: no cover
 
     class Meta:
         ordering = [
