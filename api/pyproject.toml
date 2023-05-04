@@ -15,6 +15,7 @@ djangorestframework = "^3.14.0"
 djangorestframework-jsonapi = "^6.0.0"
 django-filter = "^22.1"
 gunicorn = "^20.1.0"
+semver = "^3.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -31,6 +32,7 @@ pytest = "7.2.1"
 isort = "5.11.4"
 pytest-factoryboy = "2.5.1"
 pytest-cov = "^4.0.0"
+pdbpp = "^0.10.3"
 
 
 [tool.isort]
@@ -65,6 +67,7 @@ omit = [
     "*/apps.py",
     "manage.py",
     "outdated/wsgi.py",
+    "pdbrc.py"
 ]
 show_missing = true
 
