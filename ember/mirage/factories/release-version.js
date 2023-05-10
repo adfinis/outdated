@@ -5,24 +5,25 @@ import { Factory, trait } from 'miragejs';
 export default Factory.extend({
   majorVersion: () => faker.datatype.number({ min: 1, max: 10 }),
   minorVersion: () => faker.datatype.number({ min: 0, max: 10 }),
-  endOfLife: () => faker.date.future(2),
+  endOfLife: () => faker.date.future(20),
 
   status() {
-    const eolDateTime = DateTime.fromJSDate(this.endOfLife);
-    const now = DateTime.now();
-    if (eolDateTime < now) {
+    const dayDiff = DateTime.fromJSDate(this.endOfLife)
+      .diff(DateTime.now(), 'days')
+      .toObject().days;
+    if (dayDiff <= 0) {
       return 'OUTDATED';
-    } else if (eolDateTime < now.plus({ months: 1 })) {
+    } else if (dayDiff <= 150) {
       return 'WARNING';
     }
     return 'UP-TO-DATE';
   },
 
   isEndOfLife: trait({
-    endOfLifeDate: () => faker.date.recent(),
+    endOfLife: () => faker.date.recent(),
   }),
   isNearlyEndOfLife: trait({
-    endOfLifeDate: () => faker.date.soon(80),
+    endOfLife: () => faker.date.soon(80),
   }),
 
   afterCreate(releaseVersion, server) {
