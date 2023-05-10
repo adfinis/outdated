@@ -4,7 +4,8 @@ export default class ProjectDetailedRoute extends Route {
   @service store;
   model(params) {
     return this.store.findRecord('project', params.project_id, {
-      include: 'dependencyVersions,dependencyVersions.dependency',
+      include:
+        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
     });
   }
 }

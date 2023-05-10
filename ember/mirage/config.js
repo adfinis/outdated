@@ -19,8 +19,10 @@ export default function () {
 
     https://www.ember-cli-mirage.com/docs/route-handlers/shorthands
   */
+
   this.namespace = '/api';
   this.resource('projects');
-  this.resource('dependency-versions');
+  this.resource('versions');
+  this.resource('release-versions');
   this.resource('dependencies');
 }

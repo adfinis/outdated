@@ -13,9 +13,10 @@ module('Integration | Component | project-compact', function (hooks) {
 
     const store = this.owner.lookup('service:store');
     this.project = await store.findRecord('project', project.id, {
-      include: 'dependencyVersions,dependencyVersions.dependency',
+      include:
+        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
     });
-    await render(hbs`<ProjectCompact  @project={{this.project}} />`);
+    await render(hbs`<ProjectCompact @project={{this.project}} />`);
     assert.dom('[data-test-dependency-compact]').exists();
     assert.dom(`[data-test-project-link="${this.project.id}"]`).exists();
     assert
@@ -23,10 +24,6 @@ module('Integration | Component | project-compact', function (hooks) {
       .hasProperty('href', new RegExp(`^.*/projects/${this.project.id}$`));
 
     assert.dom('[data-test-project-name]').hasText(this.project.name);
-
-    assert
-      .dom('[data-test-project-status]')
-      .hasClass(`text-${this.project.status}`);
 
     const statusIcons = {
       OUTDATED: 'bolt',

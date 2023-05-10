@@ -12,7 +12,8 @@ module('Integration | Component | project-detailed', function (hooks) {
     const store = this.owner.lookup('service:store');
 
     this.project = await store.findRecord('project', project.id, {
-      include: 'dependencyVersions,dependencyVersions.dependency',
+      include:
+        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
     });
 
     await render(hbs`<ProjectDetailed @project={{this.project}}/>`);
@@ -22,11 +23,11 @@ module('Integration | Component | project-detailed', function (hooks) {
 
     assert
       .dom('tbody>tr')
-      .exists({ count: this.project.dependencyVersions.length });
+      .exists({ count: this.project.versionedDependencies.length });
 
-    this.project.dependencyVersions = [];
+    this.project.versionedDependencies = [];
     await settled();
 
-    assert.dom('[data-test-dependency-versions-none]').exists();
+    assert.dom('[data-test-versioned-dependencies-none]').exists();
   });
 });
