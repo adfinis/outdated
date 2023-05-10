@@ -1,15 +1,9 @@
-.text-OUTDATED {
-  @extend .uk-text-danger;
-}
-.text-WARNING {
-  @extend .uk-text-warning;
-}
-.text-UP-TO-DATE {
-  @extend .uk-text-success;
-}
-.text-UNDEFINED {
-  @extend .uk-text-muted;
-  font-style: italic;
+.text-undefined {
+  &:not(tr),
+  td[data-test-version-end-of-life] {
+    @extend .uk-text-muted;
+    font-style: italic;
+  }
 }
 .none-yet {
   width: 100%;

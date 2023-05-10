@@ -6,5 +6,5 @@ export default function (server) {
   */
   // server.createList('post', 10);
   server.createList('project', 3, 'withVersions');
-  server.createList('project', 2);
+  server.createList('project', 1);
 }
