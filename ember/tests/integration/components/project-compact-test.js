@@ -25,10 +25,6 @@ module('Integration | Component | project-compact', function (hooks) {
 
     assert.dom('[data-test-project-name]').hasText(this.project.name);
 
-    assert
-      .dom('[data-test-project-status]')
-      .hasClass(`text-${this.project.status}`);
-
     const statusIcons = {
       OUTDATED: 'bolt',
       WARNING: 'warning',

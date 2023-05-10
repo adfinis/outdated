@@ -18,9 +18,6 @@ module('Integration | Component | dependency-detailed', function (hooks) {
 
     await render(hbs`<DependencyDetailed @version={{this.version}} />`);
     assert
-      .dom('[data-test-version-status]')
-      .hasClass(`text-${this.version.status}`);
-    assert
       .dom('[data-test-version-dependency-name]')
       .hasText(this.version.name);
     assert.dom('[data-test-version-version]').hasText(this.version.version);

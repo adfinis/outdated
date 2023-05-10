@@ -12,7 +12,7 @@
       </h3>
     </LinkTo>
 
-    <card.body data-test-project-status class='text-{{@project.status}}'>
+    <card.body class='{{status-to-class @project.status}}'>
 
       <UkIcon @icon='{{this.icon}}' @ratio={{4}} />
       <DependencyCompact @version={{this.version}} />
