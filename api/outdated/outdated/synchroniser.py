@@ -8,9 +8,11 @@ from asgiref.sync import sync_to_async
 from dateutil import parser
 from django.conf import settings
 from semver import Version as SemVer
-from yaml import safe_load
 
 from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
+
+# from yaml import safe_load
+
 
 NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
 PYPI_FILES = ["poetry.lock"]
@@ -176,16 +178,16 @@ class LockFileParser:
                 regex = r'"?([\S]+)@.*:\n  version "(.+)"'
             elif name == "poetry.lock":
                 regex = r'\[\[package]]\nname = "(.+)"\nversion = "(.+)"'
-            elif name == "pnpm-lock.yaml":  # pragma: no cover
-                lockfile = safe_load(data)
-                if float(lockfile["lockfileDependencyVersion"]) < 6.0:
-                    regex = r"\/([^\s]+)\/([^_\s]+).*"
-                else:
-                    regex = r"\/(@?[^\s@]+)@([^()]+).*"
-                dependencies = [
-                    findall(regex, dependency)[0]
-                    for dependency in lockfile["packages"].keys()
-                ]
+            #            elif name == "pnpm-lock.yaml":  # pragma: no cover
+            #               lockfile = safe_load(data)
+            #              if float(lockfile["lockfileDependencyVersion"]) < 6.0:
+            #                  regex = r"\/([^\s]+)\/([^_\s]+).*"
+            #              else:
+            #                    regex = r"\/(@?[^\s@]+)@([^()]+).*"
+            #                dependencies = [
+            #                    findall(regex, dependency)[0]
+            #                    for dependency in lockfile["packages"].keys()
+            #                ]
             matches = dependencies or findall(regex, data)
             tasks.extend(
                 [
