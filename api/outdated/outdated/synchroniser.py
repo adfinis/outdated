@@ -2,6 +2,7 @@ from asyncio import gather, run, sleep
 from datetime import datetime
 from os.path import basename
 from re import findall
+from tomllib import loads
 
 from aiohttp import ClientSession, client_exceptions
 from asgiref.sync import sync_to_async
@@ -174,25 +175,29 @@ class LockFileParser:
             dependencies = []
             if name == "yarn.lock":
                 regex = r'"?([\S]+)@.*:\n  version "(.+)"'
-            elif name == "poetry.lock":
-                regex = r'\[\[package]]\nname = "(.+)"\nversion = "(.+)"'
-            #            elif name == "pnpm-lock.yaml":  # pragma: no cover
-            #               lockfile = safe_load(data)
-            #              if float(lockfile["lockfileDependencyVersion"]) < 6.0:
-            #                  regex = r"\/([^\s]+)\/([^_\s]+).*"
-            #              else:
-            #                    regex = r"\/(@?[^\s@]+)@([^()]+).*"
-            #                dependencies = [
-            #                    findall(regex, dependency)[0]
-            #                    for dependency in lockfile["packages"].keys()
-            #                ]
-            matches = dependencies or findall(regex, data)
-            tasks.extend(
-                [
-                    self._get_version(match, provider)
-                    for match in matches
-                    if match[0] in settings.RELEVANT_DEPENDENCIES
+                dependencies = [
+                    dependency
+                    for dependency in findall(regex, data)
+                    if dependency[0] in settings.RELEVANT_DEPENDENCIES
                 ]
+            elif name == "poetry.lock":
+                dependencies = [
+                    (dependency["name"], dependency["version"])
+                    for dependency in loads(data)["package"]
+                    if dependency["name"] in settings.RELEVANT_DEPENDENCIES
+                ]
+            # elif name == "pnpm-lock.yaml":  # pragma: no cover
+            #     lockfile = safe_load(data)
+            #     if float(lockfile["lockfileDependencyVersion"]) < 6.0:
+            #         regex = r"\/([^\s]+)\/([^_\s]+).*"
+            #     else:
+            #         regex = r"\/(@?[^\s@]+)@([^()]+).*"
+            #     dependencies = [
+            #         findall(regex, dependency)[0]
+            #         for dependency in lockfile["packages"].keys()
+            #     ]
+            tasks.extend(
+                [self._get_version(dependency, provider) for dependency in dependencies]
             )
 
         return await gather(*tasks)
