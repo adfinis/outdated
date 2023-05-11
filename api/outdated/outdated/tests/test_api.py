@@ -164,3 +164,6 @@ def test_sync_project_endpoint(client, project_factory):
     resp = client.post(url)
     assert resp.status_code == status.HTTP_200_OK
     assert generated_project.versioned_dependencies.count() > 0
+    url = reverse("project-sync", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
+    resp = client.post(url)
+    assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
