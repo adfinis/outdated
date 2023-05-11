@@ -1,11 +1,12 @@
 version: "3.9"
 services:
   db:
-    image: postgres:15.2
+    image: postgres:15-alpine
     ports:
       - "5432:5432"
     volumes:
       - dbdata:/var/lib/postgresql/data
+      - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
   api:
     build: ./api
     user: "${UID:?Set UID env variable to your user id}"
@@ -24,6 +25,24 @@ services:
     ports:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1
+    depends_on:
+      - db
+    volumes:
+      - ./keycloak/config.json:/opt/keycloak/data/import/config.json
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://db/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KEYCLOAK_ADMIN=admin
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_RELATIVE_PATH=/auth
+      - KC_PROXY=edge
+    # import: docker compose exec keycloak /opt/keycloak/bin/kc.sh import --override true --file /opt/keycloak/data/import/config.json
+    # export: docker compose exec keycloak /opt/keycloak/bin/kc.sh export --file /opt/keycloak/data/import/config.json
+    command: "start"
 
 volumes:
   dbdata:

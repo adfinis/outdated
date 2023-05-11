@@ -23,3 +23,5 @@ services:
       default:
         aliases:
           - outdated.local
+  keycloak:
+    env_file: ./.envs/.local/.keycloak
