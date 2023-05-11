@@ -111,27 +111,27 @@ class LockFileParser:
         return "PIP"
 
     async def _get_version(self, requirements: tuple, provider: str):
-        dependency = await Dependency.objects.aget_or_create(
+        dependency, dependency_created = await Dependency.objects.aget_or_create(
             name=requirements[0], provider=provider
         )
         major, minor, patch = SemVer.parse(get_version(requirements[1])).to_tuple()[0:3]
 
-        release_version = await ReleaseVersion.objects.aget_or_create(
-            dependency=dependency[0],
+        release_version, _ = await ReleaseVersion.objects.aget_or_create(
+            dependency=dependency,
             major_version=major,
             minor_version=minor,
         )
 
-        version = await Version.objects.aget_or_create(
-            release_version=release_version[0],
+        version, version_created = await Version.objects.aget_or_create(
+            release_version=release_version,
             patch_version=patch,
         )
 
-        if dependency[1] or version[1]:
-            version[0].release_date = await self._get_release_date(version[0])
-            await sync_to_async(version[0].save)()
+        if dependency_created or version_created:
+            version.release_date = await self._get_release_date(version)
+            await sync_to_async(version.save)()
 
-        return version[0]
+        return version
 
     async def _get_release_date(self, version: Version):
         """Get the release date of a dependency."""
