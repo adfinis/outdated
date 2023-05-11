@@ -66,6 +66,14 @@ migrate: ## Migrate django
 migrate-zero: ## Unapply all django migrations
 	@docker compose run --rm api python ./manage.py migrate outdated zero
 
+.PHONY: keycloak-import
+keycloak-import: ## Import keycloak configuration
+	@docker compose exec keycloak /opt/keycloak/bin/kc.sh import --override true --file /opt/keycloak/data/import/config.json
+
+.PHONY: keycloak-export
+keycloak-export: ## Export keycloak configuration
+	@docker compose exec keycloak /opt/keycloak/bin/kc.sh export --file /opt/keycloak/data/import/config.json
+
 .PHONY: start
 start: ## Start the application
 	@docker compose up -d --build
