@@ -144,11 +144,8 @@ class LockFileParser:
                     async with session.get(
                         f"https://registry.npmjs.org/{name}"
                     ) as response:
+                        response.raise_for_status()
                         json = await response.json()
-                        if json.get("error") == "Not Found":
-                            raise ValueError(
-                                f"Package {version} not found"
-                            )  # pragma: no cover
                         release_date = json["time"][version.version]
 
             elif provider == "PIP":
@@ -156,6 +153,7 @@ class LockFileParser:
                     async with session.get(
                         f"https://pypi.org/pypi/{name}/{version.version}/json"
                     ) as response:
+                        response.raise_for_status()
                         release_date = (await response.json())["urls"][0]["upload_time"]
             return parser.parse(release_date).date()
         except (
