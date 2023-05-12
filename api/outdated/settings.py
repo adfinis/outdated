@@ -36,28 +36,19 @@ DEBUG = env.bool("DEBUG", default=default(True, False))
 SECRET_KEY = env.str("SECRET_KEY", default=default("keykeykeykeykeykey"))
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=default(["*"]))
 INSTALLED_APPS = [
-    "outdated",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "rest_framework",
     "rest_framework_json_api",
+    "outdated",
 ]
-
-if ENV == "dev":
-    INSTALLED_APPS.append("django.contrib.staticfiles")
-    STATIC_URL = "/api/static/"
-    STATIC_ROOT = "/app/static"
-
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -80,6 +71,40 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Authentication
+OIDC_OP_BASE_ENDPOINT = env.str(
+    "OIDC_OP_BASE_ENDPOINT",
+    "https://outdated.local/auth/realms/outdated/protocol/openid-connect",
+)
+OIDC_OP_USER_ENDPOINT = (
+    f"{OIDC_OP_BASE_ENDPOINT}/{env.str('OIDC_OP_USER_ENDPOINT', default='userinfo')}"
+)
+OIDC_OP_TOKEN_ENDPOINT = (
+    f"{OIDC_OP_BASE_ENDPOINT}/{env.str('OIDC_OP_TOKEN_ENDPOINT', default='token')}"
+)
+
+OIDC_BEARER_TOKEN_REVALIDATION_TIME = env.int(
+    "OIDC_BEARER_TOKEN_REVALIDATION_TIME", default=10
+)
+
+
+OIDC_CLAIMS = {
+    "EMAIL": env.str("OIDC_EMAIL_CLAIM", default="email"),
+    "ID": env.str("OIDC_ID_CLAIM", default="sub"),
+    "FIRST_NAME": env.str("OIDC_FIRSTNAME_CLAIM", default="given_name"),
+    "LAST_NAME": env.str("OIDC_LASTNAME_CLAIM", default="family_name"),
+    "USERNAME": env.str("OIDC_USERNAME_CLAIM", default="preferred_username"),
+    "GROUPS": env.str("OIDC_GROUPS_CLAIM", default="outdated_groups"),
+}
+
+OIDC_VERIFY_SSL = env.bool("OIDC_VERIFY_SSL", default=True)
+OIDC_DRF_AUTH_BACKEND = (
+    "outdated.oidc_auth.authentication.OutdatedOIDCAuthenticationBackend"
+)
+
+# Needed to instantiate `mozilla_django_oidc.auth.OIDCAuthenticationBackend`
+OIDC_RP_CLIENT_ID = None
+OIDC_RP_CLIENT_SECRET = None
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -102,6 +127,13 @@ DECIMAL_SEPARATOR = env.str("DECIMAL_SEPARATOR", ".")
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "rest_framework_json_api.exceptions.exception_handler",
     "DEFAULT_PAGINATION_CLASS": "rest_framework_json_api.pagination.JsonApiPageNumberPagination",
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+        "outdated.oidc_auth.permissions.IsAuthenticated",
+    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "mozilla_django_oidc.contrib.drf.OIDCAuthentication",
+    ),
     "DEFAULT_PARSER_CLASSES": (
         "rest_framework_json_api.parsers.JSONParser",
         "rest_framework.parsers.JSONParser",
@@ -127,26 +159,6 @@ REST_FRAMEWORK = {
     ),
     "TEST_REQUEST_DEFAULT_FORMAT": "vnd.api+json",
 }
-
-if ENV == "dev":
-    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] += (
-        "rest_framework_json_api.renderers.BrowsableAPIRenderer",
-    )
-    TEMPLATES = [
-        {
-            "BACKEND": "django.template.backends.django.DjangoTemplates",
-            "DIRS": [django_root("outdated", "templates")],
-            "APP_DIRS": True,
-            "OPTIONS": {
-                "context_processors": [
-                    "django.template.context_processors.debug",
-                    "django.template.context_processors.request",
-                    "django.contrib.auth.context_processors.auth",
-                    "django.contrib.messages.context_processors.messages",
-                ]
-            },
-        },
-    ]
 
 
 JSON_API_FORMAT_FIELD_NAMES = "dasherize"
