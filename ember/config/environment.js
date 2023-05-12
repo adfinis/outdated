@@ -5,7 +5,14 @@ module.exports = function (environment) {
     modulePrefix: 'outdated',
     environment,
     rootURL: '/',
-    locationType: 'history',
+    locationType: 'auto',
+    'ember-simple-auth-oidc': {
+      host: 'https://outdated.local/auth/realms/outdated/protocol/openid-connect',
+      clientId: 'outdated',
+      authEndpoint: '/auth',
+      tokenEndpoint: '/token',
+      userinfoEndpoint: '/userinfo',
+    },
     EmberENV: {
       EXTEND_PROTOTYPES: false,
       FEATURES: {
