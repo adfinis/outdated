@@ -1,5 +1,6 @@
 import { visit, currentURL, click } from '@ember/test-helpers';
 import { setupMirage } from 'ember-cli-mirage/test-support';
+import { authenticateSession } from 'ember-simple-auth/test-support';
 import { setupApplicationTest } from 'outdated/tests/helpers';
 import { module, test } from 'qunit';
 
@@ -10,6 +11,7 @@ module('Acceptance | projects', function (hooks) {
   test('Project clickable and link is correct', async function (assert) {
     const project = await this.server.create('project', 'withVersions');
 
+    await authenticateSession();
     await visit('/');
 
     assert.strictEqual(currentURL(), '/');

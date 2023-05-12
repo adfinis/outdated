@@ -3,8 +3,10 @@ import { service } from '@ember/service';
 
 export default class ApplicationRoute extends Route {
   @service intl;
+  @service session;
 
-  beforeModel() {
+  async beforeModel() {
+    await this.session.setup();
     this.intl.setLocale(['en-us']);
   }
 }
