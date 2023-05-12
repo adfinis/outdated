@@ -14,3 +14,12 @@ register(factories.ProjectFactory)
 def client(db):
     """Return rest framework client, includes db."""
     return APIClient()
+
+
+@pytest.fixture(scope="module")
+def vcr_config():
+    return {
+        # Replace the Authorization header with a dummy value
+        "filter_headers": [("Authorization", "DUMMY")],
+        "ignore_localhost": True,
+    }

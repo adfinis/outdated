@@ -154,3 +154,16 @@ def test_project(client, project_factory, version_factory, defined):
     else:
         assert not generated_project.versioned_dependencies.first()
         assert generated_project.status == "UNDEFINED"
+
+
+@pytest.mark.vcr()
+@pytest.mark.django_db(transaction=True)
+def test_sync_project_endpoint(client, project_factory):
+    generated_project = project_factory(repo="https://github.com/adfinis/outdated")
+    url = reverse("project-sync", args=[generated_project.id])
+    resp = client.post(url)
+    assert resp.status_code == status.HTTP_200_OK
+    assert generated_project.versioned_dependencies.count() > 0
+    url = reverse("project-sync", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
+    resp = client.post(url)
+    assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
