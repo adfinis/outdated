@@ -11,4 +11,4 @@ router.register(r"release-versions", views.ReleaseVersionViewSet)
 router.register(r"versions", views.VersionViewSet)
 router.register(r"users", UserViewSet)
 
-urlpatterns = [path("api/", include(router.urls))]
+urlpatterns = [path(r"api/", include(router.urls))]

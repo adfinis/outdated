@@ -18,6 +18,7 @@ gunicorn = "^20.1.0"
 semver = "^3.0.0"
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 # pyaml = "^21.10.1"
+mozilla-django-oidc = "^3.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -30,12 +31,13 @@ flake8-docstrings = "1.6.0"
 flake8-string-format = "0.3.0"
 black = "22.12.0"
 pytest-django = "4.5.2"
-pytest = "7.2.1"
+pytest = "7.3.1"
 isort = "5.11.4"
 pytest-factoryboy = "2.5.1"
 pytest-cov = "^4.0.0"
 pytest-vcr = "^1.0.2"
 pdbpp = "^0.10.3"
+urllib3 = "~1.26.15"
 
 
 [tool.isort]
