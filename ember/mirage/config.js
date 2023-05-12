@@ -20,6 +20,9 @@ export default function () {
     https://www.ember-cli-mirage.com/docs/route-handlers/shorthands
   */
 
+  this.passthrough('/auth');
+  this.passthrough('https://outdated.local/auth/**');
+
   this.namespace = '/api';
   this.resource('projects');
   this.resource('versions');
