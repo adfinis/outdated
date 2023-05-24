@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "rest_framework",
     "rest_framework_json_api",
-    "outdated",
+    "outdated.outdated",
+    "outdated.user",
 ]
 
 MIDDLEWARE = [
