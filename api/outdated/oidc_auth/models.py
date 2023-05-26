@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.db.models import Q
 
 from outdated.user.models import User
 
