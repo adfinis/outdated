@@ -2,6 +2,8 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
+from outdated.outdated.models import Maintainer
+
 
 def test_dependency(client, dependency_factory):
     generated_dependency = dependency_factory()
@@ -154,6 +156,33 @@ def test_project(client, project_factory, version_factory, defined):
     else:
         assert not generated_project.versioned_dependencies.first()
         assert generated_project.status == "UNDEFINED"
+
+
+def test_maintainer(client, maintainer):
+
+    assert Maintainer.objects.count() == 1
+    url = reverse("maintainer-list")
+    resp = client.get(url)
+    assert resp.status_code == status.HTTP_200_OK
+    resp_detailed = client.get(reverse("maintainer-detail", args=[maintainer.id]))
+    relationships = resp.json()["data"][0]["relationships"]
+    detailed_relationships = resp_detailed.json()["data"]["relationships"]
+
+    assert (
+        relationships["user"]["data"]["id"]
+        == detailed_relationships["user"]["data"]["id"]
+        == str(maintainer.user.id)
+    )
+    assert (
+        relationships["project"]["data"]["id"]
+        == detailed_relationships["project"]["data"]["id"]
+        == str(maintainer.project.id)
+    )
+    assert (
+        resp.json()["data"][0]["attributes"]
+        == resp_detailed.json()["data"]["attributes"]
+    )
+    assert maintainer.project.maintainers.all()[0] == maintainer
 
 
 @pytest.mark.vcr()

@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from factory import Faker
 from factory.django import DjangoModelFactory
 
@@ -13,7 +11,7 @@ class UserFactory(DjangoModelFactory):
     last_name = Faker("last_name")
     email = Faker("email")
     username = Faker("user_name")
-    idp_id = uuid4()
+    idp_id = Faker("uuid4")
 
     class Meta:
         """Meta informations for the user factory."""
