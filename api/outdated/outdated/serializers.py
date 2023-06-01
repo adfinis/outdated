@@ -1,6 +1,12 @@
 from rest_framework_json_api import serializers
 
-from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
+from outdated.outdated.models import (
+    Dependency,
+    Maintainer,
+    Project,
+    ReleaseVersion,
+    Version,
+)
 
 
 class DependencySerializer(serializers.ModelSerializer):
@@ -30,12 +36,27 @@ class VersionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class MaintainerSerializer(serializers.ModelSerializer):
+    included_serializers = {
+        "user": "outdated.user.serializers.UserSerializer",
+        "project": "outdated.outdated.serializers.ProjectSerializer",
+    }
+
+    class Meta:
+        model = Maintainer
+        fields = "__all__"
+
+
 class ProjectSerializer(serializers.ModelSerializer):
-    status = serializers.ReadOnlyField()
+    maintainers = serializers.ResourceRelatedField(
+        many=True, required=False, read_only=True
+    )
+
     included_serializers = {
         "versioned_dependencies": "outdated.outdated.serializers.VersionSerializer",
+        "maintainers": "outdated.outdated.serializers.MaintainerSerializer",
     }
 
     class Meta:
         model = Project
-        fields = "__all__"
+        fields = ("name", "repo", "status", "versioned_dependencies", "maintainers")

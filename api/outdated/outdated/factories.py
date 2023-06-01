@@ -4,6 +4,7 @@ from datetime import date, timedelta
 from factory import Faker, Sequence, SubFactory, Trait, post_generation
 from factory.django import DjangoModelFactory
 
+from ..user.factories import UserFactory
 from . import models
 
 DEPENDENCIES = [
@@ -88,3 +89,11 @@ class ProjectFactory(DjangoModelFactory):
 
     class Meta:
         model = models.Project
+
+
+class MaintainerFactory(DjangoModelFactory):
+    project = SubFactory(ProjectFactory)
+    user = SubFactory(UserFactory)
+
+    class Meta:
+        model = models.Maintainer
