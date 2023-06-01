@@ -2,9 +2,16 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
+from outdated.outdated.models import (
+    Dependency,
+    Maintainer,
+    Project,
+    ReleaseVersion,
+    Version,
+)
 from outdated.outdated.serializers import (
     DependencySerializer,
+    MaintainerSerializer,
     ProjectSerializer,
     ReleaseVersionSerializer,
     VersionSerializer,
@@ -41,3 +48,8 @@ class VersionViewSet(viewsets.ModelViewSet):
 class DependencyViewSet(viewsets.ModelViewSet):
     queryset = Dependency.objects.all()
     serializer_class = DependencySerializer
+
+
+class MaintainerViewset(viewsets.ModelViewSet):
+    queryset = Maintainer.objects.all()
+    serializer_class = MaintainerSerializer

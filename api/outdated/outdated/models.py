@@ -3,7 +3,8 @@ from datetime import date, timedelta
 from django.db import models
 from django.db.models.functions import Lower
 
-from outdated.models import UUIDModel
+from outdated.models import UniqueBooleanField, UUIDModel
+from outdated.user.models import User
 
 STATUS_OPTIONS = {
     "outdated": "OUTDATED",
@@ -38,7 +39,6 @@ class ReleaseVersion(UUIDModel):
     dependency = models.ForeignKey(Dependency, on_delete=models.CASCADE)
     major_version = models.IntegerField()
     minor_version = models.IntegerField()
-
     end_of_life = models.DateField(null=True, blank=True)
 
     def __str__(self) -> str:
@@ -112,3 +112,14 @@ class Project(UUIDModel):
 
     def __str__(self):
         return self.name
+
+
+class Maintainer(UUIDModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="maintainers"
+    )
+    is_primary = UniqueBooleanField(default=False, together=["project"])
+
+    class Meta:
+        unique_together = ("user", "project")
