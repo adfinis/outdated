@@ -4,7 +4,8 @@ from django.db import models
 from django.db.models.functions import Lower
 
 from outdated.models import UniqueBooleanField, UUIDModel
-from outdated.user.models import User
+
+from ..user.models import User
 
 STATUS_OPTIONS = {
     "outdated": "OUTDATED",

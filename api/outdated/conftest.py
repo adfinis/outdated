@@ -4,8 +4,7 @@ import pytest
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
-from outdated.oidc_auth.models import OIDCUser
-
+from .oidc_auth.models import OIDCUser
 from .outdated import factories
 from .user.factories import UserFactory
 

@@ -1,27 +1,15 @@
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
-from outdated.outdated.models import (
-    Dependency,
-    Maintainer,
-    Project,
-    ReleaseVersion,
-    Version,
-)
-from outdated.outdated.serializers import (
-    DependencySerializer,
-    MaintainerSerializer,
-    ProjectSerializer,
-    ReleaseVersionSerializer,
-    VersionSerializer,
-)
-from outdated.outdated.synchroniser import Synchroniser
+from . import models, serializers
+from .synchroniser import Synchroniser
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+class ProjectViewSet(ModelViewSet):
+    queryset = models.Project.objects.all()
+    serializer_class = serializers.ProjectSerializer
 
     @action(detail=True, methods=["post"])
     def sync(self, request, pk=None):
@@ -35,21 +23,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_200_OK)
 
 
-class ReleaseVersionViewSet(viewsets.ModelViewSet):
-    queryset = ReleaseVersion.objects.all()
-    serializer_class = ReleaseVersionSerializer
+class ReleaseVersionViewSet(ModelViewSet):
+    queryset = models.ReleaseVersion.objects.all()
+    serializer_class = serializers.ReleaseVersionSerializer
 
 
-class VersionViewSet(viewsets.ModelViewSet):
-    queryset = Version.objects.all()
-    serializer_class = VersionSerializer
+class VersionViewSet(ModelViewSet):
+    queryset = models.Version.objects.all()
+    serializer_class = serializers.VersionSerializer
 
 
-class DependencyViewSet(viewsets.ModelViewSet):
-    queryset = Dependency.objects.all()
-    serializer_class = DependencySerializer
+class DependencyViewSet(ModelViewSet):
+    queryset = models.Dependency.objects.all()
+    serializer_class = serializers.DependencySerializer
 
 
-class MaintainerViewset(viewsets.ModelViewSet):
-    queryset = Maintainer.objects.all()
-    serializer_class = MaintainerSerializer
+class MaintainerViewset(ModelViewSet):
+    queryset = models.Maintainer.objects.all()
+    serializer_class = serializers.MaintainerSerializer
