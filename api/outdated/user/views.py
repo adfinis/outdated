@@ -1,9 +1,9 @@
-from rest_framework import viewsets
+from rest_framework.viewsets import ModelViewSet
 
-from outdated.user.models import User
-from outdated.user.serializers import UserSerializer
+from .models import User
+from .serializers import UserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer

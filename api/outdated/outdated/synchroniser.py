@@ -10,7 +10,7 @@ from dateutil import parser
 from django.conf import settings
 from semver import Version as SemVer
 
-from outdated.outdated.models import Dependency, Project, ReleaseVersion, Version
+from . import models
 
 # from yaml import safe_load
 
@@ -27,7 +27,7 @@ def get_version(version: str) -> str:
 
 
 class Synchroniser:
-    def __init__(self, project: Project):
+    def __init__(self, project):
         self.project = project
         self.owner, self.name = findall(r"\/([^\/]+)\/([^\/]+)$", self.project.repo)[0]
 
@@ -112,18 +112,18 @@ class LockFileParser:
         return "PIP"
 
     async def _get_version(self, requirements: tuple, provider: str):
-        dependency, dependency_created = await Dependency.objects.aget_or_create(
+        dependency, dependency_created = await models.Dependency.objects.aget_or_create(
             name=requirements[0], provider=provider
         )
         major, minor, patch = SemVer.parse(get_version(requirements[1])).to_tuple()[0:3]
 
-        release_version, _ = await ReleaseVersion.objects.aget_or_create(
+        release_version, _ = await models.ReleaseVersion.objects.aget_or_create(
             dependency=dependency,
             major_version=major,
             minor_version=minor,
         )
 
-        version, version_created = await Version.objects.aget_or_create(
+        version, version_created = await models.Version.objects.aget_or_create(
             release_version=release_version,
             patch_version=patch,
         )
@@ -134,7 +134,7 @@ class LockFileParser:
 
         return version
 
-    async def _get_release_date(self, version: Version):
+    async def _get_release_date(self, version):
         """Get the release date of a dependency."""
         dependency = version.release_version.dependency
         name, provider = dependency.name, dependency.provider
