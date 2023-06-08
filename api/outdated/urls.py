@@ -1,8 +1,8 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from outdated.outdated import views
-from outdated.user.views import UserViewSet
+from .outdated import views
+from .user.views import UserViewSet
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r"projects", views.ProjectViewSet)
