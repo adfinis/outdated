@@ -5,4 +5,5 @@ export default class ProjectModel extends Model {
   @attr status;
   @attr repo;
   @hasMany('version') versionedDependencies;
+  @hasMany('maintainer') maintainers;
 }
