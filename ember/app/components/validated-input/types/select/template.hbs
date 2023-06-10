@@ -16,5 +16,5 @@
   class='{{if @isValid "is-valid "}} {{if @isInvalid "is-invalid"}}'
   as |name|
 >
-  {{or (get name @searchField) name}}
+  {{or (get name (or @visibleField @searchField)) name}}
 </@selectComponent>
