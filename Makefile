@@ -44,6 +44,10 @@ ember-lint-fix: ## lint and fix ember
 ember-start: ## Start ember
 	@docker compose up ember --build -d
 
+.PHONY: ember-start-livereload
+ember-start-livereload: ## Start ember with livereload
+	@docker compose up -d --build db keycloak api caddy && cd ember && yarn && yarn start-proxy
+
 .PHONY: ember-test
 ember-test: ## test the frontend
 	@cd ember && yarn test:ember
