@@ -1,0 +1,14 @@
+{{page-title @project.name}}
+
+<Form @name={{if @project (concat 'Edit project ' @project.name) 'Track new Project'}} @model={{this.project}} @onSubmit={{perform this.saveProject}} as |f|>
+  <f.input @name='name' />
+  <f.input @name='repo' />
+
+  <f.input @name='users' @type='select' @label='Maintainers' @multiple={{true}} @value={{this.project.users}}
+    @options={{this.users}} @searchField='searchField' @visibleField='fullName' />
+  {{#if (gt this.project.users.length 1)}}
+  <f.input @name='primaryMaintainer' @type='select' @options={{this.project.users}} @value={{this.primaryMaintainer}}
+    @searchField='searchField' @visibleField='fullName' />
+  {{/if}}
+  <f.button @loading={{this.saveProject.isRunning}} />
+</Form>
