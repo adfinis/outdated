@@ -5,9 +5,10 @@ export default class ProjectsRoute extends Route {
   @service store;
 
   model() {
+    this.store.unloadAll('project');
     return this.store.findAll('project', {
       include:
-        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
+        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency,maintainers,maintainers.user',
     });
   }
 }

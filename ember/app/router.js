@@ -12,8 +12,10 @@ Router.map(function () {
   this.route('protected', { path: '/' }, function () {
     this.route('index', { resetNamespace: true, path: '/' }, function () {
       this.route('projects', { resetNamespace: true, path: '/' }, function () {
-        this.route('project-detailed', { path: 'projects/:project_id' });
-        this.route('create-new', { path: 'projects/add' });
+        this.route('detailed', { path: 'projects/:project_id' }, function () {
+          this.route('edit');
+        });
+        this.route('add', { path: 'projects/add' });
       });
     });
   });
