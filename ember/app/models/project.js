@@ -1,4 +1,5 @@
 import Model, { attr, hasMany } from '@ember-data/model';
+import { tracked } from '@glimmer/tracking';
 
 export default class ProjectModel extends Model {
   @attr name;
@@ -6,4 +7,7 @@ export default class ProjectModel extends Model {
   @attr repo;
   @hasMany('version') versionedDependencies;
   @hasMany('maintainer') maintainers;
+
+  @tracked users;
+  @tracked primaryMaintainer;
 }

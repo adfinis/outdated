@@ -1,15 +1,13 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 
-export default class ProjectsCreateNewRoute extends Route {
+export default class ProjectsAddRoute extends Route {
   @service store;
   beforeModel() {
     this.store.findAll('dependency');
     this.store.findAll('releaseVersion');
     this.store.findAll('version');
-  }
-
-  deactivate() {
-    this.store.unloadAll('project');
+    this.store.findAll('user');
+    this.store.findAll('maintainer');
   }
 }
