@@ -13,6 +13,7 @@
   </div>
 
   <hr class='seperator' />
+  <MaintainerTable @maintainers={{@project.maintainers}} />
   <DependencyTable @versionedDependencies={{@project.versionedDependencies}} />
   <UkButton
     @label='Sync'
