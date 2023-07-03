@@ -14,4 +14,9 @@
 
   <hr class='seperator' />
   <DependencyTable @versionedDependencies={{@project.versionedDependencies}} />
+  <UkButton
+    @label='Sync'
+    @loading={{this.syncProject.isRunning}}
+    @onClick={{perform this.syncProject}}
+  />
 </div>
