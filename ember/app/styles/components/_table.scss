@@ -1,8 +1,14 @@
+.table-header {
+  font-size: calc(var(--detailed-heading-font-size) * .9);
+  margin-bottom: calc(var(--navbar-margin-bottom) * .4);
+}
+
 table {
   @extend .uk-table;
   @extend .uk-text-center;
   @extend .uk-table-striped;
   @extend .uk-margin-bottom;
+
   th {
     @extend .uk-text-center;
   }
@@ -12,8 +18,10 @@ table {
     padding: var(--table-cell-paddings);
     font-size: var(--table-cell-font-size);
   }
+
   tbody {
     border: $table-striped-border 2px solid;
+
     tr:nth-of-type(odd) {
       box-shadow: inset 0 0 5px 1px rgba(59, 59, 59, 0.1) !important;
     }
