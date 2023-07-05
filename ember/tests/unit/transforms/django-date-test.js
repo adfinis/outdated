@@ -1,5 +1,6 @@
-import { setupTest } from 'outdated/tests/helpers';
 import { module, test } from 'qunit';
+
+import { setupTest } from 'outdated/tests/helpers';
 
 module('Unit | Transform | django date', function (hooks) {
   setupTest(hooks);

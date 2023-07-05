@@ -2,9 +2,10 @@ import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import { service } from '@ember/service';
 import Component from '@glimmer/component';
+import { tracked } from 'tracked-built-ins';
+
 import emptyChangeset from 'outdated/utils/empty-changeset';
 import ProjectValidations from 'outdated/validations/project';
-import { tracked } from 'tracked-built-ins';
 
 export default class ProjectFormComponent extends Component {
   // Services
