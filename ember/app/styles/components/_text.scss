@@ -5,9 +5,14 @@
     font-style: italic;
   }
 }
+
 .none-yet {
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 1rem;
+
+  span {
+    @extend .text-undefined;
+  }
 }
