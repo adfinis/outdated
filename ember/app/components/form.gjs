@@ -1,7 +1,13 @@
+import { hash } from '@ember/helper';
+import { on } from '@ember/modifier';
 import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
+import UkButton from 'ember-uikit/components/uk-button';
+
+import ValidatedInput from './validated-input';
+
 export default class FormComponent extends Component {
   @tracked loading = false;
   @tracked submitted = false;
@@ -41,4 +47,23 @@ export default class FormComponent extends Component {
     }
     return false;
   }
+  <template>
+    <form class='uk-form' autocomplete='off' {{on 'submit' this.submit}}>
+
+      <fieldset class='uk-fieldset'>
+        <legend class='uk-legend'>{{@name}}</legend>
+
+        {{yield
+          (hash
+            model=@model
+            loading=this.loading
+            input=(component
+              ValidatedInput model=@model submitted=this.submitted
+            )
+            button=(component UkButton label='Save' type='submit')
+          )
+        }}
+      </fieldset>
+    </form>
+  </template>
 }

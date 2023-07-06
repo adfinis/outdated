@@ -1,8 +1,12 @@
+import { concat } from '@ember/helper';
 import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import { service } from '@ember/service';
 import Component from '@glimmer/component';
+import gt from 'ember-truth-helpers/helpers/gt';
 import { tracked } from 'tracked-built-ins';
+
+import Form from './form';
 
 import emptyChangeset from 'outdated/utils/empty-changeset';
 import ProjectValidations from 'outdated/validations/project';
@@ -99,4 +103,42 @@ export default class ProjectFormComponent extends Component {
       return m.project.get('id') === this.project.id;
     });
   }
+  /* eslint-disable no-undef */
+  <template>
+    <Form
+      @name={{if
+        @project
+        (concat 'Edit project ' @project.name)
+        'Track new Project'
+      }}
+      @model={{this.project}}
+      @onSubmit={{this.saveProject}}
+      as |f|
+    >
+      <f.input @name='name' />
+      <f.input @name='repo' />
+
+      <f.input
+        @name='users'
+        @type='select'
+        @label='Maintainers'
+        @multiple={{true}}
+        @value={{this.project.users}}
+        @options={{this.users}}
+        @searchField='searchField'
+        @visibleField='fullName'
+      />
+      {{#if (gt this.project.users.length 1)}}
+        <f.input
+          @name='primaryMaintainer'
+          @type='select'
+          @options={{this.project.users}}
+          @value={{this.primaryMaintainer}}
+          @searchField='searchField'
+          @visibleField='fullName'
+        />
+      {{/if}}
+      <f.button />
+    </Form>
+  </template>
 }

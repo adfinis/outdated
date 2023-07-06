@@ -1,7 +1,0 @@
-{{! template-lint-disable require-input-label}}
-<input
-  {{on 'input' this.onUpdate}}
-  {{on 'blur' @setDirty}}
-  class='uk-input {{if @isValid "is-valid"}} {{if @isInvalid "is-invalid"}}'
-  ...attributes
-/>
