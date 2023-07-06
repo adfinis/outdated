@@ -1,5 +1,6 @@
-import validateOtherDate from 'outdated/validators/other-date';
 import { module, test } from 'qunit';
+
+import validateOtherDate from 'outdated/validators/other-date';
 
 module('Unit | Validator | other-date');
 test('it works with after', function (assert) {

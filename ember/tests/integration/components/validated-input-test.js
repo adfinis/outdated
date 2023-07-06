@@ -1,8 +1,9 @@
 import { render } from '@ember/test-helpers';
 import { Changeset } from 'ember-changeset';
 import { hbs } from 'ember-cli-htmlbars';
-import { setupRenderingTest } from 'outdated/tests/helpers';
 import { module, test } from 'qunit';
+
+import { setupRenderingTest } from 'outdated/tests/helpers';
 module('Integration | Component | validated-input ', function (hooks) {
   setupRenderingTest(hooks);
 
