@@ -1,9 +1,10 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
+import { tracked } from 'tracked-built-ins';
+
 import emptyChangeset from 'outdated/utils/empty-changeset';
 import ProjectValidations from 'outdated/validations/project';
-import { tracked } from 'tracked-built-ins';
 
 export default class ProjectsCreateNewController extends Controller {
   // Services
