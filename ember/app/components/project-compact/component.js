@@ -11,6 +11,6 @@ export default class ProjectCompactComponent extends Component {
     return stateIconDict[this.args.project.status];
   }
   get version() {
-    return this.args.project.versionedDependencies.slice()[0];
+    return this.args.project.versionedDependencies[0];
   }
 }
