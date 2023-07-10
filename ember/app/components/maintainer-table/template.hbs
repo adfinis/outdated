@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each (sort-by "isPrimary:desc" @maintainers) as |maintainer|}}
+      {{#each (sort-by "isPrimary:desc" this.maintainers) as |maintainer|}}
       <tr>
         <td>
           {{#if maintainer.isPrimary}}
