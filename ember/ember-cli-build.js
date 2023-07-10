@@ -4,7 +4,9 @@ const BrotliPlugin = require('brotli-webpack-plugin');
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function (defaults) {
   const app = new EmberApp(defaults, {
-    // Add options here
+    'ember-simple-auth': {
+      useSessionSetupMethod: true,
+    },
   });
 
   const { Webpack } = require('@embroider/webpack');
@@ -14,7 +16,6 @@ module.exports = function (defaults) {
         package: 'qunit',
       },
     ],
-
     packagerOptions: {
       webpackConfig: {
         plugins:
