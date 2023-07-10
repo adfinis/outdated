@@ -2,6 +2,7 @@
   &:not(tr),
   td[data-test-version-end-of-life] {
     @extend .uk-text-muted;
+
     font-style: italic;
   }
 }

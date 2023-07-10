@@ -9,6 +9,7 @@
     --button-nav-button-padding: 0 10px;
   }
 }
+
 @media only screen and (min-width: $breakpoint-small) {
   :root {
     --seperator-margin-bottom: 3px;
@@ -22,6 +23,7 @@
     --detailed-heading-font-size: 1.9rem;
   }
 }
+
 @media only screen and (min-width: $breakpoint-medium) {
   :root {
     --navbar-height: 70px;
@@ -35,6 +37,7 @@
     --detailed-heading-font-size: 2.5rem;
   }
 }
+
 @media only screen and (min-width: $breakpoint-large) {
   :root {
     --navbar-height: 80px;
@@ -43,6 +46,7 @@
     --title-compact-font-size: 1.3rem;
   }
 }
+
 /* Content Contaier */
 .content-container {
   @extend .uk-container;

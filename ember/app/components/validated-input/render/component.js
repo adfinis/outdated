@@ -5,7 +5,7 @@ export default class RenderComponent extends Component {
   get selectComponent() {
     return ensureSafeComponent(
       this.args.multiple ? 'power-select-multiple' : 'power-select',
-      this
+      this,
     );
   }
   get name() {

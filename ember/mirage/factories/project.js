@@ -7,7 +7,7 @@ export default Factory.extend({
 
   repo() {
     return `https://github.com/${faker.internet.domainWord()}/${faker.helpers.slugify(
-      this.name
+      this.name,
     )}`;
   },
   withVersions: trait({

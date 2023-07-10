@@ -17,18 +17,18 @@ module('Integration | Component | form', function (hooks) {
 
   test('it renders flatpickr', async function (assert) {
     await render(
-      hbs`<Form as |f|> <f.input @name="test" @type="date" /> </Form>`
+      hbs`<Form as |f|> <f.input @name="test" @type="date" /> </Form>`,
     );
     assert.dom('form input.ember-flatpickr-input').exists();
   });
 
   test('it renders powerselect', async function (assert) {
     await render(
-      hbs`<Form as |f|> <f.input @name="test" @type="select" /> </Form>`
+      hbs`<Form as |f|> <f.input @name="test" @type="select" /> </Form>`,
     );
     assert.dom('form div.ember-power-select-trigger').exists();
     await render(
-      hbs`<Form as |f|> <f.input @name="test" @type="select" @multiple={{true}} /> </Form>`
+      hbs`<Form as |f|> <f.input @name="test" @type="select" @multiple={{true}} /> </Form>`,
     );
     assert.dom('form input.ember-power-select-trigger-multiple-input').exists();
   });
@@ -37,10 +37,10 @@ module('Integration | Component | form', function (hooks) {
     this.model = new Changeset(
       {},
       lookupValidator(TestValidations),
-      TestValidations
+      TestValidations,
     );
     await render(
-      hbs`<Form as |f|> <f.input data-test-input @model={{this.model}} @name="test" /> </Form>`
+      hbs`<Form as |f|> <f.input data-test-input @model={{this.model}} @name="test" /> </Form>`,
     );
     triggerEvent('[data-test-input]', 'blur');
     await fillIn('[data-test-input]', 'foo');

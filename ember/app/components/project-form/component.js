@@ -16,7 +16,7 @@ export default class ProjectFormComponent extends Component {
 
   @tracked project = emptyChangeset(
     ProjectValidations,
-    this.args.project ?? this.store.createRecord('project')
+    this.args.project ?? this.store.createRecord('project'),
   );
 
   constructor(...args) {
@@ -68,7 +68,7 @@ export default class ProjectFormComponent extends Component {
   get primaryMaintainer() {
     return (
       this.project.users.find(
-        (u) => u.id === this.project.primaryMaintainer?.id
+        (u) => u.id === this.project.primaryMaintainer?.id,
       ) ?? this.project.users[0]
     );
   }

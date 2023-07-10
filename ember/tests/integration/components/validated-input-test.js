@@ -23,7 +23,7 @@ module('Integration | Component | validated-input ', function (hooks) {
     this.set('model', new Changeset({ name: 'foo' }));
 
     await render(
-      hbs`<ValidatedInput @name="name" @value='bar' @model={{this.model}} />`
+      hbs`<ValidatedInput @name="name" @value='bar' @model={{this.model}} />`,
     );
 
     assert.dom('input').hasValue('bar');

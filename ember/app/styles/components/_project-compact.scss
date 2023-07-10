@@ -1,4 +1,4 @@
-/* style how the compact projects are displayed*/
+/* style how the compact projects are displayed */
 .compact-projects {
   @extend .uk-grid;
   @extend .uk-grid-small;
@@ -9,26 +9,29 @@
 /* style the compact projects themselves */
 .project-compact {
   @extend .uk-margin-small-bottom;
+
   width: var(--compact-projects-width);
 
   .uk-card-body {
     @extend .uk-padding-small;
     @extend .uk-padding-remove-top;
-
     @extend .uk-flex-column;
     @extend .uk-flex-middle;
     @extend .uk-flex-center;
+
     display: flex;
   }
+
   a {
     @extend .uk-text-decoration-none;
   }
 }
 
-/* the compact-projects title*/
+/* the compact-projects title */
 .title-compact {
   @extend .uk-text-center;
   @extend .uk-text-nowrap;
+
   margin: 0;
   position: relative;
   z-index: 0;
