@@ -56,7 +56,7 @@
     "ember-cli-sass": "^11.0.1",
     "ember-composable-helpers": "^5.0.0",
     "ember-concurrency": "^3.0.0",
-    "ember-data": "~4.11.3",
+    "ember-data": "^4.12.1",
     "ember-fetch": "^8.1.2",
     "ember-flatpickr": "^4.0.0",
     "ember-focus-trap": "^1.0.2",
