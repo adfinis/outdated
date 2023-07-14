@@ -1,0 +1,9 @@
+[Unit]
+Description=Synchronise projects
+Wants=syncprojects.timer
+
+[Service]
+ExecStart=docker exec outdated-api sh -c './manage.py syncprojects'
+
+[Install]
+WantedBy=multi-user.target

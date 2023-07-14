@@ -1,0 +1,9 @@
+[Unit]
+Description=Send email notifications to users
+Wants=notifications.timer
+
+[Service]
+ExecStart=docker exec outdated-api sh -c './manage.py notify'
+
+[Install]
+WantedBy=multi-user.target
