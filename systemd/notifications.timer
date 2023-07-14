@@ -1,9 +1,0 @@
-[Unit]
-Description=Send notifications every monday morning
-
-[Timer]
-Unit=notifications.service
-OnCalendar=Mon *-*-* 00:00:00
-
-[Install]
-WantedBy=timers.target

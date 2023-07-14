@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer for Sync all projects with their remote counterparts
+
+[Timer]
+Unit=outdated-syncprojects.service
+OnCalendar=*-*-* 00:00:00
+
+[Install]
+WantedBy=timers.target

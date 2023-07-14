@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer for Notify maintainers about their projects if necessary
+
+[Timer]
+Unit=outdated-notify.service
+OnCalendar=Mon *-*-* 00:00:00
+
+[Install]
+WantedBy=timers.target

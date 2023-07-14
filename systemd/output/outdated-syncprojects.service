@@ -1,0 +1,9 @@
+[Unit]
+Description=Sync all projects with their remote counterparts
+Wants=outdated-syncprojects.timer
+
+[Service]
+ExecStart=docker exec outdated-api sh -c './manage.py syncprojects'
+
+[Install]
+WantedBy=multi-user.target

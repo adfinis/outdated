@@ -1,0 +1,9 @@
+[[timer]]
+description="Sync all projects with their remote counterparts"
+command="syncprojects"
+schedule="*-*-* 00:00:00"
+
+[[timer]]
+description="Notify maintainers about their projects if necessary"
+command="notify"
+schedule="Mon *-*-* 00:00:00"
