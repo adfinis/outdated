@@ -15,5 +15,5 @@ module(
 
       assert.dom('input').exists();
     });
-  }
+  },
 );

@@ -1,8 +1,9 @@
-/* the projects header, includes its name and a button to the repository*/
+/* the projects header, includes its name and a button to the repository */
 .detailed-header {
   text-align: center;
   display: flex;
   align-items: center;
+
   h1 {
     @extend .uk-link-heading;
 
@@ -11,14 +12,17 @@
     width: 100%;
     font-size: var(--detailed-heading-font-size);
   }
+
   a {
     width: calc(5px + var(--detailed-heading-font-size));
   }
 }
+
 .project-detailed {
   table {
     margin: 0;
   }
+
   th,
   td {
     width: 25%;

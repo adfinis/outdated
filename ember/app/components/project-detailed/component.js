@@ -14,7 +14,7 @@ export default class ProjectDetailedComponent extends Component {
         `/api/projects/${this.args.project.id}/sync`,
         {
           method: 'POST',
-        }
+        },
       );
       if (request.ok) {
         this.notification.success('Project synced successfully');

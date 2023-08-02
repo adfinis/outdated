@@ -7,8 +7,10 @@
 .navbar-container {
   @extend .uk-navbar-container;
   @extend .uk-container-expand;
+
   padding: 0 30px;
   height: var(--navbar-height);
+
   a {
     min-height: var(--navbar-height);
   }
@@ -17,12 +19,14 @@
 /* button nav */
 .button-nav {
   @extend .uk-button-group;
+
   button {
     @extend .uk-button-small;
 
     padding: var(--button-nav-button-padding);
     line-height: var(--button-nav-button-line-height);
   }
+
   a.ember-view.active button {
     @extend .uk-button-primary;
   }

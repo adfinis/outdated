@@ -14,5 +14,5 @@ module(
     `);
       assert.dom('input.ember-flatpickr-input').exists();
     });
-  }
+  },
 );
