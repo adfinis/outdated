@@ -10,8 +10,8 @@ test('it works with after', function (assert) {
       new Date(2000, 1, 1),
       null,
       {},
-      { otherKey: new Date(1990, 1, 1) }
-    )
+      { otherKey: new Date(1990, 1, 1) },
+    ),
   );
   assert.strictEqual(
     typeof validateOtherDate({ after: 'otherKey' })(
@@ -19,9 +19,9 @@ test('it works with after', function (assert) {
       new Date(1990, 1, 1),
       null,
       {},
-      { otherKey: new Date(2000, 1, 1) }
+      { otherKey: new Date(2000, 1, 1) },
     ),
-    'string'
+    'string',
   );
 });
 
@@ -32,8 +32,8 @@ test('it works with before', function (assert) {
       new Date(1990, 1, 1),
       null,
       {},
-      { otherKey: new Date(2000, 1, 1) }
-    )
+      { otherKey: new Date(2000, 1, 1) },
+    ),
   );
   assert.strictEqual(
     typeof validateOtherDate({ before: 'otherKey' })(
@@ -41,8 +41,8 @@ test('it works with before', function (assert) {
       new Date(2000, 1, 1),
       null,
       {},
-      { otherKey: new Date(1990, 1, 1) }
+      { otherKey: new Date(1990, 1, 1) },
     ),
-    'string'
+    'string',
   );
 });

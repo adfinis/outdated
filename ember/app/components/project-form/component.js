@@ -16,7 +16,7 @@ export default class ProjectFormComponent extends Component {
 
   @tracked project = emptyChangeset(
     ProjectValidations,
-    this.args.project ?? this.store.createRecord('project')
+    this.args.project ?? this.store.createRecord('project'),
   );
 
   constructor(...args) {
@@ -26,14 +26,11 @@ export default class ProjectFormComponent extends Component {
     }
   }
 
-  async initUsers() {
-    this.maintainers = await this.project.maintainers.slice();
-    this.project.users = await Promise.all(
-      this.project.maintainers.map((m) => m.user)
-    );
-
-    this.project.primaryMaintainer = this.maintainers.find(
-      (m) => m.isPrimary
+  initUsers() {
+    this.maintainers = this.project.maintainers;
+    this.project.users = this.project.maintainers.map((m) => m.user);
+    this.project.primaryMaintainer = this.maintainers?.find(
+      (m) => m.isPrimary,
     )?.user;
   }
 
@@ -42,17 +39,13 @@ export default class ProjectFormComponent extends Component {
       const project = await this.project.save();
 
       this.maintainers
-        ?.filter(
-          (m) => !this.project.users.map((u) => u.id).includes(m.user.get('id'))
-        )
+        ?.filter((m) => !this.project.users.includes(m.user))
         .forEach((m) => m.destroyRecord());
       this.project.users.forEach((user) => {
-        const maintainer = this.maintainers?.find(
-          (m) => m.user.get('id') === user.id
-        );
+        const maintainer = this.maintainers?.find((m) => m.user.id === user.id);
         if (maintainer) {
-          maintainer.isPrimary = user === this.primaryMaintainer;
-          maintainer.save();
+          maintainer.isPrimary = user.id === this.primaryMaintainer.id;
+          if (maintainer.hasDirtyAttributes) maintainer.save();
         } else {
           this.store
             .createRecord('maintainer', {
@@ -74,8 +67,9 @@ export default class ProjectFormComponent extends Component {
 
   get primaryMaintainer() {
     return (
-      this.project.users.find((u) => u === this.project.primaryMaintainer) ??
-      this.project.users[0]
+      this.project.users.find(
+        (u) => u.id === this.project.primaryMaintainer?.id,
+      ) ?? this.project.users[0]
     );
   }
 

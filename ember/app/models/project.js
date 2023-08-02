@@ -5,8 +5,8 @@ export default class ProjectModel extends Model {
   @attr name;
   @attr status;
   @attr repo;
-  @hasMany('version') versionedDependencies;
-  @hasMany('maintainer') maintainers;
+  @hasMany('version', { inverse: null, async: false }) versionedDependencies;
+  @hasMany('maintainer', { inverse: 'project', async: false }) maintainers;
 
   @tracked users;
   @tracked primaryMaintainer;

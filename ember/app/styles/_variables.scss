@@ -1,14 +1,14 @@
 $breakpoint-xsmall: 419px;
 
 // uikit-colors
-$colors: 'primary', 'danger', 'warning', 'success';
+$colors: "primary", "danger", "warning", "success";
 
 // Backgrounds
 $ember-power-select-background-color: $form-background;
 $ember-power-select-disabled-background-color: $form-disabled-background;
 $ember-power-select-multiple-selection-background-color: $form-background;
 $ember-power-select-highlighted-background: #5897fb;
-$ember-power-select-selected-background: #dddddd;
+$ember-power-select-selected-background: #ddd;
 
 // Texts
 $ember-power-select-text-color: $form-color;
@@ -20,7 +20,6 @@ $ember-power-select-focus-border-color: $form-focus-border;
 $ember-power-select-default-border: $form-border-width solid $form-border;
 $ember-power-select-default-focus-border: $form-border-width solid
   $form-focus-border;
-
 $ember-power-select-trigger-border: $ember-power-select-default-border;
 $ember-power-select-active-trigger-border: $ember-power-select-default-border;
 $ember-power-select-dropdown-border: $ember-power-select-default-border;

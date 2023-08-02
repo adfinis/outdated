@@ -3,7 +3,7 @@ import Model, { attr, belongsTo } from '@ember-data/model';
 export default class VersionModel extends Model {
   @attr patchVersion;
   @attr('django-date') releaseDate;
-  @belongsTo('releaseVersion') releaseVersion;
+  @belongsTo('releaseVersion', { inverse: null, async: false }) releaseVersion;
 
   get name() {
     return this.releaseVersion.get('dependency.name');

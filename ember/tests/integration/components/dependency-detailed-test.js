@@ -14,7 +14,7 @@ module('Integration | Component | dependency-detailed', function (hooks) {
       await this.server.create('version').id,
       {
         include: 'releaseVersion,releaseVersion.dependency',
-      }
+      },
     );
 
     await render(hbs`<DependencyDetailed @version={{this.version}} />`);

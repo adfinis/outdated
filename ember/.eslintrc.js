@@ -4,5 +4,5 @@ module.exports = {
   settings: {
     'import/internal-regex': '^outdated/',
   },
-  extends: '@adfinis/eslint-config/ember-app',
+  extends: ['@adfinis/eslint-config/ember-app'],
 };
