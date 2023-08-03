@@ -1,6 +1,7 @@
 from functools import partial
 
 import pytest
+from django.core.management import call_command
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
@@ -57,6 +58,18 @@ def client(db, settings, get_claims):
     client.force_authenticate(user=user)
     client.user = user
     return client
+
+
+@pytest.fixture
+def setup_notifications(transactional_db, settings):
+    settings.NOTIFICATIONS = [
+        ("test-foo", 60),
+        ("test-bar", 10),
+        ("test-baz", -20),
+    ]
+    call_command("update-notifications")
+    settings.TEMPLATES[0]["DIRS"] = ["outdated/notifications/tests/templates"]
+    settings.TEMPLATES[0]["APP_DIRS"] = False
 
 
 @pytest.fixture(scope="module")

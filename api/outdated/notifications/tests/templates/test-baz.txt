@@ -1,0 +1,9 @@
+{% extends 'base.txt' %}
+
+{% block subject %}
+baz
+{% endblock %}
+
+{% block content %}
+test-baz.txt contents
+{% endblock %}
