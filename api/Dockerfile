@@ -32,4 +32,4 @@ COPY . $APP_HOME
 
 EXPOSE 8000
 
-CMD /bin/sh -c "wait-for-it.sh ${DATABASE_HOST:-db}:${DATABASE_PORT:-5432} -- ./manage.py migrate && gunicorn --bind :8000 outdated.wsgi"
+CMD /bin/sh -c "wait-for-it.sh ${DATABASE_HOST:-db}:${DATABASE_PORT:-5432} -- ./manage.py migrate && ./manage.py update-notifications && gunicorn --bind :8000 outdated.wsgi"

@@ -1,0 +1,9 @@
+{% extends 'base-warning.txt' %}
+
+{% block subject %}
+Your project will go out of date soon
+{% endblock %}
+
+{% block content %}
+first warning text
+{% endblock %}

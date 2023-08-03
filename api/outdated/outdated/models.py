@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from typing import Optional
 
 from django.db import models
 from django.db.models.functions import Lower
@@ -70,7 +71,9 @@ class ReleaseVersion(UUIDModel):
 
 
 class Version(UUIDModel):
-    release_version = models.ForeignKey(ReleaseVersion, on_delete=models.CASCADE)
+    release_version = models.ForeignKey(
+        ReleaseVersion, on_delete=models.CASCADE, related_name="versions"
+    )
     patch_version = models.IntegerField()
     release_date = models.DateField(null=True, blank=True)
 
@@ -91,12 +94,20 @@ class Version(UUIDModel):
     def version(self):
         return f"{self.release_version.version}.{self.patch_version}"
 
+    @property
+    def end_of_life(self):
+        return self.release_version.end_of_life
+
 
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
-
-    versioned_dependencies = models.ManyToManyField(Version, blank=True)
     repo = RepositoryURLField(max_length=100, unique=True)
+    versioned_dependencies = models.ManyToManyField(
+        Version, blank=True, related_name="projects"
+    )
+    notification_queue = models.ManyToManyField(
+        "notifications.Notification", blank=True
+    )
 
     class Meta:
         ordering = ["name", "id"]
@@ -116,6 +127,12 @@ class Project(UUIDModel):
         first = self.versioned_dependencies.first()
         return first.release_version.status if first else STATUS_OPTIONS["undefined"]
 
+    @property
+    def duration_until_outdated(self) -> Optional[timedelta]:
+        if not self.status or self.status == STATUS_OPTIONS["undefined"]:
+            return
+        return self.versioned_dependencies.first().end_of_life - date.today()
+
     def __str__(self):
         return self.name
 
@@ -127,5 +144,9 @@ class Maintainer(UUIDModel):
     )
     is_primary = UniqueBooleanField(default=False, together=["project"])
 
+    def __str__(self):
+        return self.user.email
+
     class Meta:
         unique_together = ("user", "project")
+        ordering = ("-is_primary",)

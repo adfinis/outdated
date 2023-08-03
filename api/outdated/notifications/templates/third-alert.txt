@@ -1,0 +1,9 @@
+{% extends 'base-alert.txt' %}
+
+{% block subject %}
+Your Project has outdated!
+{% endblock %}
+
+{% block content %}
+third-alert.txt contents
+{% endblock %}

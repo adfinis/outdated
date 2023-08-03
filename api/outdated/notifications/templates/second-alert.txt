@@ -1,0 +1,9 @@
+{% extends 'base-alert.txt' %}
+
+{% block subject %}
+Your project is using outdated dependencies!
+{% endblock %}
+
+{% block content %}
+second-alert.txt contents
+{% endblock %}

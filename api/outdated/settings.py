@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework_json_api",
     "outdated.outdated",
     "outdated.user",
+    "outdated.notifications",
 ]
 
 if DEBUG:
@@ -184,3 +185,27 @@ TRACKED_DEPENDENCIES = env.list(
         "ember-cli",
     ],
 )
+
+
+NOTIFICATIONS = [
+    *env.dict("NOTIFICATIONS", cast=dict(key=str, value=int), default={}).items()
+] or [
+    ("first-warning", 180),
+    ("second-warning", 90),
+    ("third-warning", 31),
+    ("final-warning", 10),
+    ("first-alert", 0),
+    ("second-alert", -10),
+    ("third-alert", -30),
+    ("final-alert", -60),
+]
+
+TEMPLATES = [
+    # template backend for plain text
+    {
+        "BACKEND": "outdated.templates.Jinja2",
+        "NAME": "text",
+        "APP_DIRS": True,
+        "OPTIONS": {"environment": "outdated.jinja.environment"},
+    },
+]

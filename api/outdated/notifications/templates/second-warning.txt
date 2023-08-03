@@ -1,0 +1,9 @@
+{% extends 'base-warning.txt' %}
+
+{% block subject %}
+Your project is approaching it's EOL
+{% endblock %}
+
+{% block content %}
+second warning text
+{% endblock %}
