@@ -39,9 +39,9 @@ export default class ProjectFormComponent extends Component {
       const project = await this.project.save();
 
       this.maintainers
-        ?.filter((m) => !this.project.users.includes(m.user))
+        ?.filter((m) => !this.project.users?.includes(m.user))
         .forEach((m) => m.destroyRecord());
-      this.project.users.forEach((user) => {
+      this.project.users?.forEach((user) => {
         const maintainer = this.maintainers?.find((m) => m.user.id === user.id);
         if (maintainer) {
           maintainer.isPrimary = user.id === this.primaryMaintainer.id;
@@ -67,7 +67,7 @@ export default class ProjectFormComponent extends Component {
 
   get primaryMaintainer() {
     return (
-      this.project.users.find(
+      this.project.users?.find(
         (u) => u.id === this.project.primaryMaintainer?.id,
       ) ?? this.project.users[0]
     );
