@@ -9,8 +9,13 @@
       </LinkTo>
     </div>
     <div class='uk-navbar-right'>
-      <ul class='uk-navbar-nav uk-navbar-left'>
-        <div class='uk-navbar-left'></div>
+      <ul class='button-nav'>
+          <li>
+            <LinkTo @route="projects.index" @current-when="projects.index projects.detailed">Overview</LinkTo>
+          </li>
+          <li>
+            <LinkTo @route="projects.add">Add</LinkTo>
+        </li>
       </ul>
     </div>
   </nav>
