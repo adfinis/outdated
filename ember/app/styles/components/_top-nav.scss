@@ -11,7 +11,7 @@
   padding: 0 30px;
   height: var(--navbar-height);
 
-  a {
+  .uk-logo {
     min-height: var(--navbar-height);
   }
 }
@@ -19,15 +19,25 @@
 /* button nav */
 .button-nav {
   @extend .uk-button-group;
+  @extend .uk-navbar-nav;
 
-  button {
+  list-style: none;
+  gap: 0;
+
+  li a {
+    @extend .uk-button;
     @extend .uk-button-small;
 
+    min-height: initial;
     padding: var(--button-nav-button-padding);
     line-height: var(--button-nav-button-line-height);
-  }
 
-  a.ember-view.active button {
-    @extend .uk-button-primary;
+    &:not(.active) {
+      @extend .uk-button-default;
+    }
+
+    &.active {
+      @extend .uk-button-primary;
+    }
   }
 }
