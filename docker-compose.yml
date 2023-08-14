@@ -7,11 +7,15 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
       - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+
   api:
     build: ./api
+    volumes:
+      - project_repos:/projects
     user: "${UID:?Set UID env variable to your user id}"
     depends_on:
       - db
+
   ember:
     build:
       context: ./ember/
@@ -48,3 +52,4 @@ volumes:
   dbdata:
   caddy_data:
   caddy_config:
+  project_repos:
