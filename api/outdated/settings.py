@@ -170,7 +170,7 @@ JSON_API_PLURALIZE_TYPES = True
 GITHUB_API_TOKEN = env.str("GITHUB_API_TOKEN")
 
 # Syncproject settings
-RELEVANT_DEPENDENCIES = [
+TRACKED_DEPENDENCIES = [
     "django",
     "djangorestframework",
     "djangorestframework-jsonapi",
