@@ -170,11 +170,14 @@ JSON_API_PLURALIZE_TYPES = True
 GITHUB_API_TOKEN = env.str("GITHUB_API_TOKEN")
 
 # Syncproject settings
-TRACKED_DEPENDENCIES = [
-    "django",
-    "djangorestframework",
-    "djangorestframework-jsonapi",
-    "ember-source",
-    "ember-data",
-    "ember-cli",
-]
+TRACKED_DEPENDENCIES = env.list(
+    "TRACKED_DEPENDENCIES",
+    default=[
+        "django",
+        "djangorestframework",
+        "djangorestframework-jsonapi",
+        "ember-source",
+        "ember-data",
+        "ember-cli",
+    ],
+)
