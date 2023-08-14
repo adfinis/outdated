@@ -178,13 +178,13 @@ class LockFileParser:
                 dependencies = [
                     dependency
                     for dependency in findall(regex, data)
-                    if dependency[0] in settings.RELEVANT_DEPENDENCIES
+                    if dependency[0] in settings.TRACKED_DEPENDENCIES
                 ]
             elif name == "poetry.lock":
                 dependencies = [
                     (dependency["name"], dependency["version"])
                     for dependency in loads(data)["package"]
-                    if dependency["name"] in settings.RELEVANT_DEPENDENCIES
+                    if dependency["name"] in settings.TRACKED_DEPENDENCIES
                 ]
             # elif name == "pnpm-lock.yaml":  # pragma: no cover
             #     lockfile = safe_load(data)
