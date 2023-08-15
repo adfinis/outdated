@@ -8,6 +8,7 @@ from dateutil import parser
 from django.conf import settings
 from semver import Version as SemVer
 from tomllib import loads
+from yaml import safe_load
 
 from .outdated import models
 
@@ -105,6 +106,18 @@ class LockFileParser:
                     (dependency["name"], dependency["version"])
                     for dependency in loads(data)["package"]
                     if dependency["name"] in settings.TRACKED_DEPENDENCIES
+                ]
+            elif name == "pnpm-lock.yaml":
+                lockfile_data = safe_load(data)
+                if float(lockfile["lockfileVersion"]) < 6.0:
+                    regex = r"\/([^\s]+)\/([^_\s]+).*"
+                else:
+                    regex = r"\/(@?[^\s@]+)@([^()]+).*"
+                dependencies = [
+                    findall(regex, dependency)[0]
+                    for dependency in lockfile_data["packages"]
+                    if (requirements := findall(regex, dependency))
+                    and requirements[0][0] in settings.TRACKED_DEPENDENCIES
                 ]
 
             versions.extend(

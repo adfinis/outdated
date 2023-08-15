@@ -94,7 +94,6 @@ class Version(UUIDModel):
 
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
-
     versioned_dependencies = models.ManyToManyField(Version, blank=True)
     repo = RepositoryURLField(max_length=100)
 
