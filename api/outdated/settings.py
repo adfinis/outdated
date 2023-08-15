@@ -170,9 +170,6 @@ JSON_API_FORMAT_FIELD_NAMES = "dasherize"
 JSON_API_FORMAT_TYPES = "dasherize"
 JSON_API_PLURALIZE_TYPES = True
 
-# Github API
-GITHUB_API_TOKEN = env.str("GITHUB_API_TOKEN")
-
 # Syncproject settings
 TRACKED_DEPENDENCIES = env.list(
     "TRACKED_DEPENDENCIES",
@@ -185,3 +182,7 @@ TRACKED_DEPENDENCIES = env.list(
         "ember-cli",
     ],
 )
+NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
+PYPI_FILES = ["poetry.lock"]
+
+SUPPORTED_LOCK_FILES = [*NPM_FILES, *PYPI_FILES]

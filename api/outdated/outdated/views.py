@@ -1,12 +1,10 @@
 from django.db.models import Max
-from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from outdated.outdated import models, serializers
-
-from .synchroniser import Synchroniser
+from outdated.tracking import Tracker
 
 
 class ProjectViewSet(ModelViewSet):
@@ -21,17 +19,15 @@ class ProjectViewSet(ModelViewSet):
     serializer_class = serializers.ProjectSerializer
 
     @action(detail=True, methods=["post"])
-    def sync(self, *args, **kwargs):
-        try:
-            project = self.get_object()
-            Synchroniser(project).sync()
-        except Exception as e:  # noqa: BLE001
-            return Response(
-                {"detail": f"Failed to sync project: {e}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+    def sync(self, request, pk=None):  # noqa: ARG002
+        project = self.get_object()
+        Tracker(project).sync()
         serializer = self.get_serializer(project)
         return Response(serializer.data)
+
+    def perform_destroy(self, instance):
+        Tracker(instance).delete()
+        instance.delete()
 
 
 class ReleaseVersionViewSet(ModelViewSet):

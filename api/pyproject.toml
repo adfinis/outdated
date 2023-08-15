@@ -16,7 +16,6 @@ djangorestframework-jsonapi = "^6.1.0"
 django-filter = "^23.3"
 gunicorn = "^20.1.0"
 semver = "^3.0.0"
-aiohttp = { extras = ["speedups"], version = "^3.8.4" }
 # pyaml = "^21.10.1"
 mozilla-django-oidc = "^3.0.0"
 
