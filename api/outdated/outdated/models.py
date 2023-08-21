@@ -82,6 +82,7 @@ class Version(UUIDModel):
             "release_version__minor_version",
             "patch_version",
         ]
+        unique_together = ("release_version", "patch_version")
 
     def __str__(self):
         return f"{self.release_version}.{self.patch_version}"
