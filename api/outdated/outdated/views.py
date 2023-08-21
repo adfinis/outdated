@@ -1,14 +1,23 @@
+from django.db.models import Max
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from . import models, serializers
+from outdated.outdated import models, serializers
+
 from .synchroniser import Synchroniser
 
 
 class ProjectViewSet(ModelViewSet):
-    queryset = models.Project.objects.all()
+    queryset = (
+        models.Project.objects.all()
+        .annotate(
+            latest_eol=Max("versioned_dependencies__release_version__end_of_life")
+        )
+        .order_by("latest_eol")
+    )
+
     serializer_class = serializers.ProjectSerializer
 
     @action(detail=True, methods=["post"])
