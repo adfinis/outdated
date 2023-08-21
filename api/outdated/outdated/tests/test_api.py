@@ -158,6 +158,38 @@ def test_project(client, project_factory, version_factory, defined):
         assert generated_project.status == "UNDEFINED"
 
 
+def test_project_ordered_by_eol(
+    client, project_factory, release_version_factory, version_factory
+):
+    outdated_version = version_factory(
+        release_version=release_version_factory(outdated=True)
+    )
+    warning_version = version_factory(
+        release_version=release_version_factory(warning=True)
+    )
+    up_to_date_version = version_factory(
+        release_version=release_version_factory(up_to_date=True)
+    )
+
+    project_last = project_factory(
+        name="A project", versioned_dependencies=[up_to_date_version]
+    )
+    project_middle = project_factory(
+        name="B project", versioned_dependencies=[warning_version]
+    )
+    project_first = project_factory(
+        name="C project", versioned_dependencies=[outdated_version]
+    )
+
+    url = reverse("project-list")
+    resp = client.get(url)
+    json = resp.json()
+
+    assert json["data"][0]["id"] == str(project_first.pk)
+    assert json["data"][1]["id"] == str(project_middle.pk)
+    assert json["data"][2]["id"] == str(project_last.pk)
+
+
 def test_maintainer(client, maintainer):
 
     assert Maintainer.objects.count() == 1
