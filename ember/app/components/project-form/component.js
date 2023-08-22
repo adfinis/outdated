@@ -36,6 +36,7 @@ export default class ProjectFormComponent extends Component {
 
   saveProject = dropTask(async () => {
     try {
+      const created = this.project.isNew;
       const project = await this.project.save();
 
       this.maintainers
@@ -58,6 +59,11 @@ export default class ProjectFormComponent extends Component {
       });
 
       this.router.transitionTo('projects.detailed', project.id);
+
+      if (created) {
+        project.unloadRecord();
+      }
+
       this.notification.success('Successfully saved!');
     } catch (e) {
       this.notification.danger(e);
