@@ -5,8 +5,12 @@ export default class ProjectsRoute extends Route {
   @service store;
 
   beforeModel() {
-    this.store.unloadAll('project');
+    const unsavedProject = this.store
+      .peekAll('project')
+      .find((project) => project.isNew);
+    unsavedProject?.destroyRecord();
   }
+
   model() {
     return this.store.findAll('project', {
       include:
