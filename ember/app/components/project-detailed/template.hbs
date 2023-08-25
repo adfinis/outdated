@@ -24,4 +24,12 @@
     @route='projects.detailed.edit'
     class='uk-button uk-button-default'
   >Edit</LinkTo>
+
+  <UkButton
+    class="uk-float-right"
+    @label='Delete'
+    @color="danger"
+    @loading={{this.deleteProject.isRunning}}
+    @onClick={{perform this.deleteProject}}
+  />
 </div>
