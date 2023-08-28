@@ -23,13 +23,15 @@ class ProjectViewSet(ModelViewSet):
     @action(detail=True, methods=["post"])
     def sync(self, request, pk=None):
         try:
-            Synchroniser(self.get_object()).sync()
+            project = self.get_object()
+            Synchroniser(project).sync()
         except Exception as e:
             return Response(
                 {"detail": f"Failed to sync project: {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        return Response(status=status.HTTP_200_OK)
+        serializer = self.get_serializer(project)
+        return Response(serializer.data)
 
 
 class ReleaseVersionViewSet(ModelViewSet):
