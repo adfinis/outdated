@@ -37,5 +37,5 @@ class ProjectCommand(BaseCommand):
         for project in projects:
             self._handle(project)
 
-    def _handle(self, project: Project): # pragma: no cover
+    def _handle(self, project: Project):  # pragma: no cover
         raise NotImplementedError()
