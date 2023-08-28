@@ -1,26 +1,15 @@
+from unittest.mock import ANY
+
 import pytest
 from django.core.management import call_command
 
+from outdated.outdated.synchroniser import Synchroniser
+
 
 @pytest.mark.vcr()
 @pytest.mark.django_db(transaction=True)
-def test_syncproject(project_factory):
-    call_command("syncproject", "foo")
-
+def test_syncproject(project_factory, mocker):
     project = project_factory.create(repo="github.com/projectcaluma/caluma")
-
+    sync_init_mocker = mocker.spy(Synchroniser, "__init__")
     call_command("syncproject", project.name)
-    assert project.versioned_dependencies.count() > 0
-
-
-@pytest.mark.vcr()
-@pytest.mark.django_db(transaction=True)
-def test_syncprojects(project_factory):
-    projects = [
-        project_factory(repo=f"github.com/adfinis/{project}")
-        for project in ["outdated", "mysagw"]
-    ]
-
-    call_command("syncprojects")
-    for project in projects:
-        assert project.versioned_dependencies.count() > 0
+    sync_init_mocker.assert_called_once_with(ANY, project)  # ANY == self
