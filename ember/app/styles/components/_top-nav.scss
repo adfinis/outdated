@@ -19,18 +19,18 @@
 /* button nav */
 .button-nav {
   @extend .uk-button-group;
-  @extend .uk-navbar-nav;
 
   list-style: none;
-  gap: 0;
+  display: flex;
+  margin: 0;
+  padding: 0;
 
   li a {
-    @extend .uk-button;
-    @extend .uk-button-small;
-
-    min-height: initial;
+    display: flex;
     padding: var(--button-nav-button-padding);
     line-height: var(--button-nav-button-line-height);
+    text-transform: uppercase;
+    text-decoration: none;
 
     &:not(.active) {
       @extend .uk-button-default;

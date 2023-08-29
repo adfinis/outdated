@@ -19,6 +19,8 @@
 }
 
 .project-detailed {
+  @extend .uk-margin-bottom;
+
   table {
     margin: 0;
   }
