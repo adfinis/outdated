@@ -58,6 +58,10 @@ lint: api-lint ember-lint ## Lint the API and ember
 .PHONY: lint-fix
 lint-fix: api-lint-fix ember-lint-fix ## Lint and fix the API and ember
 
+.PHONY: flush
+flush: ## Flush the db
+	@docker compose run --rm api ./manage.py flush --no-input
+
 .PHONY: makemigrations
 makemigrations: ## Make django migrations
 	@docker compose run --rm api python ./manage.py makemigrations
