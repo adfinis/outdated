@@ -16,23 +16,15 @@ djangorestframework-jsonapi = "^6.1.0"
 django-filter = "^23.3"
 gunicorn = "^20.1.0"
 semver = "^3.0.0"
-aiohttp = {extras = ["speedups"], version = "^3.8.4"}
+aiohttp = { extras = ["speedups"], version = "^3.8.4" }
 # pyaml = "^21.10.1"
 mozilla-django-oidc = "^3.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "5.0.0"
-flake8-bugbear = "23.1.20"
-flake8-debugger = "4.1.2"
-flake8-tuple = "0.4.1"
-flake8-isort = "5.0.3"
-flake8-docstrings = "1.6.0"
-flake8-string-format = "0.3.0"
 black = "22.12.0"
 pytest-django = "4.5.2"
 pytest = "7.4.2"
-isort = "5.12.0"
 pytest-factoryboy = "2.6.0"
 pytest-cov = "^4.0.0"
 pytest-vcr = "^1.0.2"
@@ -40,18 +32,62 @@ pdbpp = "^0.10.3"
 requests-mock = "^1.10.0"
 django-extensions = "^3.2.3"
 ipdb = "^0.13.13"
+ruff = "^0.1.3"
 
 
-[tool.isort]
-skip = [
-  "migrations",
+[tool.ruff]
+exclude = ["migrations"]
+line-length = 88
+select = ["ALL"]
+
+ignore = [
+  "A003",   # flake8-builtins - Class attribute {name} is shadowing a Python builtin
+  "ANN101", # Missing type annotation for `self` in method  - Annotating self shouldn't be necessary
+
+  # Don't enforce the existance of docstrings
+
+  "D100",   # Missing docstring in public module
+  "D101",   # Missing docstring in public class
+  "D102",   # Missing docstring in public method
+  "D103",   # Missing docstring in public function
+  "D104",   # Missing docstring in public package
+  "D105",   # Missing docstring in magic method
+  "D106",   # Missing docstring in public nested class
+  "D107",   # Missing docstring in __init__
+  "D203",   # 1 blank line required before class docstring
+  "D212",   # Multi-line docstring summary should start at the first line
+
+  "DJ001",  # flake8-django - Avoid using null=True on string-based fields
+  "E501",   # Line length - managed by black
+  "RUF012", # Mutable class attributes should be annotated with typing.ClassVar
+  "S101",    # Use of assert detected - Required for pytest to be usable
+  "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable - allow using set values
+  "ARG001",  # Unused function argument: {name} - allow using fixtures that aren't used in the actual test e.g. db
 ]
-known_first_party = ["outdated"]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-combine_as_imports = true
-line_length = 88
+
+[tool.ruff.flake8-annotations]
+ignore-fully-untyped = true
+
+[tool.ruff.flake8-unused-arguments]
+ignore-variadic-names = true
+
+
+[tool.ruff.extend-per-file-ignores]
+"factories.py" = ["S311"] # Standard pseudo-random generators are not suitable for cryptographic purposes - factories are only used in tests 
+
+[tool.ruff.isort]
+known-first-party = ["outdated"]
+combine-as-imports = true
+
+[tool.ruff.flake8-pytest-style]
+fixture-parentheses = false
+parametrize-names-type = "csv"
+
+[tool.ruff.mccabe]
+max-complexity = 6
+
+[tool.ruff.pylint]
+max-args = 10
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "outdated.settings"
@@ -63,18 +99,18 @@ source = ["."]
 [tool.coverage.report]
 fail_under = 100
 exclude_lines = [
-    "pragma: no cover",
-    "pragma: todo cover",
-    "def __str__",
-    "def __unicode__",
-    "def __repr__",
+  "pragma: no cover",
+  "pragma: todo cover",
+  "def __str__",
+  "def __unicode__",
+  "def __repr__",
 ]
 omit = [
-    "*/migrations/*",
-    "*/apps.py",
-    "manage.py",
-    "outdated/wsgi.py",
-    "pdbrc.py"
+  "*/migrations/*",
+  "*/apps.py",
+  "manage.py",
+  "outdated/wsgi.py",
+  "pdbrc.py",
 ]
 show_missing = true
 
