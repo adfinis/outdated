@@ -16,6 +16,10 @@ api-lint: ## Lint the backend
 api-lint-fix: ## Lint and fix the API
 	@docker compose run --rm api sh -c "black . && isort ."
 
+.PHONY: api-shell
+api-shell: ## Open django shell
+	@docker-compose exec api ./manage.py shell
+
 .PHONY: api-start
 api-start: ## Start the API
 	@docker compose up db api -d --build
