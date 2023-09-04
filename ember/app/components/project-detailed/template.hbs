@@ -1,33 +1,35 @@
-<div class='project-detailed'>
+<div class="project-detailed">
 
-  <div class='detailed-header'>
+  <div class="detailed-header">
 
     <h1 data-test-project-name>
       {{@project.name}}
     </h1>
 
-    <a href='{{@project.repo}}' target='blank_' data-test-repo-link>
-      <UkIcon @icon='github' @ratio={{3}} />
+    <a href="{{@project.repo}}" target="blank_" data-test-repo-link>
+      <UkIcon @icon="github" @ratio={{3}} />
     </a>
 
   </div>
 
-  <hr class='seperator' />
-  <MaintainerTable @maintainers={{@project.maintainers}} />
+  <hr class="seperator" />
+  {{#if @project.maintainers}}
+    <MaintainerTable @maintainers={{@project.maintainers}} />
+  {{/if}}
   <DependencyTable @versionedDependencies={{@project.versionedDependencies}} />
   <UkButton
-    @label='Sync'
+    @label="Sync"
     @loading={{this.syncProject.isRunning}}
     @onClick={{perform this.syncProject}}
   />
   <LinkTo
-    @route='projects.detailed.edit'
-    class='uk-button uk-button-default'
+    @route="projects.detailed.edit"
+    class="uk-button uk-button-default"
   >Edit</LinkTo>
 
   <UkButton
     class="uk-float-right"
-    @label='Delete'
+    @label="Delete"
     @color="danger"
     @loading={{this.deleteProject.isRunning}}
     @onClick={{perform this.deleteProject}}
