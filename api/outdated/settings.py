@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     "outdated.user",
 ]
 
+if DEBUG:
+    INSTALLED_APPS.append("django_extensions")
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
