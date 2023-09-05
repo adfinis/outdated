@@ -9,9 +9,7 @@ module(
     setupRenderingTest(hooks);
 
     test('it renders', async function (assert) {
-      await render(hbs`
-      <ValidatedInput::Types::Date />
-    `);
+      await render(hbs`<ValidatedInput::Types::Date />`);
       assert.dom('input.ember-flatpickr-input').exists();
     });
   },

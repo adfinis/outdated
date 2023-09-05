@@ -18,7 +18,7 @@ module('Integration | Component | dependency-compact', function (hooks) {
       },
     );
 
-    await render(hbs`<DependencyCompact @version={{this.version}}/>`);
+    await render(hbs`<DependencyCompact @version={{this.version}} />`);
 
     assert
       .dom('[data-test-dependency-compact]')

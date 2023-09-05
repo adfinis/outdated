@@ -1,4 +1,4 @@
-<tr class='{{status-to-class @version.status}}'>
+<tr class="{{status-to-class @version.status}}">
   <td data-test-version-dependency-name>
     {{@version.name}}
   </td>
@@ -6,7 +6,7 @@
     {{@version.version}}
   </td>
   <td data-test-version-end-of-life>
-    {{or (format-date @version.endOfLife) 'missing'}}
+    {{or (format-date @version.endOfLife) "missing"}}
   </td>
   <td data-test-version-release-date>
     {{format-date @version.releaseDate}}

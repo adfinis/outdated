@@ -7,12 +7,12 @@
   as |modal|
 >
   <modal.header>
-    <h2 class='uk-modal-title'>{{@title}}</h2>
+    <h2 class="uk-modal-title">{{@title}}</h2>
   </modal.header>
   {{#if @visible}}
     {{yield
       (hash
-        body=(component 'uk-modal/body') footer=(component 'uk-modal/footer')
+        body=(component "uk-modal/body") footer=(component "uk-modal/footer")
       )
     }}
   {{/if}}

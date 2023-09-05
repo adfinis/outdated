@@ -7,7 +7,7 @@ module('Integration | Component | validated-input/label', function (hooks) {
   setupRenderingTest(hooks);
 
   test('it renders', async function (assert) {
-    await render(hbs`<ValidatedInput::Label @label={{"test"}}/>`);
+    await render(hbs`<ValidatedInput::Label @label={{'test'}} />`);
     assert.dom('[data-test-label]').hasText('test');
   });
 });

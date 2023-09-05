@@ -9,9 +9,9 @@ module(
     setupRenderingTest(hooks);
 
     test('it renders', async function (assert) {
-      await render(hbs`
-      <ValidatedInput::Types::Text @setDirty={{fn (mut this.dirty) true}}/>
-    `);
+      await render(
+        hbs`<ValidatedInput::Types::Text @setDirty={{fn (mut this.dirty) true}} />`,
+      );
 
       assert.dom('input').exists();
     });
