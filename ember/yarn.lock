@@ -2766,6 +2766,11 @@
     "@pnpm/error" "5.0.2"
     find-up "^5.0.0"
 
+"@prettier/sync@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@prettier/sync/-/sync-0.2.1.tgz#00f628a394247cc18535b3cce0b9756b352a09e0"
+  integrity sha512-7ls1R6//+GPYD9vof1XaL5psViv83CwpdwlS8oUkWldYgbPhzZ3WgxIQMWqGyBmWPmoBfQg8C7jj7KI/ZuDHhQ==
+
 "@simple-dom/document@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@simple-dom/document/-/document-1.4.0.tgz#af60855f957f284d436983798ef1006cca1a1678"
@@ -7652,6 +7657,14 @@ ember-template-imports@^3.4.2:
     parse-static-imports "^1.1.0"
     string.prototype.matchall "^4.0.6"
     validate-peer-dependencies "^1.1.0"
+
+ember-template-lint-plugin-prettier@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ember-template-lint-plugin-prettier/-/ember-template-lint-plugin-prettier-5.0.0.tgz#1a2c8c87fee54347997c20017f7842b052a78f54"
+  integrity sha512-aXUYM4yuIdPZ80+AsAU8QBwGSJJ/aAkRsNcQ5vI5HmXiBjzHlDc/ZhmP6iVcYuCmoA/3iKcssMAYwIDbuby4pg==
+  dependencies:
+    "@prettier/sync" "^0.2.1"
+    prettier-linter-helpers "^1.0.0"
 
 ember-template-lint@^5.11.0:
   version "5.11.0"
