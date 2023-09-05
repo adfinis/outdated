@@ -21,6 +21,7 @@ class UniqueBooleanField(models.BooleanField):
     by providing a list of field names as `together` param.
 
     Example:
+    -------
         ```
         >>> class Email(models.Model):
         ...     user = models.ForeignKey(User)
@@ -61,6 +62,6 @@ class RepositoryURLField(models.CharField):
         RegexValidator(
             regex=r"^([-_\w]+\.[-._\w]+)\/([-_\w]+)\/([-_\w]+)$",
             message="Invalid repository url",
-        )
+        ),
     ]
     description = "Field for git repository URLs."
