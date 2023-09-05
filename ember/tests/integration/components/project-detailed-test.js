@@ -17,7 +17,7 @@ module('Integration | Component | project-detailed', function (hooks) {
         'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
     });
 
-    await render(hbs`<ProjectDetailed @project={{this.project}}/>`);
+    await render(hbs`<ProjectDetailed @project={{this.project}} />`);
 
     assert.dom('[data-test-project-name]').hasText(this.project.name);
     assert.dom('[data-test-repo-link]').hasProperty('href', this.project.repo);

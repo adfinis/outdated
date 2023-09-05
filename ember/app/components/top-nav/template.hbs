@@ -1,20 +1,23 @@
 <div
-  class='navbar'
-  uk-sticky='sel-target: .navbar-container; cls-active: uk-navbar-sticky'
+  class="navbar"
+  uk-sticky="sel-target: .navbar-container; cls-active: uk-navbar-sticky"
 >
-  <nav class='navbar-container' uk-navbar>
-    <div class='uk-navbar-left'>
-      <LinkTo @route='projects' class='uk-navbar-item uk-logo'>
+  <nav class="navbar-container" uk-navbar>
+    <div class="uk-navbar-left">
+      <LinkTo @route="projects" class="uk-navbar-item uk-logo">
         Outdated
       </LinkTo>
     </div>
-    <div class='uk-navbar-right'>
-      <ul class='button-nav'>
-          <li>
-            <LinkTo @route="projects.index" @current-when="projects.index projects.detailed not-found">Overview</LinkTo>
-          </li>
-          <li>
-            <LinkTo @route="projects.add">Add</LinkTo>
+    <div class="uk-navbar-right">
+      <ul class="button-nav">
+        <li>
+          <LinkTo
+            @route="projects.index"
+            @current-when="projects.index projects.detailed not-found"
+          >Overview</LinkTo>
+        </li>
+        <li>
+          <LinkTo @route="projects.add">Add</LinkTo>
         </li>
       </ul>
     </div>

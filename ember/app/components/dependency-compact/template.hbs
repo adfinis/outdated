@@ -3,11 +3,11 @@
   {{(if
     @version
     (modifier
-      'uk-tooltip'
-      (concat 'EOL: ' (format-date @version.endOfLife))
-      pos='bottom'
+      "uk-tooltip"
+      (concat "EOL: " (format-date @version.endOfLife))
+      pos="bottom"
     )
   )}}
 >
-  {{or @version.requirements 'No dependencies yet'}}
+  {{or @version.requirements "No dependencies yet"}}
 </span>

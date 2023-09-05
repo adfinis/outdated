@@ -23,8 +23,8 @@
   @noMatchesMessageComponent={{@noMatchesMessageComponent}}
   @errorComponent={{if
     (and this.showValidity this.errors)
-    (component 'validated-input/error' errors=this.errors id=this.errorId)
+    (component "validated-input/error" errors=this.errors id=this.errorId)
   }}
-  @labelComponent={{component 'validated-input/label' inputId=@inputId}}
+  @labelComponent={{component "validated-input/label" inputId=@inputId}}
   ...attributes
 />

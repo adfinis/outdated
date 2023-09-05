@@ -1,16 +1,16 @@
-<form class='uk-form' autocomplete='off' {{on 'submit' this.submit}}>
+<form class="uk-form" autocomplete="off" {{on "submit" this.submit}}>
 
-  <fieldset class='uk-fieldset'>
-    <legend class='uk-legend'>{{@name}}</legend>
+  <fieldset class="uk-fieldset">
+    <legend class="uk-legend">{{@name}}</legend>
 
     {{yield
       (hash
         model=@model
         loading=this.loading
         input=(component
-          'validated-input' model=@model submitted=this.submitted
+          "validated-input" model=@model submitted=this.submitted
         )
-        button=(component 'uk-button' label='Save' type='submit')
+        button=(component "uk-button" label="Save" type="submit")
       )
     }}
   </fieldset>

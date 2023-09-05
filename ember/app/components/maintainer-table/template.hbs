@@ -1,5 +1,5 @@
 <h2 class="table-header">Maintainers</h2>
-<hr class='seperator' />
+<hr class="seperator" />
 {{#if @maintainers}}
   <table>
     <thead>
@@ -10,22 +10,22 @@
     </thead>
     <tbody>
       {{#each (sort-by "isPrimary:desc" this.maintainers) as |maintainer|}}
-      <tr>
-        <td>
-          {{#if maintainer.isPrimary}}
-            <UkIcon @icon="star" @ratio={{0.5}} />
-          {{/if}}
-          {{maintainer.user.username}}
-        </td>
-        <td>
-          {{maintainer.user.email}}
-        </td>
-      </tr>
-    {{/each}}
+        <tr>
+          <td>
+            {{#if maintainer.isPrimary}}
+              <UkIcon @icon="star" @ratio={{0.5}} />
+            {{/if}}
+            {{maintainer.user.username}}
+          </td>
+          <td>
+            {{maintainer.user.email}}
+          </td>
+        </tr>
+      {{/each}}
     </tbody>
   </table>
 {{else}}
-  <div class='none-yet' data-test-versioned-dependencies-none>
+  <div class="none-yet" data-test-versioned-dependencies-none>
     <span>No maintainers yet</span>
   </div>
 {{/if}}

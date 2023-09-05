@@ -1,10 +1,10 @@
-<div class='uk-margin'>
+<div class="uk-margin">
   {{#if (or @label (not @placeholder))}}
     <@labelComponent @label={{or @label this.name}} />
   {{/if}}
-  <div class='uk-form-controls'>
+  <div class="uk-form-controls">
 
-    {{#if (eq @type 'select')}}
+    {{#if (eq @type "select")}}
       <ValidatedInput::Types::Select
         @id={{@inputId}}
         @disabled={{@disabled}}
@@ -26,7 +26,7 @@
         @selectComponent={{this.selectComponent}}
         ...attributes
       />
-    {{else if (eq @type 'date')}}
+    {{else if (eq @type "date")}}
       <ValidatedInput::Types::Date
         @id={{@inputId}}
         @disabled={{@disabled}}

@@ -13,7 +13,7 @@
   @noMatchesMessage={{@noMatchesMessage}}
   @noMatchesMessageComponent={{@noMatchesMessageComponent}}
   id={{@inputId}}
-  class='{{if @isValid "is-valid "}} {{if @isInvalid "is-invalid"}}'
+  class="{{if @isValid 'is-valid '}} {{if @isInvalid 'is-invalid'}}"
   as |name|
 >
   {{or (get name (or @visibleField @searchField)) name}}
