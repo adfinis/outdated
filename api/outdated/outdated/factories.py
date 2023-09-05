@@ -1,10 +1,12 @@
 import random
-from datetime import date, timedelta
+from datetime import timedelta
 
+from django.utils import timezone
 from factory import Faker, Sequence, SubFactory, Trait, post_generation
 from factory.django import DjangoModelFactory
 
-from ..user.factories import UserFactory
+from outdated.user.factories import UserFactory
+
 from . import models
 
 PROVIDERS = ["PIP", "NPM"]
@@ -31,12 +33,12 @@ class ReleaseVersionFactory(DjangoModelFactory):
 
     class Params:
         undefined = Trait(end_of_life=None)
-        outdated = Trait(end_of_life=date.today())
+        outdated = Trait(end_of_life=timezone.datetime.now().date())
         warning = Trait(
-            end_of_life=date.today() + timedelta(days=150),
+            end_of_life=timezone.datetime.now().date() + timedelta(days=150),
         )
         up_to_date = Trait(
-            end_of_life=date.today() + timedelta(days=365),
+            end_of_life=timezone.datetime.now().date() + timedelta(days=365),
         )
 
 

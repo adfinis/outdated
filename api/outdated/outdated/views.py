@@ -13,7 +13,7 @@ class ProjectViewSet(ModelViewSet):
     queryset = (
         models.Project.objects.all()
         .annotate(
-            latest_eol=Max("versioned_dependencies__release_version__end_of_life")
+            latest_eol=Max("versioned_dependencies__release_version__end_of_life"),
         )
         .order_by("latest_eol")
     )
@@ -21,11 +21,11 @@ class ProjectViewSet(ModelViewSet):
     serializer_class = serializers.ProjectSerializer
 
     @action(detail=True, methods=["post"])
-    def sync(self, request, pk=None):
+    def sync(self, *args, **kwargs):
         try:
             project = self.get_object()
             Synchroniser(project).sync()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return Response(
                 {"detail": f"Failed to sync project: {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

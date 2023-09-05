@@ -1,6 +1,6 @@
 import pytest
 from django.urls import reverse
-from rest_framework import status
+from rest_framework import status as http_status
 
 from outdated.outdated.models import Maintainer
 
@@ -9,12 +9,12 @@ def test_dependency(client, dependency_factory):
     generated_dependency = dependency_factory()
     url = reverse("dependency-list")
     resp = client.get(url)
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http_status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
     resp_detailed = client.get(
-        reverse("dependency-detail", args=[generated_dependency.id])
+        reverse("dependency-detail", args=[generated_dependency.id]),
     )
-    assert resp_detailed.status_code == status.HTTP_200_OK
+    assert resp_detailed.status_code == http_status.HTTP_200_OK
     data = resp.json()["data"][0]
     data_detailed = resp_detailed.json()["data"]
     assert data["id"] == data_detailed["id"] == str(generated_dependency.id)
@@ -32,24 +32,24 @@ def test_dependency(client, dependency_factory):
     )
 
 
-@pytest.mark.parametrize("_status", ["UNDEFINED", "OUTDATED", "WARNING", "UP-TO-DATE"])
-def test_release_version(client, release_version_factory, _status):
+@pytest.mark.parametrize("status", ["UNDEFINED", "OUTDATED", "WARNING", "UP-TO-DATE"])
+def test_release_version(client, release_version_factory, status):
     include = {"include": "dependency"}
     generated_release_version = release_version_factory(
-        undefined=_status == "UNDEFINED",
-        outdated=_status == "OUTDATED",
-        warning=_status == "WARNING",
-        up_to_date=_status == "UP-TO-DATE",
+        undefined=status == "UNDEFINED",
+        outdated=status == "OUTDATED",
+        warning=status == "WARNING",
+        up_to_date=status == "UP-TO-DATE",
     )
     url = reverse("releaseversion-list")
     resp = client.get(url, include)
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http_status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
     resp_detailed = client.get(
         reverse("releaseversion-detail", args=[generated_release_version.id]),
         include,
     )
-    assert resp_detailed.status_code == status.HTTP_200_OK
+    assert resp_detailed.status_code == http_status.HTTP_200_OK
 
     data = resp.json()["data"][0]
     detailed_data = resp_detailed.json()["data"]
@@ -60,7 +60,7 @@ def test_release_version(client, release_version_factory, _status):
         response_release_version["status"]
         == detailed_response_release_version["status"]
         == generated_release_version.status
-        == _status
+        == status
     )
 
     assert (
@@ -68,7 +68,7 @@ def test_release_version(client, release_version_factory, _status):
         == detailed_response_release_version["end-of-life"]
         == (
             str(generated_release_version.end_of_life)
-            if not _status == "UNDEFINED"
+            if status != "UNDEFINED"
             else None
         )
     )
@@ -93,10 +93,10 @@ def test_version(client, version_factory):
     generated_version = version_factory()
     url = reverse("version-list")
     resp = client.get(url)
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http_status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
     resp_detailed = client.get(reverse("version-detail", args=[generated_version.id]))
-    assert resp_detailed.status_code == status.HTTP_200_OK
+    assert resp_detailed.status_code == http_status.HTTP_200_OK
     data = resp.json()["data"][0]
     detailed_data = resp_detailed.json()["data"]
     assert data["id"] == detailed_data["id"] == str(generated_version.id)
@@ -122,14 +122,14 @@ def test_version(client, version_factory):
 @pytest.mark.parametrize("defined", [True, False])
 def test_project(client, project_factory, version_factory, defined):
     generated_project = project_factory(
-        versioned_dependencies=[version_factory()] if defined else []
+        versioned_dependencies=[version_factory()] if defined else [],
     )
     url = reverse("project-list")
     resp = client.get(url)
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http_status.HTTP_200_OK
     assert len(resp.json()["data"]) == 1
     resp_detailed = client.get(reverse("project-detail", args=[generated_project.id]))
-    assert resp_detailed.status_code == status.HTTP_200_OK
+    assert resp_detailed.status_code == http_status.HTTP_200_OK
     data = resp.json()["data"][0]
     detailed_data = resp_detailed.json()["data"]
     assert data["id"] == detailed_data["id"] == str(generated_project.id)
@@ -159,26 +159,32 @@ def test_project(client, project_factory, version_factory, defined):
 
 
 def test_project_ordered_by_eol(
-    client, project_factory, release_version_factory, version_factory
+    client,
+    project_factory,
+    release_version_factory,
+    version_factory,
 ):
     outdated_version = version_factory(
-        release_version=release_version_factory(outdated=True)
+        release_version=release_version_factory(outdated=True),
     )
     warning_version = version_factory(
-        release_version=release_version_factory(warning=True)
+        release_version=release_version_factory(warning=True),
     )
     up_to_date_version = version_factory(
-        release_version=release_version_factory(up_to_date=True)
+        release_version=release_version_factory(up_to_date=True),
     )
 
     project_last = project_factory(
-        name="A project", versioned_dependencies=[up_to_date_version]
+        name="A project",
+        versioned_dependencies=[up_to_date_version],
     )
     project_middle = project_factory(
-        name="B project", versioned_dependencies=[warning_version]
+        name="B project",
+        versioned_dependencies=[warning_version],
     )
     project_first = project_factory(
-        name="C project", versioned_dependencies=[outdated_version]
+        name="C project",
+        versioned_dependencies=[outdated_version],
     )
 
     url = reverse("project-list")
@@ -195,7 +201,7 @@ def test_maintainer(client, maintainer):
     assert Maintainer.objects.count() == 1
     url = reverse("maintainer-list")
     resp = client.get(url)
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http_status.HTTP_200_OK
     resp_detailed = client.get(reverse("maintainer-detail", args=[maintainer.id]))
     relationships = resp.json()["data"][0]["relationships"]
     detailed_relationships = resp_detailed.json()["data"]["relationships"]
@@ -223,8 +229,8 @@ def test_sync_project_endpoint(client, project_factory):
     generated_project = project_factory(repo="github.com/adfinis/outdated")
     url = reverse("project-sync", args=[generated_project.id])
     resp = client.post(url)
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http_status.HTTP_200_OK
     assert generated_project.versioned_dependencies.count() > 0
     url = reverse("project-sync", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
     resp = client.post(url)
-    assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert resp.status_code == http_status.HTTP_500_INTERNAL_SERVER_ERROR

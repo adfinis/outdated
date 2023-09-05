@@ -1,11 +1,11 @@
-from datetime import date, timedelta
+from datetime import timedelta
 
 from django.db import models
 from django.db.models.functions import Lower
+from django.utils import timezone
 
 from outdated.models import RepositoryURLField, UniqueBooleanField, UUIDModel
-
-from ..user.models import User
+from outdated.user.models import User
 
 STATUS_OPTIONS = {
     "outdated": "OUTDATED",
@@ -21,7 +21,7 @@ PROVIDER_OPTIONS = {
     "NPM": "https://registry.npmjs.org/%s",
 }
 
-PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()]
+PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS]
 
 
 class Dependency(UUIDModel):
@@ -62,9 +62,9 @@ class ReleaseVersion(UUIDModel):
     def status(self):
         if not self.end_of_life:
             return STATUS_OPTIONS["undefined"]
-        elif date.today() >= self.end_of_life:
+        if timezone.datetime.now().date() >= self.end_of_life:
             return STATUS_OPTIONS["outdated"]
-        elif date.today() + timedelta(days=150) >= self.end_of_life:
+        if timezone.datetime.now().date() + timedelta(days=150) >= self.end_of_life:
             return STATUS_OPTIONS["warning"]
         return STATUS_OPTIONS["up_to_date"]
 
@@ -123,7 +123,9 @@ class Project(UUIDModel):
 class Maintainer(UUIDModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(
-        Project, on_delete=models.CASCADE, related_name="maintainers"
+        Project,
+        on_delete=models.CASCADE,
+        related_name="maintainers",
     )
     is_primary = UniqueBooleanField(default=False, together=["project"])
 

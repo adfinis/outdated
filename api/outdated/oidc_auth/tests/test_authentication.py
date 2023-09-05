@@ -21,7 +21,14 @@ from outdated.user.models import User
     ],
 )
 def test_authentication(
-    db, rf, authentication_header, authenticated, error, requests_mock, settings, claims
+    db,
+    rf,
+    authentication_header,
+    authenticated,
+    error,
+    requests_mock,
+    settings,
+    claims,
 ):
     assert User.objects.count() == 0
 
@@ -44,7 +51,8 @@ def test_authentication(
 
 
 @pytest.mark.parametrize(
-    "modified_claim", ["email", "first_name", "last_name", "username"]
+    "modified_claim",
+    ["email", "first_name", "last_name", "username"],
 )
 def test_authentication_claims_changed(
     db,
@@ -71,7 +79,8 @@ def test_authentication_idp_502(
     settings,
 ):
     requests_mock.get(
-        settings.OIDC_OP_USER_ENDPOINT, status_code=status.HTTP_502_BAD_GATEWAY
+        settings.OIDC_OP_USER_ENDPOINT,
+        status_code=status.HTTP_502_BAD_GATEWAY,
     )
 
     request = rf.get("/openid", HTTP_AUTHORIZATION="Bearer Token")

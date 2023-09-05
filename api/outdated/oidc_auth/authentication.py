@@ -15,13 +15,12 @@ class OutdatedOIDCAuthenticationBackend(OIDCAuthenticationBackend):
 
         for claim in claims_to_verify:
             if claim not in claims:
-                raise SuspiciousOperation(f'Couldn\'t find "{claim}" claim')
+                msg = f'Couldn\'t find "{claim}" claim'
+                raise SuspiciousOperation(msg)
 
     def get_or_create_user(self, access_token, *args):
         claims = self.get_userinfo(access_token, *args)
 
         self.verify_claims(claims)
 
-        user = OIDCUser(access_token, claims)
-
-        return user
+        return OIDCUser(access_token, claims)

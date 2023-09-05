@@ -12,7 +12,7 @@ class DependencySerializer(serializers.ModelSerializer):
 class ReleaseVersionSerializer(serializers.ModelSerializer):
     status = serializers.ReadOnlyField()
     included_serializers = {
-        "dependency": "outdated.outdated.serializers.DependencySerializer"
+        "dependency": "outdated.outdated.serializers.DependencySerializer",
     }
 
     class Meta:
@@ -22,7 +22,7 @@ class ReleaseVersionSerializer(serializers.ModelSerializer):
 
 class VersionSerializer(serializers.ModelSerializer):
     included_serializers = {
-        "release_version": "outdated.outdated.serializers.ReleaseVersionSerializer"
+        "release_version": "outdated.outdated.serializers.ReleaseVersionSerializer",
     }
 
     class Meta:
@@ -43,7 +43,9 @@ class MaintainerSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     maintainers = serializers.ResourceRelatedField(
-        many=True, read_only=True, required=False
+        many=True,
+        read_only=True,
+        required=False,
     )
 
     included_serializers = {

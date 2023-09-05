@@ -17,7 +17,7 @@ class BaseUser:  # pragma: no cover
 
 
 class OIDCUser(BaseUser):
-    def __init__(self, token: str, claims: dict):
+    def __init__(self, token: str, claims: dict) -> None:
         super().__init__()
 
         self.claims = claims

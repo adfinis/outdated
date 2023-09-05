@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import environ
 
@@ -6,7 +6,7 @@ env = environ.Env()
 django_root = environ.Path(__file__) - 3
 
 ENV_FILE = django_root(".env")
-if os.path.exists(ENV_FILE):
+if Path(ENV_FILE).exists():
     environ.Env.read_env(ENV_FILE)  # pragma: no cover
 
 ENV = env.str("ENV", "prod")
@@ -27,12 +27,12 @@ DATABASES = {
         "PASSWORD": env("DATABASE_PASSWORD", default=default("outdated")),
         "HOST": env("DATABASE_HOST", default="db"),
         "PORT": env.str("DATABASE_PORT", default=""),
-    }
+    },
 }
 
 # Application definition
 
-DEBUG = env.bool("DEBUG", default=default(True, False))
+DEBUG = env.bool("DEBUG", default=default(True, False))  # noqa: FBT003
 SECRET_KEY = env.str("SECRET_KEY", default=default("keykeykeykeykeykey"))
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=default(["*"]))
 INSTALLED_APPS = [
@@ -88,7 +88,8 @@ OIDC_OP_TOKEN_ENDPOINT = (
 )
 
 OIDC_BEARER_TOKEN_REVALIDATION_TIME = env.int(
-    "OIDC_BEARER_TOKEN_REVALIDATION_TIME", default=10
+    "OIDC_BEARER_TOKEN_REVALIDATION_TIME",
+    default=10,
 )
 
 

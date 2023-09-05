@@ -1,18 +1,25 @@
+from __future__ import annotations
+
+import logging
 from asyncio import gather, run, sleep
-from datetime import datetime
-from os.path import basename
+from pathlib import Path
 from re import findall
-from tomllib import loads
 
 from aiohttp import ClientSession, client_exceptions
 from asgiref.sync import sync_to_async
 from dateutil import parser
 from django.conf import settings
+from django.utils import timezone
 from semver import Version as SemVer
+from tomllib import loads
 
-from . import models
+from outdated.outdated import models
 
-# from yaml import safe_load
+logger = logging.getLogger(__name__)
+
+
+def basename(path):
+    return Path(path).name
 
 
 NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
@@ -31,7 +38,7 @@ class Synchroniser:
         self.project = project
         self.owner, self.name = findall(r"\/([^\/]+)\/([^\/]+)$", self.project.repo)[0]
 
-    async def _get_dependencies(self):
+    async def _get_dependencies(self):  # noqa: C901
         """Get the dependencies from the lockfiles."""
         q = f"""
         {{
@@ -45,49 +52,49 @@ class Synchroniser:
         }}
         """
 
-        async with ClientSession() as session:
-            async with session.post(
-                "https://api.github.com/graphql",
-                headers={
-                    "Authorization": f"Bearer {settings.GITHUB_API_TOKEN}",
-                    "Accept": "application/vnd.github.hawkgirl-preview+json",
-                },
-                json={"query": q},
-            ) as response:
-                json = await response.json()
-                if json.get("message") == "Bad credentials":
-                    raise ValueError("API Token is not set")  # pragma: no cover
-                elif json.get("errors") and json["errors"][0]["message"] == "timedout":
-                    return await self._get_dependencies()  # pragma: no cover
-                elif json.get("errors"):
-                    raise ValueError(json)  # pragma: no cover
-                headers = response.headers
-                if headers.get("X-RateLimit-Remaining") == "0":  # pragma: no cover
-                    t = (
-                        int(headers.get("X-RateLimit-Reset"))
-                        - int(datetime.utcnow().timestamp())
-                    ) / 1000
-                    print(f"Rate limit exceeded. Sleeping for {t} seconds.")
-                    await sleep(t)
-                    return await self._get_dependencies()
+        async with ClientSession() as session, session.post(
+            "https://api.github.com/graphql",
+            headers={
+                "Authorization": f"Bearer {settings.GITHUB_API_TOKEN}",
+                "Accept": "application/vnd.github.hawkgirl-preview+json",
+            },
+            json={"query": q},
+        ) as response:
+            json = await response.json()
+            if json.get("message") == "Bad credentials":  # pragma: no cover
+                msg = "API Token is not set"
+                raise ValueError(msg)
+            if json.get("errors") and json["errors"][0]["message"] == "timedout":
+                return await self._get_dependencies()  # pragma: no cover
+            if json.get("errors"):
+                raise ValueError(json)  # pragma: no cover
+            headers = response.headers
+            if headers.get("X-RateLimit-Remaining") == "0":  # pragma: no cover
+                t = (
+                    int(headers.get("X-RateLimit-Reset"))
+                    - int(timezone.now().timestamp())
+                ) / 1000
+                logger.info("Rate limit exceeded. Sleeping for %s seconds.", t)
+                await sleep(t)
+                return await self._get_dependencies()
 
-                lockfiles = []
-                lockfile_tasks = []
-                for lockfile in json["data"]["repository"]["dependencyGraphManifests"][
-                    "nodes"
-                ]:
-                    if basename(lockfile["blobPath"]) in LOCK_FILES:
-                        url = f"https://raw.githubusercontent.com/{lockfile['blobPath'].replace('blob/', '')}"
-                        lockfile_tasks.append(session.get(url))
-                for lockfile_task in await gather(*lockfile_tasks):
-                    lockfiles.append(
-                        {
-                            "name": basename(str(lockfile_task.url)),
-                            "data": await lockfile_task.text(),
-                        }
-                    )
+            lockfiles = []
+            lockfile_tasks = []
+            for lockfile in json["data"]["repository"]["dependencyGraphManifests"][
+                "nodes"
+            ]:
+                if basename(lockfile["blobPath"]) in LOCK_FILES:
+                    url = f"https://raw.githubusercontent.com/{lockfile['blobPath'].replace('blob/', '')}"
+                    lockfile_tasks.append(session.get(url))
+            lockfiles = [
+                {
+                    "name": basename(str(lockfile_task.url)),
+                    "data": await lockfile_task.text(),
+                }
+                for lockfile_task in await gather(*lockfile_tasks)
+            ]
 
-                return await LockFileParser(lockfiles).parse()
+            return await LockFileParser(lockfiles).parse()
 
     def sync(self):
         """Sync the project with the remote project."""
@@ -102,18 +109,19 @@ class Synchroniser:
 class LockFileParser:
     """Parse a lockfile and return a list of dependencies."""
 
-    def __init__(self, lockfiles: list[dict]):
+    def __init__(self, lockfiles: list[dict]) -> None:
         self.lockfiles = lockfiles
 
-    def _get_provider(self, name: str):
+    def _get_provider(self, name: str) -> str:
         """Get the provider of the lockfile."""
         if name in NPM_FILES:
             return "NPM"
         return "PIP"
 
-    async def _get_version(self, requirements: tuple, provider: str):
+    async def _get_version(self, requirements: tuple, provider: str) -> models.Version:
         dependency, dependency_created = await models.Dependency.objects.aget_or_create(
-            name=requirements[0], provider=provider
+            name=requirements[0],
+            provider=provider,
         )
         major, minor, patch = SemVer.parse(get_version(requirements[1])).to_tuple()[0:3]
 
@@ -141,21 +149,19 @@ class LockFileParser:
 
         try:
             if provider == "NPM":
-                async with ClientSession() as session:
-                    async with session.get(
-                        f"https://registry.npmjs.org/{name}"
-                    ) as response:
-                        response.raise_for_status()
-                        json = await response.json()
-                        release_date = json["time"][version.version]
+                async with ClientSession() as session, session.get(
+                    f"https://registry.npmjs.org/{name}",
+                ) as response:
+                    response.raise_for_status()
+                    json = await response.json()
+                    release_date = json["time"][version.version]
 
             elif provider == "PIP":
-                async with ClientSession() as session:
-                    async with session.get(
-                        f"https://pypi.org/pypi/{name}/{version.version}/json"
-                    ) as response:
-                        response.raise_for_status()
-                        release_date = (await response.json())["urls"][0]["upload_time"]
+                async with ClientSession() as session, session.get(
+                    f"https://pypi.org/pypi/{name}/{version.version}/json",
+                ) as response:
+                    response.raise_for_status()
+                    release_date = (await response.json())["urls"][0]["upload_time"]
             return parser.parse(release_date).date()
         except (
             client_exceptions.ClientOSError,
@@ -186,18 +192,11 @@ class LockFileParser:
                     for dependency in loads(data)["package"]
                     if dependency["name"] in settings.TRACKED_DEPENDENCIES
                 ]
-            # elif name == "pnpm-lock.yaml":  # pragma: no cover
-            #     lockfile = safe_load(data)
-            #     if float(lockfile["lockfileDependencyVersion"]) < 6.0:
-            #         regex = r"\/([^\s]+)\/([^_\s]+).*"
-            #     else:
-            #         regex = r"\/(@?[^\s@]+)@([^()]+).*"
-            #     dependencies = [
-            #         findall(regex, dependency)[0]
-            #         for dependency in lockfile["packages"].keys()
-            #     ]
             tasks.extend(
-                [self._get_version(dependency, provider) for dependency in dependencies]
+                [
+                    self._get_version(dependency, provider)
+                    for dependency in dependencies
+                ],
             )
 
         return await gather(*tasks)
