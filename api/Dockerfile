@@ -22,6 +22,9 @@ ENV HOME=/home/outdated
 
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE outdated.settings
+
+# prevent git from asking for credentials on wrong urls
+ENV GIT_ASKPASS true
 ENV APP_HOME=/app
 
 COPY pyproject.toml poetry.lock $APP_HOME/
