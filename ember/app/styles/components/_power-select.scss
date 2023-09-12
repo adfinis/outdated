@@ -4,15 +4,20 @@
   transition-property: color, background-color, border;
 }
 
-.ember-power-select-multiple-trigger:has(ul input:focus):not(
-    .is-valid,
-    .is-invalid
-  ) {
-  border: $ember-power-select-default-focus-border;
-}
-
 .ember-power-select-search-input,
 .ember-power-select-trigger-multiple-input {
   padding: 0 $form-padding-horizontal;
   text-indent: 0;
+  color: $form-color;
+}
+
+.ember-power-select-trigger:where(:not(.ember-power-select-multiple-trigger)) {
+  @extend .uk-input;
+}
+
+.ember-power-select-multiple-option.ember-power-select-multiple-option {
+  @extend .uk-button-default;
+
+  border-radius: 0;
+  line-height: 1.5rem;
 }

@@ -7,3 +7,13 @@
 .is-invalid:focus {
   border: $form-border-width solid $form-danger-color;
 }
+
+.repo-input {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 40px auto;
+
+  small {
+    grid-column: 1 / 3;
+  }
+}
