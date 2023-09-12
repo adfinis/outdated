@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from django.db import models
 from django.db.models.functions import Lower
 
-from outdated.models import UniqueBooleanField, UUIDModel
+from outdated.models import RepositoryURLField, UniqueBooleanField, UUIDModel
 
 from ..user.models import User
 
@@ -94,17 +94,21 @@ class Version(UUIDModel):
 
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
-    repo = models.URLField(max_length=100, unique=True)
+
     versioned_dependencies = models.ManyToManyField(Version, blank=True)
+    repo = RepositoryURLField(max_length=100, unique=True)
 
     class Meta:
         ordering = ["name", "id"]
         constraints = [
             models.UniqueConstraint(
-                fields=["name"],
-                condition=models.Q(name__iexact=Lower("name")),
+                Lower("name"),
                 name="unique_project_name",
-            )
+            ),
+            models.UniqueConstraint(
+                Lower("repo"),
+                name="unique_project_repo",
+            ),
         ]
 
     @property

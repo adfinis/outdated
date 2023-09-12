@@ -77,7 +77,7 @@ class Synchroniser:
                     "nodes"
                 ]:
                     if basename(lockfile["blobPath"]) in LOCK_FILES:
-                        url = f"https://raw.githubusercontent.com/{lockfile['blobPath'].replace(f'blob/', f'')}"
+                        url = f"https://raw.githubusercontent.com/{lockfile['blobPath'].replace('blob/', '')}"
                         lockfile_tasks.append(session.get(url))
                 for lockfile_task in await gather(*lockfile_tasks):
                     lockfiles.append(
