@@ -2,6 +2,8 @@ from uuid import uuid4
 
 from django.db import models
 
+from .validators import RepositoryURLValidator
+
 
 class UUIDModel(models.Model):
     """Model which uses an uuid as primary key."""
@@ -53,3 +55,8 @@ class UniqueBooleanField(models.BooleanField):
             setattr(model_instance, self.attname, True)
 
         return super().pre_save(model_instance, add)
+
+
+class RepositoryURLField(models.CharField):
+    default_validators = [RepositoryURLValidator]
+    description = "Field for git repository URLs."

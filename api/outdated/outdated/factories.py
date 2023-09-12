@@ -51,7 +51,8 @@ class VersionFactory(DjangoModelFactory):
 
 class ProjectFactory(DjangoModelFactory):
     name = Faker("uuid4")
-    repo = Sequence(lambda n: "https://github.com/userorcompany/%s/" % n)
+    repo = Sequence(lambda n: "github.com/userorcompany/%s/" % n)
+    repo_protocol = random.choice(["https", "http"])
 
     @post_generation
     def versioned_dependencies(self, create, extracted, **kwargs):

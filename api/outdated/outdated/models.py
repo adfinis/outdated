@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from django.db import models
 from django.db.models.functions import Lower
 
-from outdated.models import UniqueBooleanField, UUIDModel
+from outdated.models import RepositoryURLField, UniqueBooleanField, UUIDModel
 
 from ..user.models import User
 
@@ -22,6 +22,8 @@ PROVIDER_OPTIONS = {
 }
 
 PROVIDER_CHOICES = [(provider, provider) for provider in PROVIDER_OPTIONS.keys()]
+
+PROTOCOL_CHOICES = [(protocol, protocol) for protocol in ("https", "http")]
 
 
 class Dependency(UUIDModel):
@@ -94,7 +96,8 @@ class Version(UUIDModel):
 
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
-    repo = models.URLField(max_length=100, unique=True)
+    repo_protocol = models.CharField(max_length=10, choices=PROTOCOL_CHOICES)
+    repo = RepositoryURLField(max_length=100)
     versioned_dependencies = models.ManyToManyField(Version, blank=True)
 
     class Meta:
@@ -104,7 +107,12 @@ class Project(UUIDModel):
                 fields=["name"],
                 condition=models.Q(name__iexact=Lower("name")),
                 name="unique_project_name",
-            )
+            ),
+            models.UniqueConstraint(
+                fields=["repo"],
+                condition=models.Q(name__iexact=Lower("repo")),
+                name="unique_project_repo",
+            ),
         ]
 
     @property
