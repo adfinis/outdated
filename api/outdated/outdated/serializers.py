@@ -53,4 +53,10 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Project
-        fields = ("name", "repo", "status", "versioned_dependencies", "maintainers")
+        fields = (
+            "name",
+            "repo",
+            "status",
+            "versioned_dependencies",
+            "maintainers",
+        )

@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from django.core.validators import RegexValidator
 from django.db import models
 
 
@@ -53,3 +54,13 @@ class UniqueBooleanField(models.BooleanField):
             setattr(model_instance, self.attname, True)
 
         return super().pre_save(model_instance, add)
+
+
+class RepositoryURLField(models.CharField):
+    default_validators = [
+        RegexValidator(
+            regex=r"^([-_\w]+\.[-._\w]+)\/([-_\w]+)\/([-_\w]+)$",
+            message="Invalid repository url",
+        )
+    ]
+    description = "Field for git repository URLs."
