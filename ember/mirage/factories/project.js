@@ -6,10 +6,11 @@ export default Factory.extend({
   status: () => 'UNDEFINED',
 
   repo() {
-    return `https://github.com/${faker.internet.domainWord()}/${faker.helpers.slugify(
+    return `github.com/${faker.internet.domainWord()}/${faker.helpers.slugify(
       this.name,
-    )}`;
+    )}.git`;
   },
+  repoProtocol: () => faker.helpers.arrayElement(['https', 'http']),
   withVersions: trait({
     status: () =>
       faker.helpers.arrayElement(['OUTDATED', 'WARNING', 'UP-TO-DATE']),

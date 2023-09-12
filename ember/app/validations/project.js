@@ -6,14 +6,12 @@ import {
 
 export default {
   name: [validatePresence(true), validateLength({ max: 100 })],
+  repoProtocol: [validatePresence(true)],
   repo: [
     validatePresence(true),
     validateLength({ max: 200 }),
-    validateFormat({ type: 'url' }),
-
     validateFormat({
-      regex: /^(\s)*https?:\/\//,
-      message: '{description} must start with either http:// or https://',
+      regex: /^([-_\w]+\.[-._\w]+)\/([-_\w]+)\/([-_\w]+)\.git$/,
     }),
   ],
   maintainers: [],

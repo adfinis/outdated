@@ -2,7 +2,12 @@
 
 <Form @name={{if @project (concat 'Edit project ' @project.name) 'Track new Project'}} @model={{this.project}} @onSubmit={{perform this.saveProject}} as |f|>
   <f.input @name='name' />
-  <f.input @name='repo' />
+
+  <label class="uk-form-label">Repo</label>
+  <div class="repo-input">
+    <f.input @noMargin={{true}} @noLabel={{true}} @hideValidity={{true}} @searchDisabled={{true}} @type="select" @name='repoProtocol' @options={{this.repoProtocols}} />
+    <f.input @noMargin={{true}} @noLabel={{true}} @name='repo' @errorComponentOutside={{true}} />
+  </div>
 
   <f.input @name='users' @type='select' @label='Maintainers' @multiple={{true}} @value={{this.project.users}}
     @options={{this.users}} @searchField='searchField' @visibleField='fullName' />

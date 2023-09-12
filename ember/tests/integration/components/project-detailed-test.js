@@ -20,7 +20,9 @@ module('Integration | Component | project-detailed', function (hooks) {
     await render(hbs`<ProjectDetailed @project={{this.project}}/>`);
 
     assert.dom('[data-test-project-name]').hasText(this.project.name);
-    assert.dom('[data-test-repo-link]').hasProperty('href', this.project.repo);
+    assert
+      .dom('[data-test-repo-link]')
+      .hasProperty('href', this.project.repoURL);
 
     assert
       .dom('tbody>tr')

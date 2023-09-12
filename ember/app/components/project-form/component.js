@@ -81,4 +81,8 @@ export default class ProjectFormComponent extends Component {
   get users() {
     return this.store.peekAll('user');
   }
+
+  get repoProtocols() {
+    return ['https', 'http'];
+  }
 }

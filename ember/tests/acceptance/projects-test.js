@@ -21,7 +21,9 @@ module('Acceptance | projects', function (hooks) {
 
     assert.strictEqual(currentURL(), `/projects/${project.id}`);
 
-    assert.dom('[data-test-repo-link]').hasProperty('href', project.repo);
+    assert
+      .dom('[data-test-repo-link]')
+      .hasProperty('href', `${project.repoProtocol}://${project.repo}`);
 
     assert
       .dom('tbody>tr')
