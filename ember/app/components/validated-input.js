@@ -38,7 +38,7 @@ export default class FormInputComponent extends Component {
     return this.showValidity && !!this.errors.length;
   }
   get showValidity() {
-    return this.args.submitted || this.dirty;
+    return !this.args.hideValidity && (this.args.submitted || this.dirty);
   }
 
   @action

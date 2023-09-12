@@ -12,6 +12,7 @@
   @model={{@model}}
   @placeholder={{@placeholder}}
   @update={{this.update}}
+  @searchDisabled={{@searchDisabled}}
   @searchField={{@searchField}}
   @visibleField={{@visibleField}}
   @setDirty={{this.setDirty}}
@@ -19,8 +20,11 @@
   @afterOptionsComponent={{@afterOptionsComponent}}
   @optionsComponent={{@optionsComponent}}
   @searchMessage={{@searchMessage}}
+  @noMargin={{@noMargin}}
+  @noLabel={{@noLabel}}
   @noMatchesMessage={{@noMatchesMessage}}
   @noMatchesMessageComponent={{@noMatchesMessageComponent}}
+  @errorComponentOutside={{@errorComponentOutside}}
   @errorComponent={{if
     (and this.showValidity this.errors)
     (component 'validated-input/error' errors=this.errors id=this.errorId)

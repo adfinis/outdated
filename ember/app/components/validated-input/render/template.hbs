@@ -1,5 +1,5 @@
-<div class='uk-margin'>
-  {{#if (or @label (not @placeholder))}}
+<div class={{if @noMargin '' 'uk-margin'}}>
+  {{#if (and (not @noLabel) (or @label (not @placeholder)))}}
     <@labelComponent @label={{or @label this.name}} />
   {{/if}}
   <div class='uk-form-controls'>
@@ -16,6 +16,7 @@
         @value={{@value}}
         @options={{@options}}
         @placeholder={{@placeholder}}
+        @searchDisabled={{@searchDisabled}}
         @searchField={{@searchField}}
         @afterOptionsComponent={{@afterOptionsComponent}}
         @optionsComponent={{@optionsComponent}}
@@ -54,6 +55,11 @@
         ...attributes
       />
     {{/if}}
+    {{#unless @errorComponentOutside}}
     <@errorComponent />
+    {{/unless}}
   </div>
 </div>
+{{#if @errorComponentOutside}}
+<@errorComponent />
+{{/if}}

@@ -1,5 +1,5 @@
 <@selectComponent
-  @searchEnabled={{true}}
+  @searchEnabled={{(not @searchDisabled)}}
   @options={{@options}}
   @selected={{@value}}
   @onChange={{this.onUpdate}}
