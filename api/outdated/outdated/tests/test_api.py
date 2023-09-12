@@ -220,7 +220,7 @@ def test_maintainer(client, maintainer):
 @pytest.mark.vcr()
 @pytest.mark.django_db(transaction=True)
 def test_sync_project_endpoint(client, project_factory):
-    generated_project = project_factory(repo="https://github.com/adfinis/outdated")
+    generated_project = project_factory(repo="github.com/adfinis/outdated")
     url = reverse("project-sync", args=[generated_project.id])
     resp = client.post(url)
     assert resp.status_code == status.HTTP_200_OK
