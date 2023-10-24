@@ -6,7 +6,7 @@ export default Factory.extend({
   status: () => 'UNDEFINED',
 
   repo() {
-    return `https://github.com/${faker.internet.domainWord()}/${faker.helpers.slugify(
+    return `github.com/${faker.internet.domainWord()}/${faker.helpers.slugify(
       this.name,
     )}`;
   },

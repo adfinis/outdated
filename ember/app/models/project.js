@@ -10,4 +10,8 @@ export default class ProjectModel extends Model {
 
   @tracked users;
   @tracked primaryMaintainer;
+
+  get repoURL() {
+    return `https://${this.repo}`;
+  }
 }
