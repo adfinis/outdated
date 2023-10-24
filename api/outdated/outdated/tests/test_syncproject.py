@@ -7,7 +7,7 @@ from django.core.management import call_command
 def test_syncproject(project_factory):
     call_command("syncproject", "foo")
 
-    project = project_factory.create(repo="https://github.com/projectcaluma/caluma")
+    project = project_factory.create(repo="github.com/projectcaluma/caluma")
 
     call_command("syncproject", project.name)
     assert project.versioned_dependencies.count() > 0
@@ -17,7 +17,7 @@ def test_syncproject(project_factory):
 @pytest.mark.django_db(transaction=True)
 def test_syncprojects(project_factory):
     projects = [
-        project_factory(repo=f"https://github.com/adfinis/{project}")
+        project_factory(repo=f"github.com/adfinis/{project}")
         for project in ["outdated", "mysagw"]
     ]
 
