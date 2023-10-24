@@ -1,0 +1,10 @@
+{% block subject required %}
+{% endblock %}
+Project: {{ project.name }}
+Repo: {{ project.repo }}
+
+{% block description %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}

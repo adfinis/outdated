@@ -1,0 +1,9 @@
+{% extends 'base-alert.txt' %}
+
+{% block subject %}
+Your Project has reached EOL
+{% endblock %}
+
+{% block content %}
+final-alert.txt contents
+{% endblock %}

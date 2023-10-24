@@ -1,0 +1,5 @@
+{% extends 'base.txt' %}
+
+{% block description %}
+Outdated since {{ project.duration_until_outdated.days * -1 }} days
+{% endblock %}

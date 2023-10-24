@@ -77,6 +77,7 @@ migrate: ## Migrate django
 .PHONY: migrate-zero
 migrate-zero: ## Unapply all django migrations
 	@docker compose run --rm api python ./manage.py migrate outdated zero
+	@docker compose run --rm api python ./manage.py migrate notifications zero
 	@docker compose run --rm api python ./manage.py migrate user zero
 
 .PHONY: keycloak-import
