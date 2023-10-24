@@ -13,7 +13,7 @@ jobs:
     name: "Lint"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set UID
         run: echo "UID=$(id --user)" > .env
       - name: Lint the backend code
@@ -23,7 +23,7 @@ jobs:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set UID
         run: echo "UID=$(id --user)" > .env
       - name: Build the containers
