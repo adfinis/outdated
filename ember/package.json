@@ -60,7 +60,7 @@
     "ember-data": "^5.1.0",
     "ember-fetch": "^8.1.2",
     "ember-flatpickr": "^4.0.0",
-    "ember-focus-trap": "^1.0.2",
+    "ember-focus-trap": "^1.1.0",
     "ember-intl": "^5.7.2",
     "ember-load-initializers": "^2.1.2",
     "ember-modifier": "^4.1.0",
