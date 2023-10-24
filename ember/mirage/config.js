@@ -1,4 +1,20 @@
-export default function () {
+import { discoverEmberDataModels } from 'ember-cli-mirage';
+import { createServer } from 'miragejs';
+
+export default function (config) {
+  const finalConfig = {
+    ...config,
+    models: {
+      ...discoverEmberDataModels(config.store),
+      ...config.models,
+    },
+    routes,
+  };
+
+  return createServer(finalConfig);
+}
+
+function routes() {
   // These comments are here to help you get started. Feel free to delete them.
   /*
     Config (with defaults).
