@@ -1586,16 +1586,7 @@
     ember-cli-version-checker "^5.1.2"
     semver "^7.3.5"
 
-"@embroider/addon-shim@^1.0.0", "@embroider/addon-shim@^1.8.4":
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/@embroider/addon-shim/-/addon-shim-1.8.4.tgz#0e7f32c5506bf0f3eb0840506e31c36c7053763c"
-  integrity sha512-sFhfWC0vI18KxVenmswQ/ShIvBg4juL8ubI+Q3NTSdkCTeaPQ/DIOUF6oR5DCQ8eO/TkIaw+kdG3FkTY6yNJqA==
-  dependencies:
-    "@embroider/shared-internals" "^2.0.0"
-    broccoli-funnel "^3.0.8"
-    semver "^7.3.8"
-
-"@embroider/addon-shim@^1.7.1":
+"@embroider/addon-shim@^1.0.0", "@embroider/addon-shim@^1.7.1", "@embroider/addon-shim@^1.8.4":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@embroider/addon-shim/-/addon-shim-1.8.5.tgz#c0aae417f9583058f40550f206fc53444e325f11"
   integrity sha512-pDgpdTsC9i/+5hHziygK5VIZc64OG8bupiqL0OxJp+bnINURalHMbu5B3Gikq/a0QIvMPzDFWzKxIZCBpeiHkg==
@@ -7377,10 +7368,10 @@ ember-flatpickr@^4.0.0:
     ember-cli-typescript "^5.0.0"
     flatpickr "^4.6.9"
 
-ember-focus-trap@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/ember-focus-trap/-/ember-focus-trap-1.0.2.tgz#813ee3684b95f31a9534ef02f47da2bb7f5f13e9"
-  integrity sha512-/8Cx9KI7uqoMaNN4Iyxc24P2JIvAcCL3cI1tYdZRHTwTd1sG6esEZWOnpxZOSE7m4xHww8HVUSiXzgyqD8YIhA==
+ember-focus-trap@^1.0.2, ember-focus-trap@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ember-focus-trap/-/ember-focus-trap-1.1.0.tgz#e3c47c6e916e838af3884b43e2794e87088d2bac"
+  integrity sha512-KxbCKpAJaBVZm+bW4tHPoBJAZThmxa6pI+WQusL+bj0RtAnGUNkWsVy6UBMZ5QqTQzf4EvGHkCVACVp5lbAWMQ==
   dependencies:
     "@embroider/addon-shim" "^1.0.0"
     focus-trap "^6.7.1"
