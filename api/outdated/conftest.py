@@ -1,11 +1,17 @@
+from __future__ import annotations
+
+from collections.abc import Callable
 from functools import partial
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_factoryboy import register
+from pytest_mock import MockerFixture
 from rest_framework.test import APIClient
 
 from .oidc_auth.models import OIDCUser
 from .outdated import factories
+from .tracking import Tracker
 from .user.factories import UserFactory
 
 register(factories.DependencyFactory)
@@ -59,11 +65,14 @@ def client(db, settings, get_claims):
     return client
 
 
-@pytest.fixture(scope="module")
-def vcr_config():
-    return {
-        # Replace the Authorization header with a dummy value
-        "filter_headers": [("Authorization", "DUMMY")],
-        "ignore_localhost": True,
-        "ignore_hosts": ["https://outdated.local"],
-    }
+@pytest.fixture
+def tracker_mock(mocker: MockerFixture) -> Callable[[str], MagicMock]:
+    def _tracker_mock(target: str) -> MagicMock:
+        return mocker.patch.object(Tracker, target)
+
+    return _tracker_mock
+
+
+@pytest.fixture
+def tracker_init_mock(mocker: MockerFixture) -> MagicMock:
+    return mocker.patch.object(Tracker, "__init__", return_value=None)
