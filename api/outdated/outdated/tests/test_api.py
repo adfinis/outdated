@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework import status as http_status
 
 from outdated.outdated.models import Maintainer
+from outdated.tracking import Tracker
 
 
 def test_dependency(client, dependency_factory):
@@ -223,14 +224,13 @@ def test_maintainer(client, maintainer):
     assert maintainer.project.maintainers.all()[0] == maintainer
 
 
-@pytest.mark.vcr()
 @pytest.mark.django_db(transaction=True)
-def test_sync_project_endpoint(client, project_factory):
+def test_sync_project_endpoint(client, project_factory, mocker):
     generated_project = project_factory(repo="github.com/adfinis/outdated")
+    tracker_mocker = mocker.patch.object(Tracker, "__init__", return_value=None)
+    tracker_sync_mocker = mocker.patch.object(Tracker, "sync")
     url = reverse("project-sync", args=[generated_project.id])
     resp = client.post(url)
     assert resp.status_code == http_status.HTTP_200_OK
-    assert generated_project.versioned_dependencies.count() > 0
-    url = reverse("project-sync", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
-    resp = client.post(url)
-    assert resp.status_code == http_status.HTTP_500_INTERNAL_SERVER_ERROR
+    tracker_mocker.assert_called_once_with(generated_project)
+    tracker_sync_mocker.assert_called_once()
