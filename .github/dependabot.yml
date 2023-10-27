@@ -1,40 +1,112 @@
 version: 2
 updates:
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: "weekly"
-    day: "friday"
-    time: "12:00"
-    timezone: "Europe/Zurich"
-- package-ecosystem: pip
-  directory: "/api"
-  schedule:
-    interval: weekly
-    day: friday
-    time: "12:00"
-    timezone: "Europe/Zurich"
-  commit-message:
-    prefix: chore
-    include: scope
-- package-ecosystem: docker
-  directory: "/"
-  schedule:
-    interval: weekly
-    day: friday
-    time: "12:00"
-    timezone: "Europe/Zurich"
-  commit-message:
-    prefix: chore
-    include: scope
-- package-ecosystem: npm
-  directory: "/ember"
-  schedule:
-    interval: weekly
-    day: friday
-    time: "12:00"
-    timezone: "Europe/Zurich"
-  versioning-strategy: increase
-  commit-message:
-    prefix: chore
-    include: scope
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "12:00"
+      timezone: "Europe/Zurich"
+
+  - package-ecosystem: pip
+    directory: "/api"
+    schedule:
+      interval: weekly
+      day: friday
+      time: "12:00"
+      timezone: "Europe/Zurich"
+    commit-message:
+      prefix: chore
+      include: scope
+    open-pull-requests-limit: 10
+
+    groups:
+      linting:
+        patterns:
+          - "ruff"
+          - "black"
+
+      testing:
+        patterns:
+          - "pytest"
+          - "pytest-*"
+          - "pdbpp"
+          - "requests-mock"
+
+      django:
+        patterns:
+          - "django"
+          - "djangorestframework"
+          - "djangorestframework-jsonapi"
+          - "mozilla-django-oidc"
+          - "psycopg2-binary"
+
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: friday
+      time: "12:00"
+      timezone: "Europe/Zurich"
+    commit-message:
+      prefix: chore
+      include: scope
+
+  - package-ecosystem: npm
+    directory: "/ember"
+    schedule:
+      interval: weekly
+      day: friday
+      time: "12:00"
+      timezone: "Europe/Zurich"
+    versioning-strategy: increase
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore
+      include: scope
+
+    groups:
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@adfinis/eslint-config"
+
+      template-lint:
+        patterns:
+          - "ember-template-lint"
+          - "ember-template-lint-*"
+
+      stylelint:
+        patterns:
+          - "stylelint"
+          - "stylelint-*"
+
+      ember-core:
+        patterns:
+          - "ember-cli"
+          - "ember-data"
+          - "ember-source"
+
+        update-types:
+          - "minor"
+          - "patch"
+
+      embroider:
+        patterns:
+          - "@embroider/*"
+          - "ember-auto-import"
+          - "webpack"
+
+      ember:
+        patterns:
+          - "ember-*"
+          - "@ember/*"
+
+        exclude-patterns:
+          - "ember-cli"
+          - "ember-data"
+          - "ember-source"
+          - "ember-template-lint"
+          - "ember-template-lint-*"
+          - "ember-auto-import"
