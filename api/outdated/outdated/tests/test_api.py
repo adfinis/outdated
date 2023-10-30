@@ -197,7 +197,6 @@ def test_project_ordered_by_eol(
 
 
 def test_maintainer(client, maintainer):
-
     assert Maintainer.objects.count() == 1
     url = reverse("maintainer-list")
     resp = client.get(url)
