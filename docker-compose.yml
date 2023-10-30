@@ -12,6 +12,9 @@ services:
     user: "${UID:?Set UID env variable to your user id}"
     depends_on:
       - db
+    volumes:
+      - projects_data:/home/outdated/projects
+
   ember:
     build:
       context: ./ember/
@@ -48,3 +51,4 @@ volumes:
   dbdata:
   caddy_data:
   caddy_config:
+  projects_data:
