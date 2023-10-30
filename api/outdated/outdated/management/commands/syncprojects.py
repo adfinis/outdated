@@ -1,15 +1,16 @@
-from asyncio import gather
+from django.core.management.base import BaseCommand
 
-from outdated.commands import AsyncCommand
 from outdated.outdated.models import Project
 from outdated.outdated.synchroniser import Synchroniser
 
 
-class Command(AsyncCommand):
+class Command(BaseCommand):
     help = "Syncs all projects with their remote counterparts."
 
-    async def _handle(self, *args, **options):
+    def handle(self, *args, **options):
         projects = Project.objects.all()
-        project_tasks = [Synchroniser(project).a_sync() async for project in projects]
-        await gather(*project_tasks)
+        for project in projects:
+            self.stdout.write(f"Syncing project {project}")
+            Synchroniser(project).sync()
+            self.stdout.write(f"Finished syncing {project}")
         self.stdout.write("Finished syncing all projects")
