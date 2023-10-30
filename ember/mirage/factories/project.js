@@ -24,4 +24,21 @@ export default Factory.extend({
       });
     },
   }),
+  withMaintainers: trait({
+    afterCreate(project, server) {
+      project.update({
+        maintainers: [
+          server.create('maintainer', {
+            user: server.create('user'),
+            project,
+            isPrimary: true,
+          }),
+          server.create('maintainer', {
+            user: server.create('user'),
+            project,
+          }),
+        ],
+      });
+    },
+  }),
 });
