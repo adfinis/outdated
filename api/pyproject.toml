@@ -63,6 +63,10 @@ ignore = [
   "S101",    # Use of assert detected - Required for pytest to be usable
   "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable - allow using set values
   "ARG001",  # Unused function argument: {name} - allow using fixtures that aren't used in the actual test e.g. db
+  "TRY003",  # Avoid specifying long messages outside the exception class
+  "EM",      # Exception must not use a string literal, f-string or .format assign to variable first
+  "S603",    # `subprocess` call: check for execution of untrusted input
+  "FBT",     # Booleans in function calls/defenitions
 ]
 
 [tool.ruff.flake8-annotations]
