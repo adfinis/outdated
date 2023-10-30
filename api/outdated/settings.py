@@ -32,7 +32,7 @@ DATABASES = {
 
 # Application definition
 
-DEBUG = env.bool("DEBUG", default=default(True, False))  # noqa: FBT003
+DEBUG = env.bool("DEBUG", default=default(True, False))
 SECRET_KEY = env.str("SECRET_KEY", default=default("keykeykeykeykeykey"))
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=default(["*"]))
 INSTALLED_APPS = [
