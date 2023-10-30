@@ -1,6 +1,7 @@
 import { render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupMirage } from 'ember-cli-mirage/test-support';
+import { setupIntl } from 'ember-intl/test-support';
 import { module, test } from 'qunit';
 
 import { setupRenderingTest } from 'outdated/tests/helpers';
@@ -8,6 +9,7 @@ import { setupRenderingTest } from 'outdated/tests/helpers';
 module('Integration | Component | project-compact', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
+  setupIntl(hooks);
 
   test('it renders correctly', async function (assert) {
     const project = this.server.create('project', 'withVersions');
