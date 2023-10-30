@@ -26,7 +26,7 @@ api-start: ## Start the API
 
 .PHONY: api-test
 api-test: ## Test the API
-	@docker compose run --rm api pytest --no-cov-on-fail --cov -vvv -s
+	@docker compose run --rm api sh -c 'ENV=test pytest --no-cov-on-fail --cov -vvv -s'
 
 .PHONY: build
 build: ## Build the containers
