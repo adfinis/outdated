@@ -6,6 +6,7 @@ RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-
     && chmod +x /usr/local/bin/wait-for-it.sh \
     && mkdir -p /app \
     && useradd -u 901 -r outdated --create-home \
+    && mkdir -p /home/outdated/projects \
     # all project specific folders need to be accessible by newly created user but also for unknown users (when UID is set manually). Such users are in group root.
     && chown -R outdated:root /home/outdated \
     && chmod -R 770 /home/outdated \
