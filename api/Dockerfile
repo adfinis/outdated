@@ -18,6 +18,8 @@ RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-
 # needs to be set for users with manually set UID
 ENV HOME=/home/outdated
 
+# prevent git from asking for credentials on wrong urls
+ENV GIT_ASKPASS true
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE outdated.settings
 ENV APP_HOME=/app
