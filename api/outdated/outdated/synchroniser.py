@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 import logging
-from asyncio import gather, run, sleep
 from pathlib import Path
 from re import findall
 
-from aiohttp import ClientSession, client_exceptions
-from asgiref.sync import sync_to_async
 from dateutil import parser
 from django.conf import settings
-from django.utils import timezone
+from requests import get, post
 from semver import Version as SemVer
 from tomllib import loads
 
@@ -38,7 +35,7 @@ class Synchroniser:
         self.project = project
         self.owner, self.name = findall(r"\/([^\/]+)\/([^\/]+)$", self.project.repo)[0]
 
-    async def _get_dependencies(self):  # noqa: C901
+    def _get_dependencies(self):
         """Get the dependencies from the lockfiles."""
         q = f"""
         {{
@@ -52,58 +49,38 @@ class Synchroniser:
         }}
         """
 
-        async with ClientSession() as session, session.post(
+        resp = post(
             "https://api.github.com/graphql",
             headers={
                 "Authorization": f"Bearer {settings.GITHUB_API_TOKEN}",
                 "Accept": "application/vnd.github.hawkgirl-preview+json",
             },
             json={"query": q},
-        ) as response:
-            json = await response.json()
-            if json.get("message") == "Bad credentials":  # pragma: no cover
-                msg = "API Token is not set"
-                raise ValueError(msg)
-            if json.get("errors") and json["errors"][0]["message"] == "timedout":
-                return await self._get_dependencies()  # pragma: no cover
-            if json.get("errors"):
-                raise ValueError(json)  # pragma: no cover
-            headers = response.headers
-            if headers.get("X-RateLimit-Remaining") == "0":  # pragma: no cover
-                t = (
-                    int(headers.get("X-RateLimit-Reset"))
-                    - int(timezone.now().timestamp())
-                ) / 1000
-                logger.info("Rate limit exceeded. Sleeping for %s seconds.", t)
-                await sleep(t)
-                return await self._get_dependencies()
+            timeout=10,
+        )
 
-            lockfiles = []
-            lockfile_tasks = []
-            for lockfile in json["data"]["repository"]["dependencyGraphManifests"][
-                "nodes"
-            ]:
-                if basename(lockfile["blobPath"]) in LOCK_FILES:
-                    url = f"https://raw.githubusercontent.com/{lockfile['blobPath'].replace('blob/', '')}"
-                    lockfile_tasks.append(session.get(url))
-            lockfiles = [
-                {
-                    "name": basename(str(lockfile_task.url)),
-                    "data": await lockfile_task.text(),
-                }
-                for lockfile_task in await gather(*lockfile_tasks)
-            ]
+        json = resp.json()
 
-            return await LockFileParser(lockfiles).parse()
+        if json.get("message") == "Bad credentials":  # pragma: no cover
+            msg = "API Token is not set"
+            raise ValueError(msg)
+        if json.get("errors"):  # pragma: no cover
+            raise ValueError(json)
+
+        lockfiles = []
+        for lockfile in json["data"]["repository"]["dependencyGraphManifests"]["nodes"]:
+            if basename(lockfile["blobPath"]) not in LOCK_FILES:
+                continue
+
+            url = f"https://raw.githubusercontent.com/{lockfile['blobPath'].replace('blob/', '')}"
+            lockfiles.append({"name": basename(url), "data": get(url, timeout=10).text})
+
+        return LockFileParser(lockfiles).parse()
 
     def sync(self):
         """Sync the project with the remote project."""
-        run(self.a_sync())
-
-    async def a_sync(self):
-        """Sync the project with the remote project."""
-        dependencies = await self._get_dependencies()
-        await sync_to_async(self.project.versioned_dependencies.set)(dependencies)
+        dependencies = self._get_dependencies()
+        self.project.versioned_dependencies.set(dependencies)
 
 
 class LockFileParser:
@@ -118,61 +95,55 @@ class LockFileParser:
             return "NPM"
         return "PIP"
 
-    async def _get_version(self, requirements: tuple, provider: str) -> models.Version:
-        dependency, dependency_created = await models.Dependency.objects.aget_or_create(
+    def _get_version(self, requirements: tuple, provider: str) -> models.Version:
+        dependency, dependency_created = models.Dependency.objects.get_or_create(
             name=requirements[0],
             provider=provider,
         )
         major, minor, patch = SemVer.parse(get_version(requirements[1])).to_tuple()[0:3]
 
-        release_version, _ = await models.ReleaseVersion.objects.aget_or_create(
+        release_version, _ = models.ReleaseVersion.objects.get_or_create(
             dependency=dependency,
             major_version=major,
             minor_version=minor,
         )
 
-        version, version_created = await models.Version.objects.aget_or_create(
+        version, version_created = models.Version.objects.get_or_create(
             release_version=release_version,
             patch_version=patch,
         )
 
         if dependency_created or version_created:
-            version.release_date = await self._get_release_date(version)
-            await sync_to_async(version.save)()
+            version.release_date = self._get_release_date(version)
+            version.save()
 
         return version
 
-    async def _get_release_date(self, version):
+    def _get_release_date(self, version):
         """Get the release date of a dependency."""
         dependency = version.release_version.dependency
         name, provider = dependency.name, dependency.provider
 
-        try:
-            if provider == "NPM":
-                async with ClientSession() as session, session.get(
-                    f"https://registry.npmjs.org/{name}",
-                ) as response:
-                    response.raise_for_status()
-                    json = await response.json()
-                    release_date = json["time"][version.version]
+        if provider == "NPM":
+            resp = get(f"https://registry.npmjs.org/{name}", timeout=10)
+            resp.raise_for_status()
+            json = resp.json()
+            release_date = json["time"][version.version]
 
-            elif provider == "PIP":
-                async with ClientSession() as session, session.get(
-                    f"https://pypi.org/pypi/{name}/{version.version}/json",
-                ) as response:
-                    response.raise_for_status()
-                    release_date = (await response.json())["urls"][0]["upload_time"]
-            return parser.parse(release_date).date()
-        except (
-            client_exceptions.ClientOSError,
-            client_exceptions.ServerDisconnectedError,
-        ):  # pragma: no cover
-            await sleep(1)
-            return await self._get_release_date(version)
+        elif provider == "PIP":
+            resp = get(
+                f"https://pypi.org/pypi/{name}/{version.version}/json",
+                timeout=10,
+            )
+            resp.raise_for_status()
+            json = resp.json()
+            release_date = json["urls"][0]["upload_time"]
 
-    async def parse(self):
+        return parser.parse(release_date).date()
+
+    def parse(self):
         """Parse the lockfile and return a dictionary of dependencies."""
-        tasks = []
+        versions = []
         for lockfile in self.lockfiles:
             name = lockfile["name"]
             data = lockfile["data"]
@@ -192,11 +163,10 @@ class LockFileParser:
                     for dependency in loads(data)["package"]
                     if dependency["name"] in settings.TRACKED_DEPENDENCIES
                 ]
-            tasks.extend(
+            versions.extend(
                 [
                     self._get_version(dependency, provider)
                     for dependency in dependencies
                 ],
             )
-
-        return await gather(*tasks)
+        return versions
