@@ -1,12 +1,14 @@
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupMirage } from 'ember-cli-mirage/test-support';
+import { setupIntl } from 'ember-intl/test-support';
 import { module, test } from 'qunit';
 
 import { setupRenderingTest } from 'outdated/tests/helpers';
 module('Integration | Component | dependency-compact', function (hooks) {
   setupRenderingTest(hooks);
   setupMirage(hooks);
+  setupIntl(hooks);
 
   test('it renders correctly with a version', async function (assert) {
     const store = this.owner.lookup('service:store');
