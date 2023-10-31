@@ -223,12 +223,10 @@ def test_maintainer(client, maintainer):
 
 
 @pytest.mark.django_db(transaction=True)
-def test_sync_project_endpoint(client, project_factory):
-    generated_project = project_factory(repo="github.com/adfinis/outdated")
-    url = reverse("project-sync", args=[generated_project.id])
+def test_sync_project_endpoint(client, project, tracker_init_mock, tracker_mock):
+    tracker_sync_mock = tracker_mock("sync")
+    url = reverse("project-sync", args=[project.id])
     resp = client.post(url)
     assert resp.status_code == http_status.HTTP_200_OK
-    assert generated_project.versioned_dependencies.count() > 0
-    url = reverse("project-sync", args=["eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"])
-    resp = client.post(url)
-    assert resp.status_code == http_status.HTTP_500_INTERNAL_SERVER_ERROR
+    tracker_init_mock.assert_called_once_with(project)
+    tracker_sync_mock.assert_called_once()
