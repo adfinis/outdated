@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from functools import partial
+from typing import TYPE_CHECKING
 
 import pytest
 from pytest_factoryboy import register
@@ -6,7 +9,14 @@ from rest_framework.test import APIClient
 
 from .oidc_auth.models import OIDCUser
 from .outdated import factories
+from .outdated.tracking import Tracker
 from .user.factories import UserFactory
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from unittest.mock import MagicMock
+
+    from pytest_mock import MockerFixture
 
 register(factories.DependencyFactory)
 register(factories.VersionFactory)
@@ -57,3 +67,30 @@ def client(db, settings, get_claims):
     client.force_authenticate(user=user)
     client.user = user
     return client
+
+
+@pytest.fixture
+def tracker_mock(mocker: MockerFixture) -> Callable[[str], MagicMock]:
+    """
+    Generate mock for Tracker.
+
+    Example:
+    -------
+        ```
+        def test_tracker_thing(project, tracker_mock):
+            tracker_sync_mock = tracker_mock('sync')
+            Tracker(project).sync()
+            tracker_sync_mock.assert_called_once()
+        ```
+    """
+
+    def _tracker_mock(target: str) -> MagicMock:
+        return mocker.patch.object(Tracker, target)
+
+    return _tracker_mock
+
+
+@pytest.fixture
+def tracker_init_mock(mocker: MockerFixture) -> MagicMock:
+    """Mock for the Trackers __init__ method."""
+    return mocker.patch.object(Tracker, "__init__", return_value=None)
