@@ -57,13 +57,3 @@ def client(db, settings, get_claims):
     client.force_authenticate(user=user)
     client.user = user
     return client
-
-
-@pytest.fixture(scope="module")
-def vcr_config():
-    return {
-        # Replace the Authorization header with a dummy value
-        "filter_headers": [("Authorization", "DUMMY")],
-        "ignore_localhost": True,
-        "ignore_hosts": ["https://outdated.local"],
-    }

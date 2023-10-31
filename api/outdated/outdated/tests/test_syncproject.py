@@ -6,7 +6,6 @@ from django.core.management import call_command
 from outdated.outdated.synchroniser import Synchroniser
 
 
-@pytest.mark.vcr()
 @pytest.mark.django_db(transaction=True)
 def test_syncproject(project_factory, mocker):
     project = project_factory.create(repo="github.com/projectcaluma/caluma")
