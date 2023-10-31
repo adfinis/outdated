@@ -1,6 +1,8 @@
 from rest_framework_json_api import serializers
 
-from . import models
+from outdated.outdated import models
+
+from .tracking import Tracker
 
 
 class DependencySerializer(serializers.ModelSerializer):
@@ -62,3 +64,16 @@ class ProjectSerializer(serializers.ModelSerializer):
             "versioned_dependencies",
             "maintainers",
         )
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        Tracker(instance).setup()
+        return instance
+
+    def update(self, instance: models.Project, validated_data: dict) -> models.Project:
+        old_instance = models.Project(repo=instance.repo)
+        super().update(instance, validated_data)
+        if instance.clone_path != old_instance.clone_path:
+            Tracker(old_instance).delete()
+            Tracker(instance).setup()
+        return instance

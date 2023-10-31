@@ -16,8 +16,8 @@ djangorestframework-jsonapi = "^6.1.0"
 django-filter = "^23.3"
 gunicorn = "^21.2.0"
 semver = "^3.0.0"
-# pyaml = "^21.10.1"
 mozilla-django-oidc = "^3.0.0"
+pyaml = "^23.9.7"
 
 
 [tool.poetry.group.dev.dependencies]
