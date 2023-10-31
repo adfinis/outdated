@@ -43,11 +43,23 @@ class ReleaseVersion(UUIDModel):
     end_of_life = models.DateField(null=True, blank=True)
 
     def __str__(self) -> str:
-        return f"{self.dependency.name} {self.version}"
+        return f"{self.dependency.name} {self.release_version}"
 
     @property
-    def version(self):
-        return f"{self.major_version}.{self.minor_version}"  # pragma: no cover
+    def release_version(self):
+        """
+        Returns release version.
+
+        Example:
+        -------
+            ```
+            >>> dependency = Dependency(name='django', provider='PIP')
+            >>> release_version = ReleaseVersion(dependency=dependency, major_version=4, minor_version=2)
+            >>> release_version.release_version
+            '4.2'
+            ```
+        """
+        return f"{self.major_version}.{self.minor_version}"
 
     class Meta:
         ordering = [
@@ -88,8 +100,21 @@ class Version(UUIDModel):
         return f"{self.release_version}.{self.patch_version}"
 
     @property
-    def version(self):
-        return f"{self.release_version.version}.{self.patch_version}"
+    def version(self) -> str:
+        """
+        Returns semantic version.
+
+        Example:
+        -------
+            ```
+            >>> dependency = Dependency(name='django', provider='PIP')
+            >>> release_version = ReleaseVersion(dependency=dependency, major_version=4, minor_version=2)
+            >>> version = Version(release_version=release_version, patch_version=5, release_date=date(2023, 1, 1))
+            >>> version.version
+            '4.2.5'
+            ```
+        """
+        return f"{self.release_version.release_version}.{self.patch_version}"
 
 
 class Project(UUIDModel):
@@ -99,19 +124,63 @@ class Project(UUIDModel):
     repo = RepositoryURLField(max_length=100)
 
     @property
-    def repo_domain(self):
+    def repo_domain(self) -> str:
+        """
+        Return the repos domain.
+
+        Example:
+        -------
+            ```
+            >>> project = Project(name='outdated', repo='github.com/adfinis/Outdated')
+            >>> project.repo_domain
+            'github.com'
+            ```
+        """
         return self.repo.split("/")[0].lower()
 
     @property
-    def repo_namespace(self):
+    def repo_namespace(self) -> str:
+        """
+        Return the repos namespace.
+
+        Example:
+        -------
+            ```
+            >>> project = Project(name='outdated', repo='github.com/adfinis/Outdated')
+            >>> project.repo_namespace
+            'adfinis'
+            ```
+        """
         return self.repo.split("/")[1].lower()
 
     @property
-    def repo_name(self):
+    def repo_name(self) -> str:
+        """
+        Return the repos name.
+
+        Example:
+        -------
+            ```
+            >>> project = Project(name='outdated', repo='github.com/adfinis/Outdated')
+            >>> project.repo_name
+            'outdated'
+            ```
+        """
         return self.repo.split("/")[-1].lower()
 
     @property
     def clone_path(self):
+        """
+        Return the repos clone path.
+
+        Example:
+        -------
+            ```
+            >>> project = Project(name='outdated', repo='github.com/adfinis/Outdated')
+            >>> project.clone_path
+            'github.com/adfinis/outdated'
+            ```
+        """
         return f"{self.repo_domain}/{self.repo_namespace}/{self.repo_name}"
 
     class Meta:

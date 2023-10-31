@@ -4,15 +4,16 @@ from re import findall
 from typing import TYPE_CHECKING
 
 import requests
-from dateutil import parser
+from dateutil.parser import parse as parse_date
 from django.conf import settings
 from semver import Version as SemVer
 from tomllib import loads
 from yaml import safe_load
 
-from . import models
+from outdated.outdated import models
 
 if TYPE_CHECKING:
+    from datetime import date
     from pathlib import Path
 
 
@@ -33,6 +34,16 @@ class LockfileParser:
         requirements: tuple[str, str],
         provider: str,
     ) -> models.Version:
+        """
+        Get version from requirements.
+
+        This does the following:
+        1. parse a semver from requirements[1]
+        2. create the necessary dependency if it doesn't exist already (name=requirements[0])
+        3. create the release version if it doesn't exist already
+        4. create the version itself if it doesn't exist already
+        5. if the version was just created fetch its release_date
+        """
         dependency, dependency_created = models.Dependency.objects.get_or_create(
             name=requirements[0],
             provider=provider,
@@ -65,7 +76,7 @@ class LockfileParser:
 
         return version
 
-    def _get_release_date(self, version):
+    def _get_release_date(self, version: models.Version) -> date:
         """Get the release date of a dependency."""
         dependency = version.release_version.dependency
         name, provider = dependency.name, dependency.provider
@@ -89,9 +100,9 @@ class LockfileParser:
                 f"Getting the release date is not implemented for {provider=}",
             )
 
-        return parser.parse(release_date).date()
+        return parse_date(release_date).date()
 
-    def parse(self):
+    def parse(self) -> list[models.Version]:
         """Parse the lockfile and return a dictionary of dependencies."""
         versions = []
 
