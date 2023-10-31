@@ -185,3 +185,9 @@ TRACKED_DEPENDENCIES = env.list(
         "ember-cli",
     ],
 )
+
+
+NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
+PYPI_FILES = ["poetry.lock"]
+
+SUPPORTED_LOCK_FILES = [*NPM_FILES, *PYPI_FILES]

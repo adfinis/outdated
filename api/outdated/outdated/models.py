@@ -98,6 +98,22 @@ class Project(UUIDModel):
     versioned_dependencies = models.ManyToManyField(Version, blank=True)
     repo = RepositoryURLField(max_length=100)
 
+    @property
+    def repo_domain(self):
+        return self.repo.split("/")[0].lower()
+
+    @property
+    def repo_namespace(self):
+        return self.repo.split("/")[1].lower()
+
+    @property
+    def repo_name(self):
+        return self.repo.split("/")[-1].lower()
+
+    @property
+    def clone_path(self):
+        return f"{self.repo_domain}/{self.repo_namespace}/{self.repo_name}"
+
     class Meta:
         ordering = ["name", "id"]
         constraints = [
