@@ -128,7 +128,7 @@ class LockfileParser:
             elif name == "pnpm-lock.yaml":
                 lockfile_data = safe_load(data)
                 regex = r"\/(@?[^\s@]+)@([^()]+).*"
-                if float(lockfile_data["lockfileVersion"]) < 6.0:
+                if float(lockfile_data["lockfileVersion"]) < 6.0:  # pragma: no cover
                     raise NotImplementedError(
                         "Outdated does not support pnpm-lock.yaml lockfiles with a version lower than 6",
                     )

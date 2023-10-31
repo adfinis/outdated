@@ -1,8 +1,14 @@
+from unittest.mock import PropertyMock, call
+
 import pytest
+from django.conf import settings
 from django.urls import reverse
 from rest_framework import status
 
+from outdated.outdated import tracking
 from outdated.outdated.models import Project
+from outdated.outdated.parser import LockfileParser
+from outdated.outdated.tracking import RepoError, Tracker
 
 
 @pytest.mark.parametrize(
@@ -91,3 +97,157 @@ def test_view_delete(client, project, tracker_init_mock, tracker_mock):
     tracker_init_mock.assert_called_once()
     delete_mock.assert_called_once()
     assert not Project.objects.filter(id=project.id)
+
+
+def test_clone(db, project_factory, tmp_repo_root, tracker_mock):
+    tracker_run_mock = tracker_mock("_run")
+    project: Project = project_factory(repo="github.com/adfinis/outdated")
+
+    tracker = Tracker(project)
+
+    tracker.clone()
+
+    tracker_run_mock.assert_has_calls(
+        [
+            call(
+                [
+                    "git",
+                    "clone",
+                    "-n",
+                    "--depth=1",
+                    "--filter=tree:0",
+                    "--single-branch",
+                    "https://github.com/adfinis/outdated",
+                    tmp_repo_root / "github.com/adfinis/outdated",
+                ],
+            ),
+            call(
+                [
+                    "git",
+                    "sparse-checkout",
+                    "set",
+                    "--no-cone",
+                    *settings.SUPPORTED_LOCK_FILES,
+                ],
+            ),
+        ],
+    )
+
+
+@pytest.mark.parametrize("requires_local_copy", [True, False])
+@pytest.mark.parametrize("exists", [True, False])
+def test_run(
+    db,
+    project,
+    tmp_repo_root,
+    requires_local_copy,
+    exists,
+    mocker,
+):
+    project_path = tmp_repo_root / project.clone_path
+
+    subprocess_run_mock = mocker.patch.object(tracking, "run")
+
+    assert not project_path.exists()
+
+    if exists:
+        project_path.mkdir(parents=True, exist_ok=False)
+
+    tracker = Tracker(project)
+
+    assert tracker.local_path == project_path
+
+    try:
+        tracker._run([], requires_local_copy)  # noqa: SLF001
+        if not exists:
+            assert not requires_local_copy
+        if requires_local_copy:
+            assert exists
+        subprocess_run_mock.assert_called_once_with(
+            [],
+            cwd=(project_path if exists else tmp_repo_root),
+            capture_output=True,
+            check=False,
+        )
+    except RepoError:
+        assert not exists
+        assert requires_local_copy
+        subprocess_run_mock.assert_not_called()
+
+
+@pytest.mark.parametrize("exists", [True, False])
+def test_sync(
+    db,
+    project,
+    tmp_repo_root,
+    tracker_mock,
+    exists,
+    mocker,
+    version_factory,
+):
+    project_path = tmp_repo_root / project.clone_path
+
+    tracker_clone_mock = tracker_mock("clone")
+    tracker_checkout_mock = tracker_mock("checkout")
+
+    tracker_lockfile_mock = mocker.patch(
+        "outdated.outdated.tracking.Tracker.lockfiles",
+        return_value=[],
+        new_callable=PropertyMock,
+    )
+
+    lockfile_parser_init_mock = mocker.patch.object(
+        LockfileParser,
+        "__init__",
+        return_value=None,
+    )
+
+    versions = version_factory.create_batch(5)
+    lockfile_parser_parser_mock = mocker.patch.object(
+        LockfileParser,
+        "parse",
+        return_value=versions,
+    )
+
+    tracker = Tracker(project)
+    assert tracker.local_path == project_path
+    assert not project.versioned_dependencies.all()
+    if exists:
+        project_path.mkdir(parents=True, exist_ok=False)
+
+    tracker.sync()
+
+    if exists:
+        tracker_clone_mock.assert_not_called()
+    else:
+        tracker_clone_mock.assert_called_once()
+
+    tracker_checkout_mock.assert_called_once()
+
+    lockfile_parser_init_mock.assert_called_once_with([])
+
+    lockfile_parser_parser_mock.assert_called_once_with()
+
+    tracker_lockfile_mock.assert_called_once()
+
+    assert set(project.versioned_dependencies.all()) == set(versions)
+
+
+@pytest.mark.parametrize("exists", [True, False])
+def test_lockfiles(db, project, tmp_repo_root, exists):
+    tracker = Tracker(project)
+
+    if exists:
+        tracker.local_path.mkdir(parents=True, exist_ok=False)
+        git_dir = tracker.local_path / ".git"
+        git_dir.mkdir(exist_ok=False)
+
+    try:
+        lockfiles = tracker.lockfiles
+        assert exists
+        assert lockfiles == []
+        poetry_lock = tracker.local_path / "poetry.lock"
+        poetry_lock.write_text("")
+        assert tracker.lockfiles == [poetry_lock]
+    except RepoError:
+        assert not exists

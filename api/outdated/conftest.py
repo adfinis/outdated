@@ -14,9 +14,11 @@ from .user.factories import UserFactory
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+    from pathlib import Path
     from unittest.mock import MagicMock
 
     from pytest_mock import MockerFixture
+
 
 register(factories.DependencyFactory)
 register(factories.VersionFactory)
@@ -94,3 +96,10 @@ def tracker_mock(mocker: MockerFixture) -> Callable[[str], MagicMock]:
 def tracker_init_mock(mocker: MockerFixture) -> MagicMock:
     """Mock for the Trackers __init__ method."""
     return mocker.patch.object(Tracker, "__init__", return_value=None)
+
+
+@pytest.fixture
+def tmp_repo_root(settings, tmp_path: Path) -> Path:  # noqa: ANN001
+    """Change settings.REPOSITORY_ROOT to a temporary directory."""
+    settings.REPOSITORY_ROOT = str(tmp_path.absolute())
+    return tmp_path
