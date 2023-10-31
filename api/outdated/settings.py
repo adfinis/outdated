@@ -186,6 +186,8 @@ TRACKED_DEPENDENCIES = env.list(
     ],
 )
 
+# Where to put the cloned projects
+REPOSITORY_ROOT = "/home/outdated/projects"
 
 NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
 PYPI_FILES = ["poetry.lock"]

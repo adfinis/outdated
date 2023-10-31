@@ -22,7 +22,7 @@ class RepoError(ValueError):
 class Tracker:
     def __init__(self, project: Project) -> None:
         self.project = project
-        self.local_path = Path(f"/projects/{self.project.clone_path}")
+        self.local_path = Path(f"{settings.REPOSITORY_ROOT}/{self.project.clone_path}")
 
     def _run(
         self,
@@ -30,8 +30,9 @@ class Tracker:
         requires_local_copy: bool = False,
     ) -> CompletedProcess[str]:
         if not self.local_path.exists() and requires_local_copy:
-            msg = f"Can't run {command} without local copy of {self.project.repo}"
-            raise RepoError(msg)
+            raise RepoError(
+                f"Can't run {command} without local copy of {self.project.repo}",
+            )
         return run(
             command,
             cwd=self.repository_path,
@@ -39,7 +40,7 @@ class Tracker:
             check=False,
         )
 
-    def clone(self):  # pragma: no cover
+    def clone(self):
         self.delete()
         self._run(
             [
@@ -69,8 +70,9 @@ class Tracker:
     @property
     def lockfiles(self):
         if not self.local_path.exists():
-            msg = f"Unable to retrieve lockfiles for {self.project.repo} because it is not saved locally."
-            raise RepoError(msg)
+            raise RepoError(
+                f"Unable to retrieve lockfiles for {self.project.repo} because it is not saved locally.",
+            )
 
         lockfile_list = []
         for root, dirs, files in self.local_path.walk():
@@ -83,7 +85,11 @@ class Tracker:
 
     @property
     def repository_path(self):
-        return self.local_path.absolute() if self.local_path.exists() else "/projects/"
+        return (
+            self.local_path.absolute()
+            if self.local_path.exists()
+            else Path(settings.REPOSITORY_ROOT)
+        )
 
     def sync(self):
         if not self.local_path.exists():
@@ -97,7 +103,7 @@ class Tracker:
         self.checkout()
         self.sync()
 
-    def delete(self):  # pragma: no cover
+    def delete(self):
         rmtree(self.local_path, True)
         self._run(
             [
