@@ -94,7 +94,7 @@ max-args = 10
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "outdated.settings"
-addopts = "--create-db"
+addopts = "--reuse-db"
 
 [tool.coverage.run]
 source = ["."]
