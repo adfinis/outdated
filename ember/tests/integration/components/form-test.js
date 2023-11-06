@@ -2,6 +2,7 @@ import { render, fillIn, triggerEvent } from '@ember/test-helpers';
 import Changeset from 'ember-changeset';
 import lookupValidator from 'ember-changeset-validations';
 import { hbs } from 'ember-cli-htmlbars';
+import { setupIntl } from 'ember-intl/test-support';
 import { module, test } from 'qunit';
 
 import { setupRenderingTest } from 'outdated/tests/helpers';
@@ -9,6 +10,7 @@ import TestValidations from 'outdated/tests/validations/test';
 
 module('Integration | Component | form', function (hooks) {
   setupRenderingTest(hooks);
+  setupIntl(hooks);
 
   test('it renders a normal input', async function (assert) {
     await render(hbs`<Form as |f|> <f.input @name='test' /> </Form>`);

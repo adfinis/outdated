@@ -7,6 +7,6 @@ export default class ApplicationRoute extends Route {
 
   async beforeModel() {
     await this.session.setup();
-    this.intl.setLocale(['en-us']);
+    this.intl.setLocale(['de-ch']);
   }
 }

@@ -1,4 +1,5 @@
 import Transform from '@ember-data/serializer/transform';
+import { DateTime } from 'luxon';
 
 export default class DjangoDateTransform extends Transform {
   deserialize(serialized) {
@@ -7,7 +8,7 @@ export default class DjangoDateTransform extends Transform {
 
   serialize(deserialized) {
     return deserialized instanceof Date
-      ? deserialized.toISOString().slice(0, 10)
+      ? DateTime.fromJSDate(deserialized).toISODate()
       : null;
   }
 }

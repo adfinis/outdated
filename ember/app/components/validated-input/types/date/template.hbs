@@ -1,6 +1,7 @@
 <EmberFlatpickr
   placeholder={{@placeholder}}
   @dateFormat={{or @dateFormat "Y-m-d"}}
+  @locale={{this.locale}}
   @date={{or @value null}}
   @onChange={{this.onUpdate}}
   @onClose={{@setDirty}}
