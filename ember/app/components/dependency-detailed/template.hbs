@@ -5,10 +5,37 @@
   <td data-test-version-version>
     {{@version.version}}
   </td>
-  <td data-test-version-end-of-life>
+  <td
+    role="button"
+    {{on "click" (fn (mut this.editing) true)}}
+    data-test-version-end-of-life
+  >
     {{or (format-date @version.endOfLife) "missing"}}
   </td>
   <td data-test-version-release-date>
     {{format-date @version.releaseDate}}
   </td>
 </tr>
+<Modal @title={{@version.releaseVersion.name}} @visible={{this.editing}} as |m|>
+  <Form
+    @model={{changeset @version this.ReleaseVersionValidations}}
+    @onSubmit={{perform this.saveReleaseVersion}}
+    as |f|
+  >
+    <m.body>
+      <f.input @name="endOfLifeDate" @type="date" />
+    </m.body>
+    <m.footer class="uk-flex uk-flex-between">
+      <f.button
+        @loading={{this.saveReleaseVersion.running}}
+        @disabled={{this.saveReleaseVersion.running}}
+      />
+      <UkButton
+        @type="button"
+        @label="cancel"
+        @color="danger"
+        @onClick={{fn (mut this.editing) false}}
+      />
+    </m.footer>
+  </Form>
+</Modal>

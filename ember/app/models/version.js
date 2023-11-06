@@ -1,4 +1,5 @@
 import Model, { attr, belongsTo } from '@ember-data/model';
+import { tracked } from '@glimmer/tracking';
 
 export default class VersionModel extends Model {
   @attr patchVersion;
@@ -8,6 +9,7 @@ export default class VersionModel extends Model {
   get name() {
     return this.releaseVersion.get('dependency.name');
   }
+
   get endOfLife() {
     return this.releaseVersion.get('endOfLife');
   }
@@ -21,4 +23,6 @@ export default class VersionModel extends Model {
   get status() {
     return this.releaseVersion.get('status');
   }
+
+  @tracked endOfLifeDate;
 }
