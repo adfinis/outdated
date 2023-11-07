@@ -20,6 +20,8 @@
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
+    "lint:prettier": "prettier --check .",
+    "lint:prettier:fix": "prettier --write .",
     "start": "ember serve",
     "start-proxy": "ember server --proxy https://outdated.local --secure-proxy=false",
     "test": "concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
@@ -51,7 +53,7 @@
     "ember-cli-clean-css": "^3.0.0",
     "ember-cli-code-coverage": "^2.0.0",
     "ember-cli-dependency-checker": "^3.3.2",
-    "ember-cli-htmlbars": "^6.2.0",
+    "ember-cli-htmlbars": "^6.3.0",
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-mirage": "^3.0.2",
     "ember-cli-sass": "^11.0.1",
@@ -71,14 +73,14 @@
     "ember-simple-auth": "^6.0.0",
     "ember-simple-auth-oidc": "^6.0.0",
     "ember-source": "^5.4.0",
-    "ember-template-lint": "^5.11.2",
-    "ember-template-lint-plugin-prettier": "^5.0.0",
+    "ember-template-imports": "^4.0.0",
+    "ember-template-lint": "^5.13.0",
     "ember-toggle": "^9.0.3",
     "ember-truth-helpers": "^4.0.3",
     "ember-uikit": "^9.0.0",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-ember": "^11.11.1",
+    "eslint-plugin-ember": "12.0.0-alpha.4",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -87,7 +89,8 @@
     "loader.js": "^4.7.0",
     "luxon": "^3.3.0",
     "miragejs": "^0.1.47",
-    "prettier": "^3.0.0",
+    "prettier": "^3.1.1",
+    "prettier-plugin-ember-template-tag": "^2.0.0",
     "qunit": "^2.19.4",
     "qunit-dom": "^2.0.0",
     "sass": "^1.69.5",
@@ -96,6 +99,7 @@
     "stylelint-prettier": "^4.0.2",
     "stylelint-scss": "^5.3.0",
     "tracked-built-ins": "^3.1.1",
+    "typescript": "^5.2.2",
     "webpack": "^5.88.1"
   },
   "engines": {
@@ -105,9 +109,14 @@
     "edition": "octane"
   },
   "@comment": {
-    "resolutions": "https://github.com/mainmatter/ember-simple-auth/issues/2577"
+    "resolutions": "https://github.com/mainmatter/ember-simple-auth/issues/2577",
+    "prettier-script": "https://github.com/ember-template-lint/ember-template-lint-plugin-prettier/issues/268"
   },
   "resolutions": {
     "ember-simple-auth": "^6.0.0-rc.1"
+  },
+  "volta": {
+    "node": "20.9.0",
+    "yarn": "1.22.19"
   }
 }
