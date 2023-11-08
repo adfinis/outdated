@@ -1640,7 +1640,7 @@
     "@embroider/shared-internals" "^1.8.3"
     semver "^7.3.5"
 
-"@embroider/addon-shim@^1.0.0", "@embroider/addon-shim@^1.7.1", "@embroider/addon-shim@^1.8.4", "@embroider/addon-shim@^1.8.6":
+"@embroider/addon-shim@^1.0.0", "@embroider/addon-shim@^1.6.0", "@embroider/addon-shim@^1.7.1", "@embroider/addon-shim@^1.8.4", "@embroider/addon-shim@^1.8.6":
   version "1.8.6"
   resolved "https://registry.yarnpkg.com/@embroider/addon-shim/-/addon-shim-1.8.6.tgz#b676991b4fa32c3a98dc7db7dc6cd655029c3f09"
   integrity sha512-siC9kP78uucEbpDcVyxjkwa76pcs5rVzDVpWO4PDc9EAXRX+pzmUuSTLAK3GztUwx7/PWhz1BenAivqdSvSgfg==
@@ -7014,6 +7014,13 @@ ember-intl@^6.1.1:
     lodash.last "^3.0.0"
     lodash.omit "^4.5.0"
     silent-error "^1.1.1"
+
+ember-lifeline@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/ember-lifeline/-/ember-lifeline-7.0.0.tgz#46780c8f832b6c784ee4681b938a1e1437bfa676"
+  integrity sha512-2l51NzgH5vjN972zgbs+32rnXnnEFKB7qsSpJF+lBI4V5TG6DMy4SfowC72ZEuAtS58OVfwITbOO+RnM21EdpA==
+  dependencies:
+    "@embroider/addon-shim" "^1.6.0"
 
 ember-load-initializers@^2.1.2:
   version "2.1.2"
