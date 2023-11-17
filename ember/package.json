@@ -88,7 +88,7 @@
     "eslint-plugin-qunit": "^8.1.1",
     "graphql": "^16.6.0",
     "loader.js": "^4.7.0",
-    "luxon": "^3.3.0",
+    "luxon": "^3.4.4",
     "miragejs": "^0.1.47",
     "prettier": "^3.2.5",
     "prettier-plugin-ember-template-tag": "^2.0.0",
