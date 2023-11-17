@@ -85,7 +85,7 @@
     "eslint-plugin-qunit": "^8.0.1",
     "graphql": "^16.6.0",
     "loader.js": "^4.7.0",
-    "luxon": "^3.3.0",
+    "luxon": "^3.4.4",
     "miragejs": "^0.1.47",
     "prettier": "^3.0.0",
     "qunit": "^2.19.4",
