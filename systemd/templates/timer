@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer for {{description}}
+
+[Timer]
+Unit=outdated-{{command}}.service
+OnCalendar={{schedule}}
+
+[Install]
+WantedBy=timers.target

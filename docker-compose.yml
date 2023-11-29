@@ -10,6 +10,7 @@ services:
   api:
     build: ./api
     user: "${UID:?Set UID env variable to your user id}"
+    container_name: "outdated-api"
     depends_on:
       - db
   ember:

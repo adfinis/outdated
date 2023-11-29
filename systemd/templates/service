@@ -1,0 +1,9 @@
+[Unit]
+Description={{description}}
+Wants=outdated-{{command}}.timer
+
+[Service]
+ExecStart=docker exec outdated-api sh -c './manage.py {{command}}'
+
+[Install]
+WantedBy=multi-user.target

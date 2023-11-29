@@ -1,0 +1,9 @@
+[Unit]
+Description=Notify maintainers about their projects if necessary
+Wants=outdated-notify.timer
+
+[Service]
+ExecStart=docker exec outdated-api sh -c './manage.py notify'
+
+[Install]
+WantedBy=multi-user.target

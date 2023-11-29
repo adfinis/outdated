@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "systemd-timer-creation-tool"
+version = "0.1.0"
+description = "create systemd timers without boilerplate"
+authors = ["Adfinis AG"]
+readme = "README.md"
+packages = [{include = "systemd_timer_creation_tool"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+jinja2 = "^3.1.2"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
