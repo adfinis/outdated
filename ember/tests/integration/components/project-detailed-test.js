@@ -33,6 +33,6 @@ module('Integration | Component | project-detailed', function (hooks) {
     this.project.versionedDependencies = [];
     await settled();
 
-    assert.dom('[data-test-versioned-dependencies-none]').exists();
+    assert.dom('[data-test-fallback]').exists();
   });
 });

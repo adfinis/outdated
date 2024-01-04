@@ -1,10 +1,10 @@
 import Model, { attr, belongsTo } from '@ember-data/model';
+import { tracked } from '@glimmer/tracking';
 
 export default class ReleaseVersionModel extends Model {
   @attr majorVersion;
   @attr minorVersion;
   @attr status;
-  @attr latestPatchVersion;
   @attr('django-date') endOfLife;
   @belongsTo('dependency', { inverse: null, async: false }) dependency;
 
@@ -14,4 +14,6 @@ export default class ReleaseVersionModel extends Model {
   get name() {
     return `${this.dependency.get('name')} ${this.releaseVersion}`;
   }
+
+  @tracked endOfLifeDate;
 }

@@ -1,6 +1,33 @@
 {{page-title "Overview"}}
-<div class="compact-projects">
-  {{#each @model as |project|}}
+
+<div class="uk-child-width-1-2@s uk-flex uk-flex-column uk-flex-row@s gap@s">
+  <label for="name">Name
+    <Input
+      class="uk-input"
+      placeholder="Search by name..."
+      id="name"
+      @value={{this.name}}
+    />
+
+  </label>
+  <label for="status">Status
+    <PowerSelect
+      @onChange={{fn (mut this.status)}}
+      @options={{this.statuses}}
+      @placeholder="Select status..."
+      @selected={{this.status}}
+      @allowClear={{true}}
+      id="status"
+      as |s|
+    >
+      {{s}}
+    </PowerSelect>
+
+  </label>
+</div>
+
+<div class="compact-projects uk-margin-top">
+  {{#each this.filteredProjects as |project|}}
     <ProjectCompact @project={{project}} />
   {{/each}}
 </div>

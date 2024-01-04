@@ -4,13 +4,23 @@
 >
   <nav class="navbar-container" uk-navbar>
     <div class="uk-navbar-left">
-      <LinkTo @route="projects" class="uk-navbar-item uk-logo">
+      <LinkTo @route="projects" class="uk-navbar-item uk-logo uk-visible@m">
         Outdated
       </LinkTo>
+
+      <ul class="button-nav uk-hidden@m">
+        <li>
+          <LinkTo
+            @route="projects.index"
+            @current-when="projects.index projects.detailed not-found"
+            class="uk-hidden@m"
+          >Outdated</LinkTo>
+        </li>
+      </ul>
     </div>
     <div class="uk-navbar-right">
       <ul class="button-nav">
-        <li>
+        <li class="uk-visible@m">
           <LinkTo
             @route="projects.index"
             @current-when="projects.index projects.detailed not-found"
@@ -18,6 +28,12 @@
         </li>
         <li>
           <LinkTo @route="projects.add">Add</LinkTo>
+        </li>
+        <li>
+          <LinkTo @route="dependencies">Dependencies</LinkTo>
+        </li>
+        <li>
+          <LinkTo @route="versions">Versions</LinkTo>
         </li>
       </ul>
     </div>

@@ -4,10 +4,10 @@
   transition-property: color, background-color, border;
 }
 
-.ember-power-select-multiple-trigger:has(ul input:focus):not(
-    .is-valid,
-    .is-invalid
-  ) {
+:is(
+    .ember-power-select-multiple-trigger:has(ul input:focus),
+    .ember-power-select-trigger:focus
+  ):not(.is-valid, .is-invalid) {
   border: $ember-power-select-default-focus-border;
 }
 

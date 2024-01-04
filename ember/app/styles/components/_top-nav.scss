@@ -8,7 +8,7 @@
   @extend .uk-navbar-container;
   @extend .uk-container-expand;
 
-  padding: 0 30px;
+  padding: 0 calc(var(--navbar-height) - 30px);
   height: var(--navbar-height);
 
   .uk-logo {
@@ -18,12 +18,11 @@
 
 /* button nav */
 .button-nav {
-  @extend .uk-button-group;
-
   list-style: none;
   display: flex;
   margin: 0;
   padding: 0;
+  gap: var(--button-nav-gap);
 
   li a {
     display: flex;
@@ -31,6 +30,7 @@
     line-height: var(--button-nav-button-line-height);
     text-transform: uppercase;
     text-decoration: none;
+    transition: all 0.2s;
 
     &:not(.active) {
       @extend .uk-button-default;

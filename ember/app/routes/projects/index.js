@@ -4,11 +4,11 @@ import { service } from '@ember/service';
 export default class ProjectsRoute extends Route {
   @service store;
 
-  beforeModel() {
-    const unsavedProject = this.store
+  async beforeModel() {
+    const unsavedProject = await this.store
       .peekAll('project')
       .find((project) => project.isNew);
-    unsavedProject?.destroyRecord();
+    await unsavedProject?.destroyRecord();
   }
 
   model() {

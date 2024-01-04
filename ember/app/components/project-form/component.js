@@ -4,7 +4,7 @@ import { dropTask } from 'ember-concurrency';
 import { scheduleTask } from 'ember-lifeline';
 import { tracked } from 'tracked-built-ins';
 
-import emptyChangeset from 'outdated/utils/empty-changeset';
+import { emptyChangeset } from 'outdated/utils';
 import ProjectValidations from 'outdated/validations/project';
 
 export default class ProjectFormComponent extends Component {

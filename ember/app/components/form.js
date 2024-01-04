@@ -2,6 +2,7 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { scheduleTask } from 'ember-lifeline';
+
 export default class FormComponent extends Component {
   @tracked loading = false;
   @tracked submitted = false;
