@@ -10,11 +10,11 @@ api-bash: ## Shell into the API
 
 .PHONY: api-lint
 api-lint: ## Lint the backend
-	@docker compose run --rm api sh -c "black --check . && ruff . --show-source"
+	@docker compose run --rm api sh -c "ruff format --check . ; ruff . --show-source"
 
 .PHONY: api-lint-fix
 api-lint-fix: ## Lint and fix the API
-	@docker compose run --rm api sh -c "black . && ruff . --fix"
+	@docker compose run --rm api sh -c "ruff format . && ruff . --fix"
 
 .PHONY: api-shell
 api-shell: ## Open django shell
