@@ -12,13 +12,14 @@ from outdated.outdated.tracking import RepoError, Tracker
 
 
 @pytest.mark.parametrize(
-    "repo,reinitialize",
+    "repo,repo_type,access_token,reinitialize",
     [
-        ("github.com/Adfinis/Outdated", False),
-        ("github.com/adfinis/outdated", False),
-        ("Github.Com/ADFINIS/OutdAted", False),
-        ("github.com/adfinis/mysagw", True),
-        ("github.com/adfinis/timed-frontend", True),
+        ("github.com/Adfinis/Outdated", "public", None, False),
+        ("github.com/adfinis/outdated", "access-token", "token", False),
+        ("Github.Com/ADFINIS/OutdAted", "public", None, False),
+        ("github.com/adfinis/mysagw", "public", None, True),
+        ("github.com/adfinis/timed-frontend", "public", None, True),
+        ("github.com/adfinis/timed-backend", "public", "token", True),
     ],
 )
 def test_serializer_patch(
@@ -28,10 +29,16 @@ def test_serializer_patch(
     tracker_mock,
     repo,
     reinitialize,
+    repo_type,
+    settings,
+    access_token,
 ):
-    project = project_factory(repo="github.com/adfinis/outdated")
+    project = project_factory(repo="github.com/adfinis/outdated", repo_type=repo_type)
     setup_mock = tracker_mock("setup")
     delete_mock = tracker_mock("delete")
+
+    # don't depend on github
+    settings.VALIDATE_REMOTES = False
 
     data = {
         "data": {
@@ -40,10 +47,14 @@ def test_serializer_patch(
             "attributes": {
                 "name": project.name,
                 "repo": repo,
+                "repo_type": "access-token" if access_token else "public",
             },
             "relationships": {},
         },
     }
+
+    if access_token:
+        data["data"]["attributes"]["access_token"] = access_token
 
     url = reverse("project-detail", args=[project.id])
 
@@ -58,15 +69,21 @@ def test_serializer_patch(
             tracker_init_mock.call_args_list[0].args[0].repo
             == "github.com/adfinis/outdated"
         )
-        tracker_init_mock.assert_called_with(project)
+        tracker_init_mock.assert_called_with(project, access_token)
     else:
         delete_mock.assert_not_called()
         setup_mock.assert_not_called()
         tracker_init_mock.assert_not_called()
 
 
-def test_serializer_create(client, project_factory, tracker_init_mock, tracker_mock):
+@pytest.mark.parametrize("access_token", [None, "token"])
+def test_serializer_create(
+    client, tracker_init_mock, tracker_mock, settings, access_token
+):
     setup_mock = tracker_mock("setup")
+
+    # don't depend on github
+    settings.VALIDATE_REMOTES = False
 
     data = {
         "data": {
@@ -75,17 +92,21 @@ def test_serializer_create(client, project_factory, tracker_init_mock, tracker_m
             "attributes": {
                 "name": "foo",
                 "repo": "github.com/adfinis/outdated",
+                "repo_type": "access-token" if access_token else "public",
             },
             "relationships": {},
         },
     }
+
+    if access_token:
+        data["data"]["attributes"]["access_token"] = access_token
 
     url = reverse("project-list")
 
     response = client.post(url, data)
     assert response.status_code == status.HTTP_201_CREATED
     project = Project.objects.get(name="foo")
-    tracker_init_mock.assert_called_once_with(project)
+    tracker_init_mock.assert_called_once_with(project, access_token)
     setup_mock.assert_called_once()
 
 
@@ -99,11 +120,16 @@ def test_view_delete(client, project, tracker_init_mock, tracker_mock):
     assert not Project.objects.filter(id=project.id)
 
 
-def test_clone(db, project_factory, tmp_repo_root, tracker_mock):
+@pytest.mark.parametrize("access_token", [None, "token"])
+def test_clone(db, project_factory, tmp_repo_root, tracker_mock, access_token):
     tracker_run_mock = tracker_mock("_run")
-    project: Project = project_factory(repo="github.com/adfinis/outdated")
+    tracker_delete_mock = tracker_mock("delete")
+    project: Project = project_factory(
+        repo="github.com/adfinis/outdated",
+        repo_type="access-token" if access_token else "public",
+    )
 
-    tracker = Tracker(project)
+    tracker = Tracker(project, access_token)
 
     tracker.clone()
 
@@ -117,7 +143,9 @@ def test_clone(db, project_factory, tmp_repo_root, tracker_mock):
                     "--depth=1",
                     "--filter=tree:0",
                     "--single-branch",
-                    "https://github.com/adfinis/outdated",
+                    "https://outdated:token@github.com/adfinis/outdated"
+                    if access_token
+                    else "https://github.com/adfinis/outdated",
                     tmp_repo_root / "github.com/adfinis/outdated",
                 ],
             ),
@@ -132,6 +160,8 @@ def test_clone(db, project_factory, tmp_repo_root, tracker_mock):
             ),
         ],
     )
+
+    tracker_delete_mock.assert_called_once()
 
 
 @pytest.mark.parametrize("requires_local_copy", [True, False])
