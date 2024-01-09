@@ -11,8 +11,13 @@ export default class FormComponent extends Component {
     super(...args);
 
     if (this.args.model && this.args.model.validate) {
-      scheduleTask(this, 'actions', () => this.args.model.validate());
+      scheduleTask(this, 'actions', () => this.validateModel);
     }
+  }
+
+  @action
+  validateModel() {
+    this.args.model.validate();
   }
 
   @action
