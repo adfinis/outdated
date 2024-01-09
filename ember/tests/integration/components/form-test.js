@@ -30,7 +30,7 @@ module('Integration | Component | form', function (hooks) {
     await render(
       hbs`<Form as |f|> <f.input @name='test' @type='select' @multiple={{true}} /> </Form>`,
     );
-    assert.dom('form input.ember-power-select-trigger-multiple-input').exists();
+    assert.dom('form div.ember-power-select-multiple-trigger').exists();
   });
 
   test('it renders errors', async function (assert) {
