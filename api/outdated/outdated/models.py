@@ -117,11 +117,15 @@ class Version(UUIDModel):
         return f"{self.release_version.release_version}.{self.patch_version}"
 
 
+REPO_TYPES = [(_, _) for _ in ["public", "access-token"]]
+
+
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
 
     versioned_dependencies = models.ManyToManyField(Version, blank=True)
     repo = RepositoryURLField(max_length=100)
+    repo_type = models.CharField(max_length=25, choices=REPO_TYPES)
 
     @property
     def repo_domain(self) -> str:

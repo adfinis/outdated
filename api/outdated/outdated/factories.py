@@ -54,6 +54,7 @@ class VersionFactory(DjangoModelFactory):
 class ProjectFactory(DjangoModelFactory):
     name = Faker("uuid4")
     repo = Sequence(lambda n: "github.com/userorcompany/%s/" % n)
+    repo_type = "public"
 
     @post_generation
     def versioned_dependencies(self, create, extracted, **kwargs):

@@ -1,8 +1,7 @@
-from subprocess import run
+from __future__ import annotations
+
 from uuid import uuid4
 
-from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -60,29 +59,11 @@ class UniqueBooleanField(models.BooleanField):
         return super().pre_save(model_instance, add)
 
 
-def validate_repo_exists(value: str) -> None:
-    """Validate the existance of a remote git repository."""
-    url = "https://" + value
-
-    if value.startswith("file://") and settings.ENV == "test":
-        url = value
-
-    result = run(
-        ["/usr/bin/git", "ls-remote", url],
-        capture_output=True,
-        check=False,
-        shell=False,
-    )
-    if result.returncode != 0:
-        raise ValidationError("Repository does not exist.", params={"value": value})
-
-
 class RepositoryURLField(models.CharField):
     default_validators = [
         RegexValidator(
             regex=r"^([-_\w]+\.[-._\w]+)\/([-_\w]+)\/([-_\w]+)$",
             message="Invalid repository url",
-        ),
-        validate_repo_exists,
+        )
     ]
     description = "Field for git repository URLs."

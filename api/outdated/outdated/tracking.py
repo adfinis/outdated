@@ -20,8 +20,9 @@ class RepoError(ValueError):
 
 
 class Tracker:
-    def __init__(self, project: Project) -> None:
+    def __init__(self, project: Project, access_token: str | None = None) -> None:
         self.project = project
+        self.access_token = access_token
         self.local_path = Path(f"{settings.REPOSITORY_ROOT}/{self.project.clone_path}")
 
     def _run(
@@ -42,6 +43,11 @@ class Tracker:
 
     def clone(self):
         self.delete()
+        url = (
+            "https://"
+            + (f"outdated:{self.access_token}@" if self.access_token else "")
+            + self.project.repo
+        )
         self._run(
             [
                 "git",
@@ -50,7 +56,7 @@ class Tracker:
                 "--depth=1",
                 "--filter=tree:0",
                 "--single-branch",
-                "https://" + self.project.repo,
+                url,
                 self.local_path.absolute(),
             ],
         )
@@ -103,7 +109,7 @@ class Tracker:
         self.checkout()
         self.sync()
 
-    def delete(self):
+    def delete(self):  # pragma: no cover
         rmtree(self.local_path, True)
         self._run(
             [
