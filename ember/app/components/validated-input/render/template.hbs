@@ -1,9 +1,5 @@
-<div class="uk-margin">
-  {{#if (or @label (not @placeholder))}}
-    <@labelComponent @label={{or @label this.name}} />
-  {{/if}}
+{{#if @raw}}
   <div class="uk-form-controls">
-
     {{#if (eq @type "select")}}
       <ValidatedInput::Types::Select
         @id={{@inputId}}
@@ -57,4 +53,65 @@
     {{/if}}
     <@errorComponent />
   </div>
-</div>
+{{else}}
+  <div class="uk-margin">
+    {{#if (and (or @label (not @placeholder)))}}
+      <@labelComponent @label={{or @label this.name}} />
+    {{/if}}
+    <div class="uk-form-controls">
+
+      {{#if (eq @type "select")}}
+        <ValidatedInput::Types::Select
+          @id={{@inputId}}
+          @disabled={{@disabled}}
+          @isInvalid={{@isInvalid}}
+          @isValid={{@isValid}}
+          @name={{@name}}
+          @setDirty={{@setDirty}}
+          @update={{@update}}
+          @value={{@value}}
+          @options={{@options}}
+          @placeholder={{@placeholder}}
+          @searchField={{@searchField}}
+          @afterOptionsComponent={{@afterOptionsComponent}}
+          @optionsComponent={{@optionsComponent}}
+          @searchMessage={{@searchMessage}}
+          @searchable={{@searchable}}
+          @noMatchesMessage={{@noMatchesMessage}}
+          @noMatchesMessageComponent={{@noMatchesMessageComponent}}
+          @visibleField={{@visibleField}}
+          @selectComponent={{this.selectComponent}}
+          ...attributes
+        />
+      {{else if (eq @type "date")}}
+        <ValidatedInput::Types::Date
+          @id={{@inputId}}
+          @disabled={{@disabled}}
+          @isInvalid={{@isInvalid}}
+          @isValid={{@isValid}}
+          @options={{@options}}
+          @name={{@name}}
+          @setDirty={{@setDirty}}
+          @update={{@update}}
+          @value={{@value}}
+          @placeholder={{@placeholder}}
+          ...attributes
+        />
+      {{else}}
+        <ValidatedInput::Types::Text
+          placeholder={{@placeholder}}
+          id={{@inputId}}
+          value={{@value}}
+          disabled={{@disabled}}
+          @isInvalid={{@isInvalid}}
+          @isValid={{@isValid}}
+          @name={{@name}}
+          @setDirty={{@setDirty}}
+          @update={{@update}}
+          ...attributes
+        />
+      {{/if}}
+      <@errorComponent />
+    </div>
+  </div>
+{{/if}}
