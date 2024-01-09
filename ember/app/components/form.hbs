@@ -8,7 +8,10 @@
         model=@model
         loading=this.loading
         input=(component
-          "validated-input" model=@model submitted=this.submitted
+          "validated-input"
+          model=@model
+          submitted=this.submitted
+          validateModel=this.validateModel
         )
         button=(component "uk-button" label="Save" type="submit")
       )
