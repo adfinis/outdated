@@ -7,3 +7,17 @@
 .is-invalid:focus {
   border: $form-border-width solid $form-danger-color;
 }
+
+.repo-inputs {
+  display: flex;
+
+  & > div:first-of-type {
+    width: 90%;
+  }
+
+  & > div:last-of-type {
+    min-width: 8rem;
+    display: grid;
+    align-content: start;
+  }
+}
