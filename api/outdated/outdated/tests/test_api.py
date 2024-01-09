@@ -145,6 +145,11 @@ def test_project(client, project_factory, version_factory, defined):
         == detailed_response_project["repo"]
         == generated_project.repo
     )
+    assert (
+        response_project["repo-type"]
+        == detailed_response_project["repo-type"]
+        == generated_project.repo_type
+    )
     if defined:
         for gen_dep_version, resp_dep_version in zip(
             resp_detailed.json()["data"]["relationships"]["versioned-dependencies"][

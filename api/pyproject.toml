@@ -42,7 +42,7 @@ ignore = [
   "A003",   # flake8-builtins - Class attribute {name} is shadowing a Python builtin
   "ANN101", # Missing type annotation for `self` in method  - Annotating self shouldn't be necessary
 
-  # Don't enforce the existance of docstrings
+  # Don't enforce the existence of docstrings
 
   "D100",   # Missing docstring in public module
   "D101",   # Missing docstring in public class

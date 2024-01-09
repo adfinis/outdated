@@ -190,3 +190,6 @@ NPM_FILES = ["yarn.lock", "pnpm-lock.yaml"]
 PYPI_FILES = ["poetry.lock"]
 
 SUPPORTED_LOCK_FILES = [*NPM_FILES, *PYPI_FILES]
+
+# Variables used only in testing
+VALIDATE_REMOTES = True
