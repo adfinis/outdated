@@ -5,6 +5,9 @@ export default class ProjectModel extends Model {
   @attr name;
   @attr status;
   @attr repo;
+  @attr({ defaultValue: 'public' }) repoType;
+  @attr accessToken;
+
   @hasMany('version', { inverse: null, async: false }) versionedDependencies;
   @hasMany('maintainer', { inverse: 'project', async: false }) maintainers;
 

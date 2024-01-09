@@ -4,6 +4,7 @@ import { Factory, trait } from 'miragejs';
 export default Factory.extend({
   name: () => `${faker.hacker.adjective()} ${faker.company.bsNoun()}`,
   status: () => 'UNDEFINED',
+  repoType: () => faker.helpers.arrayElement(['public', 'access-token']),
 
   repo() {
     return `github.com/${faker.internet.domainWord()}/${faker.helpers.slugify(
