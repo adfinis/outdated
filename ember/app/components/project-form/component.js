@@ -34,6 +34,10 @@ export default class ProjectFormComponent extends Component {
 
   saveProject = dropTask(async () => {
     try {
+      if (this.project.repoType === 'public') {
+        this.project.accessToken = '';
+      }
+
       const project = await this.project.save({
         adapterOptions: {
           include:
@@ -61,6 +65,7 @@ export default class ProjectFormComponent extends Component {
       });
 
       this.router.transitionTo('projects.detailed', project.id);
+      this.project.accessToken = '';
       this.notification.success('Successfully saved!');
     } catch (e) {
       this.notification.danger(e);
@@ -78,5 +83,9 @@ export default class ProjectFormComponent extends Component {
 
   get users() {
     return this.store.peekAll('user');
+  }
+
+  get repoTypes() {
+    return ['public', 'access-token'];
   }
 }

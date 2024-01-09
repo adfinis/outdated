@@ -11,7 +11,25 @@
   as |f|
 >
   <f.input @name="name" />
-  <f.input @name="repo" />
+  <div class="uk-margin">
+    <label class="uk-form-label">Repo</label>
+    <div class="repo-inputs">
+      <f.input @name="repo" @raw={{true}} />
+      <f.input
+        @name="repoType"
+        @type="select"
+        @options={{this.repoTypes}}
+        @raw={{true}}
+      />
+    </div>
+  </div>
+
+  <f.input
+    @name="accessToken"
+    type="password"
+    autocomplete="off"
+    @hidden={{(eq this.project.repoType "public")}}
+  />
 
   <f.input
     @name="users"
