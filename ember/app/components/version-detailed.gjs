@@ -11,7 +11,6 @@ import {
   EndOfLifeCell,
   DependencyCell,
 } from './cells';
-import EOLForm from './eol-form';
 import Table from './table';
 
 import { statusToClass } from 'outdated/utils';
@@ -99,10 +98,5 @@ export default class VersionDetailedComponent extends Component {
       <t.head />
       <t.body />
     </Table>
-    <EOLForm
-      @setIsEditing={{this.setIsEditing}}
-      @isEditing={{this.isEditing}}
-      @version={{@version}}
-    />
   </template>
 }
