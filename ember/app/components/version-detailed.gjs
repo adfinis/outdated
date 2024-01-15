@@ -3,7 +3,7 @@ import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import formatDate from 'ember-intl/helpers/format-date';
 import UkIcon from 'ember-uikit/components/uk-icon';
-import _ from 'lodash';
+import { startCase } from 'lodash';
 
 import {
   ProjectCell,
@@ -59,7 +59,7 @@ export default class VersionDetailedComponent extends Component {
           @version={{version}}
         />
       </template>,
-    }).map(([label, value]) => ({ label: _.startCase(label), value }));
+    }).map(([label, value]) => ({ label: startCase(label), value }));
   }
 
   <template>

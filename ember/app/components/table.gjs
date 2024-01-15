@@ -5,7 +5,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import formatDate from 'ember-intl/helpers/format-date';
 import { or } from 'ember-truth-helpers';
-import _ from 'lodash';
+import { startCase } from 'lodash';
 
 const TableRow = <template>
   <tr>{{yield}}</tr>
@@ -50,7 +50,7 @@ const TableHead = <template>
   <thead ...attributes>
     <tr>
       {{#each @fields as |field|}}
-        <th>{{_.startCase field}}</th>
+        <th>{{startCase field}}</th>
       {{/each}}
     </tr>
   </thead>
