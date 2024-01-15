@@ -67,7 +67,7 @@ export default class Table extends Component {
   }
 
   get hasData() {
-    return !!this.args.data?.length;
+    return Boolean(this.args.data?.length);
   }
 
   get isVisible() {
