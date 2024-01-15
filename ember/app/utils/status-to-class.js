@@ -6,5 +6,5 @@ export default function (status) {
   };
   return colorMappings[status]
     ? `uk-text-${colorMappings[status]}`
-    : 'text-undefined';
+    : 'uk-text-muted';
 }
