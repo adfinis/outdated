@@ -5,7 +5,7 @@ export default class ProjectsRoute extends Route {
   @service store;
 
   async beforeModel() {
-    const unsavedProject = await this.store
+    const unsavedProject = this.store
       .peekAll('project')
       .find((project) => project.isNew);
     await unsavedProject?.destroyRecord();
