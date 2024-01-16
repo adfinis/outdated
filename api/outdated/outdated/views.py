@@ -1,7 +1,7 @@
 from django.db.models import Max
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from . import models, serializers
 from .tracking import Tracker
@@ -11,7 +11,7 @@ class ProjectViewSet(ModelViewSet):
     queryset = (
         models.Project.objects.all()
         .annotate(
-            latest_eol=Max("versioned_dependencies__release_version__end_of_life"),
+            latest_eol=Max("sources__versions__release_version__end_of_life"),
         )
         .order_by("latest_eol")
     )
@@ -43,6 +43,10 @@ class VersionViewSet(ModelViewSet):
 class DependencyViewSet(ModelViewSet):
     queryset = models.Dependency.objects.all()
     serializer_class = serializers.DependencySerializer
+
+
+class DependencySourceViewSet(ReadOnlyModelViewSet):
+    queryset = models.DependencySource.objects.all()
 
 
 class MaintainerViewset(ModelViewSet):

@@ -101,8 +101,7 @@ class Tracker:
         if not self.local_path.exists():
             self.clone()
         self.checkout()
-        dependencies = LockfileParser(self.lockfiles).parse()
-        self.project.versioned_dependencies.set(dependencies)
+        LockfileParser(self.project, self.lockfiles).parse()
 
     def setup(self):  # pragma: no cover
         self.clone()

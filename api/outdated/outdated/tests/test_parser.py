@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from outdated.outdated.models import Version
 from outdated.outdated.parser import LockfileParser
 from outdated.outdated.tracking import Tracker
 
@@ -110,9 +111,9 @@ def test_parser(db, tmp_repo_root, project, lockfile, content, expected):
     assert len(lockfiles) == 1
     assert lockfiles[0].name == lockfile
 
-    results = LockfileParser(lockfiles).parse()
+    LockfileParser(project, lockfiles).parse()
 
-    assert len(results) == len(expected)
+    assert len(project.sources.values_list("versions", flat=True)) == len(expected)
 
-    for result in results:
-        assert str(result) in expected
+    for result in project.sources.values_list("versions", flat=True):
+        assert str(Version.objects.get(id=result)) in expected

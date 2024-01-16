@@ -122,8 +122,6 @@ REPO_TYPES = [(_, _) for _ in ["public", "access-token"]]
 
 class Project(UUIDModel):
     name = models.CharField(max_length=100, db_index=True)
-
-    versioned_dependencies = models.ManyToManyField(Version, blank=True)
     repo = RepositoryURLField(max_length=100)
     repo_type = models.CharField(max_length=25, choices=REPO_TYPES)
 
@@ -202,21 +200,34 @@ class Project(UUIDModel):
 
     @property
     def status(self) -> str:
-        first = self.versioned_dependencies.first()
+        first = self.sources.all().values_list("versions", flat=True).first()
         return first.release_version.status if first else STATUS_OPTIONS["undefined"]
 
     def __str__(self):
         return self.name
 
 
+class DependencySource(UUIDModel):
+    path = models.CharField()
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="sources"
+    )
+    versions = models.ManyToManyField(Version, blank=True)
+
+    @property
+    def status(self) -> str:
+        first = self.versions.first()
+        return first.release_version.status if first else STATUS_OPTIONS["undefined"]
+
+
 class Maintainer(UUIDModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    project = models.ForeignKey(
-        Project,
+    source = models.ForeignKey(
+        DependencySource,
         on_delete=models.CASCADE,
         related_name="maintainers",
     )
-    is_primary = UniqueBooleanField(default=False, together=["project"])
+    is_primary = UniqueBooleanField(default=False, together=["source"])
 
     class Meta:
-        unique_together = ("user", "project")
+        unique_together = ("user", "source")

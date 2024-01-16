@@ -25,6 +25,7 @@ register(factories.VersionFactory)
 register(factories.ReleaseVersionFactory)
 register(factories.ProjectFactory)
 register(factories.MaintainerFactory)
+register(factories.DependencySourceFactory)
 register(UserFactory)
 
 

@@ -20,8 +20,9 @@ if TYPE_CHECKING:
 class LockfileParser:
     """Parse a lockfile and return a list of dependencies."""
 
-    def __init__(self, lockfiles: list[Path]) -> None:
+    def __init__(self, project: models.Project, lockfiles: list[Path]) -> None:
         self.lockfiles = lockfiles
+        self.project = project
 
     def _get_provider(self, name: str) -> str:
         """Get the provider of the lockfile."""
@@ -102,10 +103,8 @@ class LockfileParser:
 
         return parse_date(release_date).date()
 
-    def parse(self) -> list[models.Version]:
+    def parse(self) -> None:
         """Parse the lockfile and return a dictionary of dependencies."""
-        versions = []
-
         for lockfile in self.lockfiles:
             name = lockfile.name
             data = lockfile.read_text()
@@ -139,8 +138,9 @@ class LockfileParser:
                     and requirements[0][0] in settings.TRACKED_DEPENDENCIES
                 ]
 
-            versions.extend(
-                self._get_version(dependency, provider) for dependency in dependencies
+            source, _ = models.DependencySource.objects.get_or_create(
+                path=name, project=self.project
             )
-
-        return versions
+            source.versions.set(
+                [self._get_version(dependency, provider) for dependency in dependencies]
+            )

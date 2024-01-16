@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from unittest.mock import PropertyMock, call
 
 import pytest
@@ -214,6 +216,7 @@ def test_sync(
     exists,
     mocker,
     version_factory,
+    dependency_source_factory,
 ):
     project_path = tmp_repo_root / project.clone_path
 
@@ -233,15 +236,17 @@ def test_sync(
     )
 
     versions = version_factory.create_batch(5)
+
+    def side_effect() -> None:
+        dependency_source_factory(versions=versions, project=project)
+
     lockfile_parser_parser_mock = mocker.patch.object(
-        LockfileParser,
-        "parse",
-        return_value=versions,
+        LockfileParser, "parse", side_effect=side_effect
     )
 
     tracker = Tracker(project)
     assert tracker.local_path == project_path
-    assert not project.versioned_dependencies.all()
+    assert not project.sources.all()
     if exists:
         project_path.mkdir(parents=True, exist_ok=False)
 
@@ -254,13 +259,13 @@ def test_sync(
 
     tracker_checkout_mock.assert_called_once()
 
-    lockfile_parser_init_mock.assert_called_once_with([])
+    lockfile_parser_init_mock.assert_called_once_with(project, [])
 
     lockfile_parser_parser_mock.assert_called_once_with()
 
     tracker_lockfile_mock.assert_called_once()
 
-    assert set(project.versioned_dependencies.all()) == set(versions)
+    assert set(project.sources.first().versions.all()) == set(versions)
 
 
 @pytest.mark.parametrize("exists", [True, False])
