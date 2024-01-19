@@ -1,43 +1,28 @@
 {{page-title "Versions"}}
 
 <div class="uk-child-width-1-3@s uk-flex uk-flex-column uk-flex-row@s gap@s">
-  <label for="status">Status
-    <PowerSelect
-      @onChange={{fn (mut this.status)}}
-      @options={{this.statuses}}
-      @placeholder="Select status..."
-      @selected={{this.status}}
-      @allowClear={{true}}
-      id="status"
-      as |s|
-    >
-      {{s}}
-    </PowerSelect>
-  </label>
-
-  <label for="dependency">Dependency
-    <PowerSelect
-      @onChange={{this.dependencyChanged}}
-      @options={{this.dependencies}}
-      @placeholder="Select dependency..."
-      @selected={{this.selectedDependency}}
-      @allowClear={{true}}
-      @searchEnabled={{true}}
-      @searchField="name"
-      id="dependency"
-      as |d|
-    >
-      {{d.name}}
-    </PowerSelect>
-  </label>
-  <label for="name">Version
-    <Input
-      class="uk-input"
-      placeholder="Search by version..."
-      id="version"
-      @value={{this.version}}
-    />
-  </label>
+  <Filter
+    @name="status"
+    @options={{this.statuses}}
+    @placeholder="Select status..."
+    @value={{this.status}}
+    @type="select"
+  />
+  <Filter
+    @name="dependency"
+    @options={{this.dependencies}}
+    @placeholder="Select dependency..."
+    @value={{this.selectedDependency}}
+    @type="select"
+    @searchField="name"
+    @searchEnabled={{true}}
+    @onChange={{this.dependencyChanged}}
+  />
+  <Filter
+    @name="version"
+    @value={{this.version}}
+    @placeholder="Search by version..."
+  />
 </div>
 
 <VersionTable @versions={{this.filteredVersions}} />

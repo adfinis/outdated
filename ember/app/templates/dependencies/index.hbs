@@ -1,28 +1,13 @@
 {{page-title "Dependencies"}}
 
 <div class="uk-child-width-1-2@s uk-flex uk-flex-column uk-flex-row@s gap@s">
-  <label for="name">Name
-    <Input
-      class="uk-input"
-      placeholder="Search by name..."
-      id="name"
-      @value={{this.name}}
-    />
-
-  </label>
-  <label for="provider">Provider
-    <PowerSelect
-      @onChange={{fn (mut this.provider)}}
-      @options={{this.providers}}
-      @placeholder="Select provider..."
-      @selected={{this.provider}}
-      @allowClear={{true}}
-      id="provider"
-      as |p|
-    >
-      {{p}}
-    </PowerSelect>
-
-  </label>
+  <Filter @name="name" @value={{this.name}} @placeholder="Seach by name..." />
+  <Filter
+    @name="provider"
+    @type="select"
+    @options={{this.providers}}
+    @value={{this.provider}}
+    @placeholder="Select provider..."
+  />
 </div>
 <DependencyTable @dependencies={{this.filteredDependencies}} />

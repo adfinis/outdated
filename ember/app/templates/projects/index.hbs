@@ -1,29 +1,14 @@
 {{page-title "Overview"}}
 
 <div class="uk-child-width-1-2@s uk-flex uk-flex-column uk-flex-row@s gap@s">
-  <label for="name">Name
-    <Input
-      class="uk-input"
-      placeholder="Search by name..."
-      id="name"
-      @value={{this.name}}
-    />
-
-  </label>
-  <label for="status">Status
-    <PowerSelect
-      @onChange={{fn (mut this.status)}}
-      @options={{this.statuses}}
-      @placeholder="Select status..."
-      @selected={{this.status}}
-      @allowClear={{true}}
-      id="status"
-      as |s|
-    >
-      {{s}}
-    </PowerSelect>
-
-  </label>
+  <Filter @name="name" @value={{this.name}} @placeholder="Seach by name..." />
+  <Filter
+    @name="status"
+    @type="select"
+    @options={{this.statuses}}
+    @value={{this.status}}
+    @placeholder="Select status..."
+  />
 </div>
 
 <div class="compact-projects uk-margin-top">
