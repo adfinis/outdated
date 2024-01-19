@@ -34,7 +34,6 @@ ruff = "^0.1.3"
 
 
 [tool.ruff]
-exclude = ["migrations"]
 line-length = 88
 select = ["ALL"]
 
