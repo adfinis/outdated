@@ -22,5 +22,6 @@ export default Factory.extend({
       faker.system.commonFileExt() +
         faker.helpers.arrayElement(['-support', '-export', '-import']),
     ]),
+  provider: () => faker.helpers.arrayElement(['PIP', 'NPM']),
   versions: hasMany(),
 });

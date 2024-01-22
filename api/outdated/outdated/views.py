@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from . import models, serializers
+from . import filters, models, serializers
 from .tracking import Tracker
 
 
@@ -17,6 +17,7 @@ class ProjectViewSet(ModelViewSet):
     )
 
     serializer_class = serializers.ProjectSerializer
+    filterset_class = filters.ProjectFilterSet
 
     @action(detail=True, methods=["post"])
     def sync(self, *args, **kwargs):
@@ -38,6 +39,7 @@ class ReleaseVersionViewSet(ModelViewSet):
 class VersionViewSet(ModelViewSet):
     queryset = models.Version.objects.all()
     serializer_class = serializers.VersionSerializer
+    filterset_class = filters.VersionFilterSet
 
 
 class DependencyViewSet(ModelViewSet):

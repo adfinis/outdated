@@ -1,10 +1,10 @@
-import { scheduleOnce } from '@ember/runloop';
 import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { dropTask } from 'ember-concurrency';
+import { scheduleTask } from 'ember-lifeline';
 import { tracked } from 'tracked-built-ins';
 
-import emptyChangeset from 'outdated/utils/empty-changeset';
+import { emptyChangeset } from 'outdated/utils';
 import ProjectValidations from 'outdated/validations/project';
 
 export default class ProjectFormComponent extends Component {
@@ -22,16 +22,14 @@ export default class ProjectFormComponent extends Component {
   constructor(...args) {
     super(...args);
     if (this.args.project) {
-      scheduleOnce('actions', this, 'initUsers');
+      scheduleTask(this, 'actions', () => {
+        this.maintainers = this.project.maintainers;
+        this.project.users = this.project.maintainers.map((m) => m.user);
+        this.project.primaryMaintainer = this.maintainers?.find(
+          (m) => m.isPrimary,
+        )?.user;
+      });
     }
-  }
-
-  initUsers() {
-    this.maintainers = this.project.maintainers;
-    this.project.users = this.project.maintainers.map((m) => m.user);
-    this.project.primaryMaintainer = this.maintainers?.find(
-      (m) => m.isPrimary,
-    )?.user;
   }
 
   saveProject = dropTask(async () => {

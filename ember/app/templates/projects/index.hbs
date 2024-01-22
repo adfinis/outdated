@@ -1,6 +1,18 @@
 {{page-title "Overview"}}
-<div class="compact-projects">
-  {{#each @model as |project|}}
+
+<div class="uk-child-width-1-2@s uk-flex uk-flex-column uk-flex-row@s gap@s">
+  <Filter @name="name" @value={{this.name}} @placeholder="Seach by name..." />
+  <Filter
+    @name="status"
+    @type="select"
+    @options={{this.statuses}}
+    @value={{this.status}}
+    @placeholder="Select status..."
+  />
+</div>
+
+<div class="compact-projects uk-margin-top">
+  {{#each this.filteredProjects as |project|}}
     <ProjectCompact @project={{project}} />
   {{/each}}
 </div>

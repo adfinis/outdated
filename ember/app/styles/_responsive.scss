@@ -7,6 +7,7 @@
     --detailed-heading-font-size: 1.4rem;
     --seperator-margin-bottom: 2px;
     --button-nav-button-padding: 0 10px;
+    --button-nav-gap: 0.4rem;
   }
 }
 
@@ -21,6 +22,15 @@
     --button-nav-button-padding: 0 28px;
     --button-nav-button-line-height: 42px;
     --detailed-heading-font-size: 1.9rem;
+    --button-nav-gap: 0.5rem;
+  }
+
+  .uk-flex-row\@s {
+    flex-direction: row;
+  }
+
+  .gap\@s {
+    gap: 1rem;
   }
 }
 
@@ -35,6 +45,7 @@
     --button-nav-button-padding: 0 40px;
     --button-nav-button-line-height: 53px;
     --detailed-heading-font-size: 2.5rem;
+    --button-nav-gap: 0.6rem;
   }
 }
 
@@ -44,11 +55,6 @@
     --compact-projects-width: 18%;
     --detailed-heading-font-size: 2.8rem;
     --title-compact-font-size: 1.3rem;
+    --button-nav-gap: 0.8rem;
   }
-}
-
-/* Content Contaier */
-.content-container {
-  @extend .uk-container;
-  @extend .uk-container-expand;
 }

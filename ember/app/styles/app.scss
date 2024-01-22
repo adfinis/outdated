@@ -11,14 +11,16 @@
 @import "responsive";
 
 /* Components */
-@import "components/button";
 @import "components/form";
 @import "components/notification";
 @import "components/power-select";
 @import "components/project-compact";
-@import "components/project-detailed";
+@import "components/detailed-overview";
 @import "components/seperator";
 @import "components/table";
 @import "components/text";
 @import "components/tooltip";
 @import "components/top-nav";
+
+/* Utils */
+@import "utils";

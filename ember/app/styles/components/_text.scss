@@ -1,19 +1,12 @@
-.text-undefined {
-  &:not(tr),
-  td[data-test-version-end-of-life] {
-    @extend .uk-text-muted;
-
-    font-style: italic;
-  }
+.uk-link-text:hover {
+  color: color-mix(in oklab, currentcolor 85%, black) !important;
 }
 
-.none-yet {
+.text-empty {
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 1rem;
 
-  span {
-    @extend .text-undefined;
-  }
+  @extend .uk-text-muted;
 }

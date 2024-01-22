@@ -21,4 +21,12 @@ export default class VersionModel extends Model {
   get status() {
     return this.releaseVersion.get('status');
   }
+  get url() {
+    const providerMap = {
+      PIP: `https://pypi.org/project/${this.name}/`,
+      NPM: `https://npmjs.org/package/${this.name}/v/`,
+    };
+
+    return providerMap[this.releaseVersion.dependency.provider] + this.version;
+  }
 }
