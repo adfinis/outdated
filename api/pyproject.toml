@@ -21,8 +21,8 @@ pyaml = "^23.9.7"
 
 
 [tool.poetry.group.dev.dependencies]
-pytest-django = "4.6.0"
-pytest = "7.4.3"
+pytest-django = "4.7.0"
+pytest = "7.4.4"
 pytest-factoryboy = "2.6.0"
 pytest-cov = "^4.0.0"
 pytest-mock = "^3.11.1"
