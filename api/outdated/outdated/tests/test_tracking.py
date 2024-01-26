@@ -281,3 +281,27 @@ def test_lockfiles(db, project, tmp_repo_root, exists):
         assert tracker.lockfiles == [poetry_lock]
     except RepoError:
         assert not exists
+
+
+@pytest.mark.django_db()
+def test_delete(tmp_repo_root, project_factory):
+    project = project_factory(repo="my.git.com/foo/bar")
+
+    tracker = Tracker(project, None)
+    tracker.local_path.mkdir(parents=True)
+
+    assert tracker.local_path.exists()
+
+    tracker.delete()
+    assert not tracker.local_path.exists()
+    assert not tracker.local_path.parent.exists()
+    assert not tracker.local_path.parent.parent.exists()
+
+    tracker.local_path.mkdir(parents=True)
+    (baz := tracker.local_path.parent / "baz").mkdir()
+
+    tracker.delete()
+
+    assert not tracker.local_path.exists()
+    assert tracker.local_path.parent.exists()
+    assert baz.exists()
