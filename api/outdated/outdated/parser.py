@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from re import findall
+from re import compile, findall, search
 from typing import TYPE_CHECKING
 
 import requests
@@ -60,6 +60,19 @@ class LockfileParser:
             minor_version=semver.minor,
         )
 
+        if remote_name := next(
+            (
+                remote_name
+                for key, remote_name in settings.ENDOFLIFE_DATE_ASSOCIATIONS.items()
+                if search(compile(f"^{key}$"), dependency.name)
+            ),
+            None,
+        ):
+            release_version.end_of_life = self._get_end_of_life_date(
+                remote_name, release_version
+            )
+            release_version.save()
+
         version, version_created = models.Version.objects.get_or_create(
             release_version=release_version,
             patch_version=semver.patch,
@@ -75,6 +88,23 @@ class LockfileParser:
             version.save()
 
         return version
+
+    def _get_end_of_life_date(
+        self, remote_name: str, release_version: models.ReleaseVersion
+    ) -> date:
+        try:
+            resp = requests.get(
+                f"https://endoflife.date/api/{remote_name}/{release_version.release_version}.json",
+                timeout=10,
+            )
+            data = resp.json()
+            if eol := data.get("eol"):
+                return parse_date(eol)
+        except (
+            requests.exceptions.Timeout,
+            requests.exceptions.JSONDecodeError,
+        ):  # pragma: no cover
+            pass
 
     def _get_release_date(self, version: models.Version) -> date:
         """Get the release date of a dependency."""
