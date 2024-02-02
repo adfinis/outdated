@@ -183,6 +183,12 @@ TRACKED_DEPENDENCIES = env.list(
     ],
 )
 
+# dependencies supported by endofile.date
+ENDOFLIFE_DATE_ASSOCIATIONS = env.dict(
+    "ENDOFLIFE_DATE_ASSOCIATIONS",
+    default=({"django": "django", "ember-(data|source|cli)": "emberjs"}),
+)
+
 # Where to put the cloned projects
 REPOSITORY_ROOT = "/home/outdated/projects"
 
