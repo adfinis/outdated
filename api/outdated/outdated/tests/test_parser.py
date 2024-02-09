@@ -5,6 +5,7 @@ from re import compile
 from typing import TYPE_CHECKING
 
 import pytest
+from requests import exceptions
 
 from outdated.outdated.parser import LockfileParser
 from outdated.outdated.tracking import Tracker
@@ -182,3 +183,28 @@ def test_fetch_end_of_life(
     for dependency_name in dependency_names:
         LockfileParser([])._get_version((dependency_name, "4.4.1"), provider="PIP")  # noqa: SLF001
     assert get_end_of_life_date_spy.call_count == call_count
+
+
+@pytest.mark.django_db()
+@pytest.mark.parametrize(
+    "exception", [exceptions.ConnectTimeout, exceptions.ReadTimeout]
+)
+def test_fetch_end_of_life_ignore_timeout(mocker, requests_mock, exception):
+    mocker.patch.object(
+        LockfileParser, "_get_release_date", return_value=date(2024, 1, 1)
+    )
+    requests_mock.get(compile("https://endoflife.date/api/[-a-z]+/4.4"), exc=exception)
+    LockfileParser([])._get_version(("django", "4.4.1"), provider="PIP")  # noqa: SLF001
+
+
+@pytest.mark.django_db()
+def test_fetch_end_of_life_invalid_json(mocker, requests_mock):
+    mocker.patch.object(
+        LockfileParser, "_get_release_date", return_value=date(2024, 1, 1)
+    )
+    requests_mock.get(
+        compile("https://endoflife.date/api/[-a-z]+/4.4"),
+        text="503 Service Temporarily Unavailable",
+        status_code=503,
+    )
+    LockfileParser([])._get_version(("django", "4.4.1"), provider="PIP")  # noqa: SLF001
