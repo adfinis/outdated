@@ -7,8 +7,6 @@ module.exports = function (environment) {
     rootURL: '/',
     locationType: 'history',
     'ember-simple-auth-oidc': {
-      host: 'https://outdated.local/auth/realms/outdated/protocol/openid-connect',
-      clientId: 'outdated',
       authEndpoint: '/auth',
       tokenEndpoint: '/token',
       userinfoEndpoint: '/userinfo',
@@ -38,6 +36,9 @@ module.exports = function (environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV['ember-simple-auth-oidc'].host =
+      'https://outdated.local/auth/realms/outdated/protocol/openid-connect';
+    ENV['ember-simple-auth-oidc'].clientId = 'outdated';
   }
 
   if (environment === 'test') {
@@ -54,6 +55,8 @@ module.exports = function (environment) {
 
   if (environment === 'production') {
     // here you can enable a production-specific feature
+    ENV['ember-simple-auth-oidc'].host = 'oidc-client-host';
+    ENV['ember-simple-auth-oidc'].clientId = 'oidc-client-id';
   }
 
   return ENV;
