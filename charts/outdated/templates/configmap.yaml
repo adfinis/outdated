@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "outdated.fullname" . }}
+  labels:
+    {{- include "outdated.labels" . | nindent 4 }}
+data:
+  OIDC_OP_BASE_ENDPOINT: {{ cat .Values.oidc.host "/realms/" .Values.oidc.realm "/protocol/openid-connect" | replace " " "" }}
+  ALLOWED_HOSTS: {{ .Values.django.allowedHosts | quote }}
+  DEBUG: "false"
+  DATABASE_HOST: "outdated-db.{{ .Release.Namespace }}"
+  POSTGRES_USER: "outdated"
+  POSTGRES_DB: "outdated"
+  OIDC_GROUPS_CLAIM: "groups"
