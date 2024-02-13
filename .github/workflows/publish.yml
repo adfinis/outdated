@@ -39,6 +39,7 @@ jobs:
           context: ./ember/
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/outdated/ember:latest
+
   helm-chart:
     runs-on: ubuntu-latest
     needs:
