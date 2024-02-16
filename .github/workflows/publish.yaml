@@ -43,7 +43,7 @@ jobs:
   helm-chart:
     runs-on: ubuntu-latest
     needs:
-      - release-container
+      build-and-push
     permissions:
       actions: none
       checks: none
