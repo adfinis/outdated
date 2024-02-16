@@ -5,9 +5,11 @@
 # kubectl create secret generic outdated-secrets \
 #         --namespace app-outdated \
 #         --from-literal=DATABASE_PASSWORD=xyz \
-#         --from-literal=POSTGRES_PASSWORD=xyz \
 #         --from-literal=SECRET_KEY=xyz \
-existingSecret: ~
+
+# for using an external database set DATABASE_HOST and DATABASE_USER
+
+existingSecret: ""
 
 api:
   replicaCount: 1
@@ -28,15 +30,6 @@ ember:
     type: ClusterIP
     port: 80
 
-db:
-  image:
-    repository: postgres
-    pullPolicy: IfNotPresent
-    tag: "16-alpine"
-  service:
-    type: ClusterIP
-    port: 5432
-
 django:
   allowedHosts: "*"
   debug: "False"
@@ -50,9 +43,8 @@ postgresql:
   enabled: true
   auth:
     username: outdated
-    password: outdated
     database: outdated
-
+    password: outdated
 
 imagePullSecrets: []
 nameOverride: ""

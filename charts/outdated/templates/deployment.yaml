@@ -45,11 +45,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ template "outdated.fullname" . }}
-            - secretRef:
             {{- if .Values.existingSecret }}
+            - secretRef:
                 name: {{ .Values.existingSecret }}
-            {{- else}}
-                name: outdated-secrets
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -155,83 +153,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
-
-{{- if .Values.postgresql.enabled }}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ include "outdated.fullname" . }}-db
-  labels:
-    {{- include "outdated.labels" . | nindent 4 }}
-spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
-  selector:
-    matchLabels:
-      {{- include "outdated.selectorLabels" . | nindent 6 }}
-  template:
-    metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        {{- include "outdated.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-        app.kubernetes.io/component: db
-    spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "outdated.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      containers:
-        - name: {{ .Chart.Name }}-db
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.db.image.pullPolicy }}
-          envFrom:
-            - configMapRef:
-                name: {{ template "outdated.fullname" . }}
-            - secretRef:
-            {{- if .Values.existingSecret }}
-                name: {{ .Values.existingSecret }}
-            {{- else}}
-                name: outdated-secrets
-            {{- end }}
-
-          ports:
-            - name: http
-              containerPort: {{ .Values.db.service.port }}
-              protocol: TCP
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-{{- end }}

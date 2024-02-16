@@ -6,10 +6,14 @@ metadata:
   labels:
     {{- include "outdated.labels" . | nindent 4 }}
 data:
-  OIDC_OP_BASE_ENDPOINT: {{ cat .Values.oidc.host "/realms/" .Values.oidc.realm "/protocol/openid-connect" | replace " " "" }}
+  OIDC_OP_BASE_ENDPOINT: {{ cat .Values.oidc.host "/realms/" .Values.oidc.realm "/protocol/openid-connect" | replace " " "" | quote }}
   ALLOWED_HOSTS: {{ .Values.django.allowedHosts | quote }}
   DEBUG: "false"
-  DATABASE_HOST: "outdated-db.{{ .Release.Namespace }}"
-  POSTGRES_USER: "outdated"
-  POSTGRES_DB: "outdated"
+  {{- if .Values.postgresql.enabled }}
+  DATABASE_HOST: "outdated-postgresql.{{ .Release.Namespace }}"
+  DATABASE_PASSWORD: {{ .Values.postgresql.auth.password }}
+  DATABASE_NAME: {{ .Values.postgresql.auth.database }}
+  DATABASE_USER: {{ .Values.postgresql.auth.username }}
+  {{- end }}
   OIDC_GROUPS_CLAIM: "groups"
+  SECRET_KEY: {{ randAscii 20 | quote }}

@@ -34,21 +34,3 @@ spec:
   selector:
     {{- include "outdated.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: ember
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "outdated.fullname" . }}-db
-  labels:
-    {{- include "outdated.labels" . | nindent 4 }}
-    app.kubernetes.io/component: db
-spec:
-  type: {{ .Values.db.service.type }}
-  ports:
-    - port: {{ .Values.db.service.port }}
-      targetPort: 5432
-      protocol: TCP
-      name: http
-  selector:
-    {{- include "outdated.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: db
