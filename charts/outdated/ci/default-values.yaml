@@ -1,0 +1,4 @@
+postgresql:
+  enabled: true
+ingress:
+  enabled: true
