@@ -1,4 +1,7 @@
+---
 postgresql:
   enabled: true
+  auth:
+    password: outdated
 ingress:
   enabled: true

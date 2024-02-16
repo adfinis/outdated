@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -49,6 +48,17 @@ spec:
             - secretRef:
                 name: {{ .Values.existingSecret }}
             {{- end }}
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.postgresql.enabled }}
+                  name: "{{ template "outdated.fullname" . }}-postgresql"
+                  key: password
+                  {{- else }}
+                  name: {{ .Values.existingSecret | quote }}
+                  key: DATABASE_PASSWORD
+                  {{- end }}         
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
