@@ -1,4 +1,0 @@
-POSTGRES_USER=outdated
-POSTGRES_PASSWORD=outdated
-POSTGRES_DB=outdated
-KEYCLOAK_DB_PASSWORD=keycloak

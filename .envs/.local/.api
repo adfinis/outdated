@@ -1,4 +1,0 @@
-ENV=dev
-
-OIDC_VERIFY_SSL=False
-OIDC_OP_BASE_ENDPOINT=https://outdated.local/auth/realms/outdated/protocol/openid-connect
