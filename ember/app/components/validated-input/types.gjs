@@ -30,7 +30,7 @@ const Date = <template>
 
 const Select = <template>
   <@selectComponent
-    @searchEnabled={{true}}
+    @searchEnabled={{@searchable}}
     @options={{@options}}
     @selected={{@value}}
     @onChange={{@update}}

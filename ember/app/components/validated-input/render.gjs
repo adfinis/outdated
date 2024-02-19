@@ -37,6 +37,7 @@ export default class Render extends Component {
             @afterOptionsComponent={{@afterOptionsComponent}}
             @optionsComponent={{@optionsComponent}}
             @searchMessage={{@searchMessage}}
+            @searchable={{@searchable}}
             @noMatchesMessage={{@noMatchesMessage}}
             @noMatchesMessageComponent={{@noMatchesMessageComponent}}
             @visibleField={{@visibleField}}
