@@ -11,7 +11,11 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
       - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
-    env_file: ./.envs/.local/.postgres
+    environment:
+      - POSTGRES_USER=outdated
+      - POSTGRES_PASSWORD=outdated
+      - POSTGRES_DB=outdated
+      - KEYCLOAK_DB_PASSWORD=keycloak
 
   api:
     build: ./api
@@ -31,7 +35,10 @@ services:
         "-c",
         "wait-for-it.sh db:5432 -- ./manage.py migrate && ./manage.py runserver 0.0.0.0:8000",
       ]
-    env_file: ./.envs/.local/.api
+    environment:
+      - ENV=dev
+      - OIDC_VERIFY_SSL=False
+      - OIDC_OP_BASE_ENDPOINT=https://outdated.local/auth/realms/outdated/protocol/openid-connect
 
   ember:
     build:
@@ -46,7 +53,8 @@ services:
     ports:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
-    env_file: ./.envs/.local/.caddy
+    environment:
+      - DOMAIN_NAME=outdated.local
     networks:
       default:
         aliases:
@@ -58,7 +66,6 @@ services:
       - db
     volumes:
       - ./keycloak/config.json:/opt/keycloak/data/import/config.json
-    env_file: ./.envs/.local/.keycloak
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://db/keycloak
@@ -68,6 +75,8 @@ services:
       - KC_HOSTNAME_STRICT_HTTPS=false
       - KC_HTTP_RELATIVE_PATH=/auth
       - KC_PROXY=edge
+      - KC_DB_PASSWORD=keycloak
+      - KEYCLOAK_ADMIN_PASSWORD=keycloak
     # import: docker compose exec keycloak /opt/keycloak/bin/kc.sh import --override true --file /opt/keycloak/data/import/config.json
     # export: docker compose exec keycloak /opt/keycloak/bin/kc.sh export --file /opt/keycloak/data/import/config.json
     command: "start"
