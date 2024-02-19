@@ -3,7 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from . import filters, models, serializers
+from outdated.outdated import models
+
+from . import filters, serializers
 from .tracking import Tracker
 
 
