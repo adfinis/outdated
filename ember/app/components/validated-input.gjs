@@ -3,7 +3,7 @@ import { guidFor } from '@ember/object/internals';
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import join from 'ember-composable-helpers/helpers/join';
-import { and } from 'ember-truth-helpers';
+import { and, or } from 'ember-truth-helpers';
 
 import Render from './validated-input/render';
 
@@ -92,6 +92,13 @@ export default class FormInputComponent extends Component {
       @afterOptionsComponent={{@afterOptionsComponent}}
       @optionsComponent={{@optionsComponent}}
       @searchMessage={{@searchMessage}}
+      @searchable={{(or
+        @searchable
+        @searchMessage
+        @searchField
+        @noMatchesMessage
+        @noMatchesMessageComponent
+      )}}
       @noMatchesMessage={{@noMatchesMessage}}
       @noMatchesMessageComponent={{@noMatchesMessageComponent}}
       @errorComponent={{if
