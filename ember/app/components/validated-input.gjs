@@ -71,42 +71,46 @@ export default class FormInputComponent extends Component {
   }
 
   <template>
-    <Render
-      @label={{@label}}
-      @type={{this.type}}
-      @disabled={{@disabled}}
-      @value={{this._val}}
-      @options={{@options}}
-      @name={{@name}}
-      @multiple={{@multiple}}
-      @inputId={{@inputId}}
-      @isValid={{this.isValid}}
-      @isInvalid={{this.isInvalid}}
-      @model={{@model}}
-      @placeholder={{@placeholder}}
-      @update={{this.update}}
-      @searchField={{@searchField}}
-      @visibleField={{@visibleField}}
-      @setDirty={{this.setDirty}}
-      @submitted={{@submitted}}
-      @afterOptionsComponent={{@afterOptionsComponent}}
-      @optionsComponent={{@optionsComponent}}
-      @searchMessage={{@searchMessage}}
-      @searchable={{(or
-        @searchable
-        @searchMessage
-        @searchField
-        @noMatchesMessage
-        @noMatchesMessageComponent
-      )}}
-      @noMatchesMessage={{@noMatchesMessage}}
-      @noMatchesMessageComponent={{@noMatchesMessageComponent}}
-      @errorComponent={{if
-        (and this.showValidity this.errors)
-        (component Error errors=this.errors id=this.errorId)
-      }}
-      @labelComponent={{component Label inputId=@inputId}}
-      ...attributes
-    />
+    {{#unless @hidden}}
+      <Render
+        @label={{@label}}
+        @type={{this.type}}
+        @disabled={{@disabled}}
+        @value={{this._val}}
+        @options={{@options}}
+        @name={{@name}}
+        @multiple={{@multiple}}
+        @inputId={{@inputId}}
+        @isValid={{this.isValid}}
+        @isInvalid={{this.isInvalid}}
+        @model={{@model}}
+        @placeholder={{@placeholder}}
+        @update={{this.update}}
+        @searchField={{@searchField}}
+        @visibleField={{@visibleField}}
+        @setDirty={{this.setDirty}}
+        @validateModel={{@validateModel}}
+        @hidden={{@hidden}}
+        @submitted={{@submitted}}
+        @afterOptionsComponent={{@afterOptionsComponent}}
+        @optionsComponent={{@optionsComponent}}
+        @searchMessage={{@searchMessage}}
+        @searchable={{(or
+          @searchable
+          @searchMessage
+          @searchField
+          @noMatchesMessage
+          @noMatchesMessageComponent
+        )}}
+        @noMatchesMessage={{@noMatchesMessage}}
+        @noMatchesMessageComponent={{@noMatchesMessageComponent}}
+        @errorComponent={{if
+          (and this.showValidity this.errors)
+          (component Error errors=this.errors id=this.errorId)
+        }}
+        @labelComponent={{component Label inputId=@inputId}}
+        ...attributes
+      />
+    {{/unless}}
   </template>
 }

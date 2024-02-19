@@ -16,7 +16,7 @@ export default class FormComponent extends Component {
     super(...args);
 
     if (this.args.model && this.args.model.validate) {
-      scheduleTask(this, 'actions', () => this.validateModel);
+      scheduleTask(this, 'actions', this.validateModel);
     }
   }
 
@@ -58,7 +58,10 @@ export default class FormComponent extends Component {
             model=@model
             loading=this.loading
             input=(component
-              ValidatedInput model=@model submitted=this.submitted
+              ValidatedInput
+              model=@model
+              submitted=this.submitted
+              validateModel=this.validateModel
             )
             button=(component UkButton label='Save' type='submit')
           )
