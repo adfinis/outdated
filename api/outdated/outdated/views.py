@@ -1,4 +1,4 @@
-from django.db.models import Max
+from django.db.models import Min
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -8,13 +8,9 @@ from .tracking import Tracker
 
 
 class ProjectViewSet(ModelViewSet):
-    queryset = (
-        models.Project.objects.all()
-        .annotate(
-            latest_eol=Max("versioned_dependencies__release_version__end_of_life"),
-        )
-        .order_by("latest_eol")
-    )
+    queryset = models.Project.objects.annotate(
+        min_end_of_life=Min("versioned_dependencies__release_version__end_of_life")
+    ).order_by("min_end_of_life")
 
     serializer_class = serializers.ProjectSerializer
     filterset_class = filters.ProjectFilterSet
