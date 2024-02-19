@@ -70,7 +70,7 @@ class Tracker:
             ],
         )
 
-    def checkout(self):  # pragma: no cover
+    def checkout(self):
         return self._run(["git", "checkout"], True)
 
     @property
