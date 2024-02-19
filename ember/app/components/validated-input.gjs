@@ -74,6 +74,7 @@ export default class FormInputComponent extends Component {
     {{#unless @hidden}}
       <Render
         @label={{@label}}
+        @raw={{@raw}}
         @type={{this.type}}
         @disabled={{@disabled}}
         @value={{this._val}}

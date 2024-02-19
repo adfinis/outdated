@@ -3,9 +3,19 @@ import getMessages from 'ember-changeset-validations/utils/get-messages';
 import { scheduleTask } from 'ember-lifeline';
 import PowerSelect from 'ember-power-select/components/power-select';
 import PowerSelectMultiple from 'ember-power-select/components/power-select-multiple';
-import { or, not, eq } from 'ember-truth-helpers';
+import { or, not, eq, and } from 'ember-truth-helpers';
 
 import { Date, Select, Text } from './types';
+
+const Wrapper = <template>
+  {{#if @raw}}
+    {{yield}}
+  {{else}}
+    <div class='uk-margin'>
+      {{yield}}
+    </div>
+  {{/if}}
+</template>;
 
 export default class Render extends Component {
   constructor(...args) {
@@ -19,17 +29,17 @@ export default class Render extends Component {
   get selectComponent() {
     return this.args.multiple ? PowerSelectMultiple : PowerSelect;
   }
+
   get name() {
     return getMessages().getDescriptionFor(this.args.name);
   }
 
   <template>
-    <div class='uk-margin'>
-      {{#if (or @label (not @placeholder))}}
+    <Wrapper @raw={{@raw}}>
+      {{#if (and (not @raw) (or @label (not @placeholder)))}}
         <@labelComponent @label={{or @label this.name}} />
       {{/if}}
       <div class='uk-form-controls'>
-
         {{#if (eq @type 'select')}}
           <Select
             @id={{@inputId}}
@@ -83,6 +93,6 @@ export default class Render extends Component {
         {{/if}}
         <@errorComponent />
       </div>
-    </div>
+    </Wrapper>
   </template>
 }
