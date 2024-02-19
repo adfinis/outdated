@@ -1,4 +1,8 @@
+---
 version: "3.9"
+
+# local developement only
+
 services:
   db:
     image: postgres:16-alpine
@@ -7,13 +11,27 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
       - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    env_file: ./.envs/.local/.postgres
+
   api:
     build: ./api
+    # necessary to retain permissions of our files when modifying them in the container (e.g. formatting)
     user: "${UID:?Set UID env variable to your user id}"
     depends_on:
       - db
     volumes:
+      - ./api:/app
+      - ./api/pdbrc.py:/home/outdated/.pdbrc.py
       - projects_data:/home/outdated/projects
+    ports:
+      - "8000:8000"
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "wait-for-it.sh db:5432 -- ./manage.py migrate && ./manage.py runserver 0.0.0.0:8000",
+      ]
+    env_file: ./.envs/.local/.api
 
   ember:
     build:
@@ -28,12 +46,19 @@ services:
     ports:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
+    env_file: ./.envs/.local/.caddy
+    networks:
+      default:
+        aliases:
+          - outdated.local
+
   keycloak:
     image: quay.io/keycloak/keycloak:23.0
     depends_on:
       - db
     volumes:
       - ./keycloak/config.json:/opt/keycloak/data/import/config.json
+    env_file: ./.envs/.local/.keycloak
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://db/keycloak
