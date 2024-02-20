@@ -69,9 +69,14 @@ class Tracker:
                 *settings.SUPPORTED_LOCK_FILES,
             ],
         )
+        self.checkout()
 
     def checkout(self):
-        return self._run(["git", "checkout"], True)
+        self._run(["git", "checkout"], True)
+
+    def fetch(self):
+        self._run(["git", "fetch", "--depth=1", "--filter=tree:0", "-n"], True)
+        self._run(["git", "reset", "--hard", "FETCH_HEAD"], True)
 
     @property
     def lockfiles(self):
@@ -106,13 +111,12 @@ class Tracker:
     def sync(self):
         if not self.local_path.exists():
             self.clone()
-        self.checkout()
+        self.fetch()
         dependencies = LockfileParser(self.lockfiles).parse()
         self.project.versioned_dependencies.set(dependencies)
 
     def setup(self):  # pragma: no cover
         self.clone()
-        self.checkout()
         self.sync()
 
     def delete(self):  # pragma: no cover

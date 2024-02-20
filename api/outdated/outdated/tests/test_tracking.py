@@ -222,7 +222,7 @@ def test_sync(
     project_path = tmp_repo_root / project.clone_path
 
     tracker_clone_mock = tracker_mock("clone")
-    tracker_checkout_mock = tracker_mock("checkout")
+    tracker_fetch_mock = tracker_mock("fetch")
 
     tracker_lockfile_mock = mocker.patch(
         "outdated.outdated.tracking.Tracker.lockfiles",
@@ -256,7 +256,7 @@ def test_sync(
     else:
         tracker_clone_mock.assert_called_once()
 
-    tracker_checkout_mock.assert_called_once()
+    tracker_fetch_mock.assert_called_once()
 
     lockfile_parser_init_mock.assert_called_once_with([])
 
