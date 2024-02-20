@@ -46,6 +46,7 @@ jobs:
             api/pyproject.toml
             ember/package.json
             charts/outdated/Chart.yaml
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
