@@ -1,0 +1,101 @@
+---
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_call:
+    secrets:
+      ADFINISBOT_PAT:
+        required: true
+
+jobs:
+  semrel:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ADFINISBOT_PAT }}
+
+      - name: Semantic Release
+        uses: go-semantic-release/action@v1
+        id: semrel
+        with:
+          github-token: ${{ secrets.ADFINISBOT_PAT }}
+          allow-initial-development-versions: true
+
+      - run: pipx install poetry
+        if: steps.semrel.outputs.version != ''
+
+      - name: Adjust Versions
+        if: steps.semrel.outputs.version != ''
+        run: |
+          cd api && poetry version ${{ steps.semrel.outputs.version }} && cd -
+          cd ember && yarn version --no-commit-hooks --no-git-tag-version --new-version ${{ steps.semrel.outputs.version }}
+
+      - name: Adjust Versions in Chart.yaml
+        if: steps.semrel.outputs.version != ''
+        uses: mikefarah/yq@v4.41.1
+        with:
+          cmd: yq eval '(.appVersion = "${{ steps.semrel.outputs.version }}") | (.version = "${{ steps.semrel.outputs.version }}" )' --inplace ./charts/outdated/Chart.yaml
+
+      - name: Release Commit
+        if: steps.semrel.outputs.version != ''
+        run: |
+          git config user.name "Semantic Release"
+          git config user.email "adfinisbot@users.noreply.github.com"
+          git add ember/package.json api/pyproject.toml charts/outdated/Chart.yaml
+          git commit -m "chore(release): ${{ steps.semrel.outputs.version }} [skip ci]"
+          git push
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        if: steps.semrel.outputs.version != ''
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        if: steps.semrel.outputs.version != ''
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push API Docker Image
+        if: steps.semrel.outputs.version != ''
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api/
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/api:${{ steps.semrel.outputs.version }}
+            ghcr.io/${{ github.repository }}/api:latest
+
+      - name: Build and Push Ember Docker Image
+        if: steps.semrel.outputs.version != ''
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ember/
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/ember:${{ steps.semrel.outputs.version }}
+            ghcr.io/${{ github.repository }}/ember:latest
+
+      - name: Set up Helm
+        if: steps.semrel.outputs.version != ''
+        uses: azure/setup-helm@v3.5
+        with:
+          version: v3.14.0
+
+      - name: Package Chart
+        if: steps.semrel.outputs.version != ''
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependency build charts/outdated
+          helm package --destination=dist charts/outdated
+
+      - name: Push Chart
+        if: steps.semrel.outputs.version != ''
+        run: helm push dist/*.tgz oci://ghcr.io/${{ github.repository }}/helm
