@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import requests
 from dateutil.parser import parse as parse_date
 from django.conf import settings
+from pyarn.lockfile import Lockfile as YarnLockfile
 from semver import Version as SemVer
 from tomllib import loads
 from yaml import safe_load
@@ -143,12 +144,13 @@ class LockfileParser:
 
             dependencies = []
             if name == "yarn.lock":
-                regex = r'"?([\S]+)@.*:\n  version "(.+)"'
+                yarn_lockfile = YarnLockfile.from_file(lockfile)
                 dependencies = [
-                    dependency
-                    for dependency in findall(regex, data)
-                    if dependency[0] in settings.TRACKED_DEPENDENCIES
+                    (dependency.name, dependency.version)
+                    for dependency in yarn_lockfile.packages()
+                    if dependency.name in settings.TRACKED_DEPENDENCIES
                 ]
+
             elif name == "poetry.lock":
                 dependencies = [
                     (dependency["name"], dependency["version"])
