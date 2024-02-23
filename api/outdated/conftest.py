@@ -84,6 +84,7 @@ def tracker_mock(mocker: MockerFixture) -> Callable[[str], MagicMock]:
             Tracker(project).sync()
             tracker_sync_mock.assert_called_once()
         ```
+
     """
 
     def _tracker_mock(target: str) -> MagicMock:

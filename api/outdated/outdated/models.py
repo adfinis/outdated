@@ -58,6 +58,7 @@ class ReleaseVersion(UUIDModel):
             >>> release_version.release_version
             '4.2'
             ```
+
         """
         return f"{self.major_version}.{self.minor_version}"
 
@@ -113,6 +114,7 @@ class Version(UUIDModel):
             >>> version.version
             '4.2.5'
             ```
+
         """
         return f"{self.release_version.release_version}.{self.patch_version}"
 
@@ -139,6 +141,7 @@ class Project(UUIDModel):
             >>> project.repo_domain
             'github.com'
             ```
+
         """
         return self.repo.split("/")[0].lower()
 
@@ -154,6 +157,7 @@ class Project(UUIDModel):
             >>> project.repo_namespace
             'adfinis'
             ```
+
         """
         return self.repo.split("/")[1].lower()
 
@@ -169,6 +173,7 @@ class Project(UUIDModel):
             >>> project.repo_name
             'outdated'
             ```
+
         """
         return self.repo.split("/")[-1].lower()
 
@@ -184,6 +189,7 @@ class Project(UUIDModel):
             >>> project.clone_path
             'github.com/adfinis/outdated'
             ```
+
         """
         return f"{self.repo_domain}/{self.repo_namespace}/{self.repo_name}"
 
