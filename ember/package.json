@@ -90,7 +90,7 @@
     "graphql": "^16.6.0",
     "loader.js": "^4.7.0",
     "luxon": "^3.4.4",
-    "miragejs": "^0.1.47",
+    "miragejs": "^0.1.48",
     "prettier": "^3.2.5",
     "prettier-plugin-ember-template-tag": "^2.0.0",
     "qunit": "^2.20.1",
