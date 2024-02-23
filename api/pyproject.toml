@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Outdated"
-version = "0.1.0"
+version = "0.0.0"
 description = "Shows all added projects, and their packages, also indicates when a package is no longer supported."
 authors = ["Adfinis AG"]
 license = "GPL-3.0-or-later"
