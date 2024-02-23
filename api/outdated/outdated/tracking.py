@@ -85,7 +85,13 @@ class Tracker:
             if ".git" in dirs:
                 dirs.remove(".git")
 
-            lockfile_list.extend([Path(root).joinpath(file) for file in files])
+            lockfile_list.extend(
+                [
+                    Path(root).joinpath(file)
+                    for file in files
+                    if not Path(root).joinpath(file).is_symlink()
+                ]
+            )
 
         return lockfile_list
 
