@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import PropertyMock, call
 
 import pytest
@@ -281,6 +282,16 @@ def test_lockfiles(db, project, tmp_repo_root, exists):
         assert tracker.lockfiles == [poetry_lock]
     except RepoError:
         assert not exists
+
+
+def test_lockfiles_ignore_symlinks(db, project, tmp_repo_root):
+    tracker = Tracker(project)
+    tracker.local_path.mkdir(parents=True, exist_ok=False)
+
+    lockfiles = tracker.lockfiles
+    assert lockfiles == []
+    (tracker.local_path / "yarn.lock").symlink_to(Path("/proc/1/environ"))
+    assert tracker.lockfiles == []
 
 
 @pytest.mark.django_db()
