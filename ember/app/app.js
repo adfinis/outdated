@@ -1,4 +1,5 @@
 import Application from '@ember/application';
+import { debug } from '@ember/debug';
 import loadInitializers from 'ember-load-initializers';
 import Resolver from 'ember-resolver';
 
@@ -10,4 +11,7 @@ export default class App extends Application {
   Resolver = Resolver;
 }
 
+const version = config.APP.version;
+debug('-------------------------------');
+debug(`Outdated : ${version}`);
 loadInitializers(App, config.modulePrefix);
