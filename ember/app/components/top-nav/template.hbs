@@ -4,9 +4,15 @@
 >
   <nav class="navbar-container" uk-navbar>
     <div class="uk-navbar-left">
-      <LinkTo @route="projects" class="uk-navbar-item uk-logo uk-visible@m">
-        Outdated
-      </LinkTo>
+      <div class="uk-navbar-item uk-logo uk-visible@m">
+        <LinkTo
+          {{uk-tooltip (concat "v" (app-version versionOnly=true))}}
+          @route="projects"
+          class="uk-link-reset"
+        >
+          Outdated
+        </LinkTo>
+      </div>
 
       <ul class="button-nav uk-hidden@m">
         <li>
@@ -14,6 +20,10 @@
             @route="projects.index"
             @current-when="projects.index projects.detailed not-found"
             class="uk-hidden@m"
+            {{uk-tooltip
+              (concat "v" (app-version versionOnly=true))
+              offset=false
+            }}
           >Outdated</LinkTo>
         </li>
       </ul>
