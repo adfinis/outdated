@@ -61,13 +61,15 @@ class LockfileParser:
             minor_version=semver.minor,
         )
 
-        if remote_name := next(
-            (
-                remote_name
-                for key, remote_name in settings.ENDOFLIFE_DATE_ASSOCIATIONS.items()
-                if search(compile(f"^{key}$"), dependency.name)
-            ),
-            None,
+        if not release_version.end_of_life and (
+            remote_name := next(
+                (
+                    remote_name
+                    for key, remote_name in settings.ENDOFLIFE_DATE_ASSOCIATIONS.items()
+                    if search(compile(f"^{key}$"), dependency.name)
+                ),
+                None,
+            )
         ):
             release_version.end_of_life = self._get_end_of_life_date(
                 remote_name, release_version
