@@ -45,5 +45,9 @@ class OIDCUser(BaseUser):
         )
         return user
 
+    @property
+    def is_admin(self):
+        return settings.OIDC_ADMIN_GROUP in self.groups
+
     def __str__(self):
         return f"{self.email} - {self.id}"

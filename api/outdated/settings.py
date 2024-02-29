@@ -103,6 +103,9 @@ OIDC_CLAIMS = {
 }
 
 OIDC_VERIFY_SSL = env.bool("OIDC_VERIFY_SSL", default=True)
+
+OIDC_ADMIN_GROUP = env.str("OIDC_ADMIN_GROUP", "outdated-admin")
+
 OIDC_DRF_AUTH_BACKEND = (
     "outdated.oidc_auth.authentication.OutdatedOIDCAuthenticationBackend"
 )
