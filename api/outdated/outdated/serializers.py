@@ -29,9 +29,16 @@ class ReleaseVersionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ReleaseVersionLimitedSerializer(ReleaseVersionSerializer):
+    """Set all fields but end_of_life to read only."""
+
+    class Meta(ReleaseVersionSerializer.Meta):
+        read_only_fields = ("major_version", "minor_version", "dependency")
+
+
 class VersionSerializer(serializers.ModelSerializer):
     included_serializers = {
-        "release_version": "outdated.outdated.serializers.ReleaseVersionSerializer",
+        "release_version": "outdated.outdated.serializers.ReleaseVersionLimitedSerializer",
     }
 
     class Meta:

@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 from django.db.models import Min
 from rest_framework.decorators import action
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from outdated.oidc_auth.permissions import is_methods, is_readonly
 from outdated.outdated import models
 
 from . import filters, serializers
@@ -32,17 +36,30 @@ class ProjectViewSet(ModelViewSet):
 class ReleaseVersionViewSet(ModelViewSet):
     queryset = models.ReleaseVersion.objects.all()
     serializer_class = serializers.ReleaseVersionSerializer
+    permission_classes = [is_methods([*SAFE_METHODS, "PATCH"], True)]
+
+    def get_serializer_class(
+        self,
+    ) -> type[
+        serializers.ReleaseVersionSerializer
+        | serializers.ReleaseVersionLimitedSerializer
+    ]:
+        if getattr(self.request.user, "is_admin", False):
+            return serializers.ReleaseVersionSerializer
+        return serializers.ReleaseVersionLimitedSerializer
 
 
 class VersionViewSet(ModelViewSet):
     queryset = models.Version.objects.all()
     serializer_class = serializers.VersionSerializer
     filterset_class = filters.VersionFilterSet
+    permission_classes = [is_readonly()]
 
 
 class DependencyViewSet(ModelViewSet):
     queryset = models.Dependency.objects.all()
     serializer_class = serializers.DependencySerializer
+    permission_classes = [is_readonly()]
 
 
 class MaintainerViewset(ModelViewSet):
