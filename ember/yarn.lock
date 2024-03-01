@@ -6109,10 +6109,10 @@ ember-cli-lodash-subset@^2.0.1:
   resolved "https://registry.yarnpkg.com/ember-cli-lodash-subset/-/ember-cli-lodash-subset-2.0.1.tgz#20cb68a790fe0fde2488ddfd8efbb7df6fe766f2"
   integrity sha512-QkLGcYv1WRK35g4MWu/uIeJ5Suk2eJXKtZ+8s+qE7C9INmpCPyPxzaqZABquYzcWNzIdw6kYwz3NWAFdKYFxwg==
 
-ember-cli-mirage@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/ember-cli-mirage/-/ember-cli-mirage-3.0.2.tgz#073efc22fef6e53cd31ab6bedcc55ce3b9be1ed9"
-  integrity sha512-SthtL8i/tvo7F/XwkSa/XEE1h99p2o1wS2O3DzyEzPqySpSD8a8YKauvN/FgZQVwjcXJuprSrCiWne8+bb6rYA==
+ember-cli-mirage@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/ember-cli-mirage/-/ember-cli-mirage-3.0.3.tgz#cc9f70009965c4b3b44708f15a412e88509c6e45"
+  integrity sha512-yrg8FpVwbMAH5KpqZn0br6Ka7M26qN3DCddsOJp2FNKk2cDoS5FKQvZUYrlD7oIfPeW4uQFigjfPuRSWRDC9Gw==
   dependencies:
     "@babel/core" "^7.22.20"
     "@embroider/macros" "^1.13.2"
@@ -6538,10 +6538,10 @@ ember-gesture-modifiers@^3.0.0:
   dependencies:
     ember-cli-babel "^7.26.5"
 
-ember-intl@^6.4.1:
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/ember-intl/-/ember-intl-6.4.1.tgz#d92251f41f4ea5703512f265612e2013be8a8ec6"
-  integrity sha512-gnui6bgwM9pPEpdHud20h3tteopPuJ29tb5BqPck2WU6yMxkeLIpZC4LcfTZ/IQ0n1dH/wDaCCpsp/G3APtAxg==
+ember-intl@^6.5.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/ember-intl/-/ember-intl-6.5.0.tgz#0b3ccfeb7738794e0db1f645c9af77247b65fde7"
+  integrity sha512-RCo1TKQnk0CC2WIZD7vDyxjs0PUr/ix7OUikCaRRzZ8hyB/cJvEpd2nT4XWK28uNT/cmdfbgbjeyaTq5VflIqw==
   dependencies:
     "@formatjs/icu-messageformat-parser" "^2.7.6"
     "@formatjs/intl" "^2.10.0"
