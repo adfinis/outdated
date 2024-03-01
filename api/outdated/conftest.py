@@ -58,17 +58,35 @@ def claims(settings):
     return _get_claims(settings)
 
 
+def _get_client(user):
+    client = APIClient()
+    client.force_authenticate(user=user)
+    client.user = user
+    return client
+
+
 @pytest.fixture
 def client(db, settings, get_claims):
     """Return rest framework client, includes db."""
-    client = APIClient()
     user = OIDCUser(
         "sometoken",
         get_claims(id_claim="user", groups_claim=[], email_claim="user@example.com"),
     )
-    client.force_authenticate(user=user)
-    client.user = user
-    return client
+    return _get_client(user)
+
+
+@pytest.fixture
+def admin_client(db, settings, get_claims):
+    """Return rest framework client with admin privileges, includes db."""
+    user = OIDCUser(
+        "sometoken",
+        get_claims(
+            id_claim="admin",
+            groups_claim=[settings.OIDC_ADMIN_GROUP],
+            email_claim="admin@example.com",
+        ),
+    )
+    return _get_client(user)
 
 
 @pytest.fixture
