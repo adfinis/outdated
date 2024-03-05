@@ -4,7 +4,7 @@ version = "0.0.0"
 description = "Shows all added projects, and their packages, also indicates when a package is no longer supported."
 authors = ["Adfinis AG"]
 license = "GPL-3.0-or-later"
-readme = "../README.md"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
