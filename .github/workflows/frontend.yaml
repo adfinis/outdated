@@ -20,16 +20,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
       - name: Install Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/Iron
-          cache: yarn
-          cache-dependency-path: ember/yarn.lock
+          cache: pnpm
+          cache-dependency-path: ember/pnpm-lock.yaml
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
 
   test:
     name: "Test"
@@ -38,13 +41,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
       - name: Install Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/Iron
-          cache: yarn
-          cache-dependency-path: ember/yarn.lock
+          cache: pnpm
+          cache-dependency-path: ember/pnpm-lock.yaml
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Run Tests
-        run: yarn ember test
+        run: pnpm ember test

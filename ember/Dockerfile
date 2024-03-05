@@ -1,19 +1,18 @@
 FROM node:lts-slim as build
 
-
-EXPOSE 4200 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 WORKDIR /ember
 
-COPY package.json yarn.lock ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN yarn install
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN yarn build
-
-CMD ["yarn", "start"]
+RUN pnpm build
 
 FROM nginx:alpine
 

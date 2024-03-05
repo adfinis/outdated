@@ -11,7 +11,7 @@ An application to track the dependencies of projects.
 
 ### Optional
 
-- yarn (for linting ember)
+- pnpm (for linting ember)
 
 ## Running
 

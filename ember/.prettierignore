@@ -1,3 +1,6 @@
+# pnpm lockfile
+pnpm-lock.yaml
+
 # unconventional js
 /blueprints/*/files/
 
