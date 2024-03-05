@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from pathlib import Path
     from unittest.mock import MagicMock
 
+    from pytest_django.fixtures import SettingsWrapper
     from pytest_mock import MockerFixture
 
 
@@ -29,14 +30,14 @@ register(UserFactory)
 
 
 def _get_claims(
-    settings,
-    id_claim="00000000-0000-0000-0000-000000000000",
-    groups_claim=None,
-    email_claim="test@example.com",
-    first_name_claim="foo",
-    last_name_claim="bar",
-    username_claim="foobar",
-):
+    settings: SettingsWrapper,
+    id_claim: str = "00000000-0000-0000-0000-000000000000",
+    groups_claim: list | None = None,
+    email_claim: str = "test@example.com",
+    first_name_claim: str = "foo",
+    last_name_claim: str = "bar",
+    username_claim: str = "foobar",
+) -> dict[str]:
     groups_claim = groups_claim if groups_claim else []
     return {
         settings.OIDC_CLAIMS["ID"]: id_claim,
@@ -49,16 +50,16 @@ def _get_claims(
 
 
 @pytest.fixture
-def get_claims(settings):
+def get_claims(settings: SettingsWrapper) -> partial[dict]:
     return partial(_get_claims, settings)
 
 
 @pytest.fixture
-def claims(settings):
+def claims(settings: SettingsWrapper) -> dict[str]:
     return _get_claims(settings)
 
 
-def _get_client(user):
+def _get_client(user: OIDCUser) -> APIClient:
     client = APIClient()
     client.force_authenticate(user=user)
     client.user = user
@@ -66,7 +67,7 @@ def _get_client(user):
 
 
 @pytest.fixture
-def client(db, settings, get_claims):
+def client(db, settings, get_claims) -> APIClient:  # noqa: ANN001
     """Return rest framework client, includes db."""
     user = OIDCUser(
         "sometoken",
@@ -76,12 +77,13 @@ def client(db, settings, get_claims):
 
 
 @pytest.fixture
-def admin_client(db, settings, get_claims):
+def admin_client(db, settings, get_claims) -> APIClient:  # noqa: ANN001
     """Return rest framework client with admin privileges, includes db."""
     user = OIDCUser(
         "sometoken",
         get_claims(
             id_claim="admin",
+            username_claim="admin",
             groups_claim=[settings.OIDC_ADMIN_GROUP],
             email_claim="admin@example.com",
         ),
@@ -118,7 +120,7 @@ def tracker_init_mock(mocker: MockerFixture) -> MagicMock:
 
 
 @pytest.fixture
-def tmp_repo_root(settings, tmp_path: Path) -> Path:  # noqa: ANN001
+def tmp_repo_root(settings: SettingsWrapper, tmp_path: Path) -> Path:
     """Change settings.REPOSITORY_ROOT to a temporary directory."""
     settings.REPOSITORY_ROOT = str(tmp_path.absolute())
     return tmp_path
