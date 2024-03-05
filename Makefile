@@ -38,11 +38,11 @@ cleanup: ## Cleanup all docker containers, images, volumes and networks from the
 
 .PHONY: ember-lint
 ember-lint: ## lint ember
-	@cd ember && yarn lint
+	@cd ember && pnpm lint
 
 .PHONY: ember-lint-fix
 ember-lint-fix: ## lint and fix ember
-	@cd ember && yarn lint:fix
+	@cd ember && pnpm lint:fix
 
 .PHONY: ember-start
 ember-start: ## Start ember
@@ -50,11 +50,11 @@ ember-start: ## Start ember
 
 .PHONY: ember-start-livereload
 ember-start-livereload: ## Start ember with livereload
-	@docker compose up -d --build db keycloak api caddy && cd ember && yarn && yarn start-proxy
+	@docker compose up -d --build db keycloak api caddy && cd ember && pnpm i && pnpm start-proxy
 
 .PHONY: ember-test
 ember-test: ## test the frontend
-	@cd ember && yarn test:ember
+	@cd ember && pnpm test:ember
 
 .PHONY: lint
 lint: api-lint ember-lint ## Lint the API and ember
