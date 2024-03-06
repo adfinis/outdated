@@ -1,13 +1,18 @@
-FROM python:3.12-alpine AS build
+FROM python:3.12-alpine AS base
+
+RUN apk update --no-cache && apk upgrade --no-cache && apk add git shadow --no-cache && useradd -m -r -u 1001 outdated && apk del shadow && rm -rf /var/cache/apk/*
+
+ENV GIT_ASKPASS=true \
+  DJANGO_SETTINGS_MODULE=outdated.settings \
+  PYTHONUNBUFFERED=1
+
+FROM base AS build
 
 WORKDIR /app
 
 COPY . ./
 
-COPY ./manage.py /tmp/
-
 ENV PYTHONFAULTHANDLER=1 \
-    PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
     PYTHONDONTWRITEBYTECODE=1 \
     # pip:
@@ -18,62 +23,34 @@ ENV PYTHONFAULTHANDLER=1 \
     POETRY_NO_INTERACTION=1
 
 RUN pip install -U poetry
-RUN poetry config virtualenvs.create false
+
+FROM build as build-prod
+
+WORKDIR /app
+
 RUN poetry build -f wheel && mv ./dist/*.whl /tmp/
 
-#  ____  _______     __
-# |  _ \| ____\ \   / /
-# | | | |  _|  \ \ / /
-# | |_| | |___  \ V /
-# |____/|_____|  \_/
-#
-
-FROM build as dev-base
+FROM build as dev
 
 WORKDIR /app
 
-RUN apk add shadow git
-RUN useradd -m -r -u 1001 outdated
-RUN poetry install
+RUN apk update --no-cache && apk add wait4ports --no-cache
 
-FROM dev-base as dev
-
-WORKDIR /app
+RUN poetry config virtualenvs.create false && poetry install
 
 USER 1001
 
 EXPOSE 8000
 
-ENV GIT_ASKPASS=true \
-  DJANGO_SETTINGS_MODULE=outdated.settings \
-  PYTHONUNBUFFERED=1
+CMD ["sh", "-c", "wait4ports -s 15 tcp://db:5432 ; ./manage.py migrate && ./manage.py runserver 0.0.0.0:8000"]
 
-CMD ["sh", "-c", "./manage.py migrate && ./manage.py runserver 0.0.0.0:8000"]
+FROM base as prod
 
-#  ____  ____   ___  ____
-# |  _ \|  _ \ / _ \|  _ \
-# | |_) | |_) | | | | | | |
-# |  __/|  _ <| |_| | |_| |
-# |_|   |_| \_\\___/|____/
-#
+COPY --from=build-prod /tmp/*.whl /tmp/
 
-FROM python:3.12-alpine as prod-base
-
-COPY --from=build /tmp/manage.py /usr/local/bin
-
-RUN apk add shadow git && useradd -m -r -u 1001 outdated && apk del shadow && rm -rf /var/cache/apk/* /lib/apk/db /root/.cache
-
-COPY --from=build /tmp/*.whl /tmp/
-
-RUN pip install /tmp/*.whl
-
-FROM prod-base as prod
+RUN ln -s /usr/local/lib/python3.12/site-packages/django/conf/project_template/manage.py-tpl /usr/local/bin/manage.py && pip install /tmp/*.whl && rm /tmp/*.whl
 
 USER 1001
-
-ENV GIT_ASKPASS=true \
-  DJANGO_SETTINGS_MODULE=outdated.settings \
-  PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
