@@ -18,7 +18,9 @@ services:
       - KEYCLOAK_DB_PASSWORD=keycloak
 
   api:
-    build: ./api
+    build:
+      context: ./api
+      target: dev
     # necessary to retain permissions of our files when modifying them in the container (e.g. formatting)
     user: "${UID:?Set UID env variable to your user id}"
     depends_on:
@@ -29,12 +31,6 @@ services:
       - projects_data:/home/outdated/projects
     ports:
       - "8000:8000"
-    command:
-      [
-        "/bin/sh",
-        "-c",
-        "wait-for-it.sh db:5432 -- ./manage.py migrate && ./manage.py runserver 0.0.0.0:8000",
-      ]
     environment:
       - ENV=dev
       - OIDC_VERIFY_SSL=False

@@ -49,6 +49,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./api/
+          target: prod
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/api:${{ steps.semrel.outputs.version }}

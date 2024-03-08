@@ -1,38 +1,59 @@
-FROM python:3.12
+FROM python:3.12-alpine AS base
+
+RUN apk update --no-cache && apk upgrade --no-cache && apk add git shadow --no-cache && useradd -m -r -u 1001 outdated && apk del shadow && rm -rf /var/cache/apk/*
+
+ENV GIT_ASKPASS=true \
+  DJANGO_SETTINGS_MODULE=outdated.settings \
+  PYTHONUNBUFFERED=1
+
+FROM base AS build
 
 WORKDIR /app
 
-RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -P /usr/local/bin \
-    && chmod +x /usr/local/bin/wait-for-it.sh \
-    && mkdir -p /app \
-    && useradd -u 901 -r outdated --create-home \
-    && mkdir -p /home/outdated/projects \
-    # all project specific folders need to be accessible by newly created user but also for unknown users (when UID is set manually). Such users are in group root.
-    && chown -R outdated:root /home/outdated \
-    && chmod -R 770 /home/outdated \
-    && apt-get update && apt-get install -y --no-install-recommends \
-    # needed for psycopg2
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/* 
+COPY . ./
 
-# needs to be set for users with manually set UID
-ENV HOME=/home/outdated
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    PYTHONDONTWRITEBYTECODE=1 \
+    # pip:
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    # poetry:
+    POETRY_NO_INTERACTION=1
 
-# prevent git from asking for credentials on wrong urls
-ENV GIT_ASKPASS true
-ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE outdated.settings
-ENV APP_HOME=/app
+RUN pip install -U poetry
 
-COPY pyproject.toml poetry.lock $APP_HOME/
+FROM build as build-prod
 
-#TODO: add --no-dev for prod ENV
-RUN pip install -U poetry && poetry config virtualenvs.create false && poetry install
+WORKDIR /app
 
-USER outdated
+RUN poetry build -f wheel && mv ./dist/*.whl /tmp/
 
-COPY . $APP_HOME
+FROM build as dev
+
+WORKDIR /app
+
+RUN apk update --no-cache && apk add wait4ports --no-cache
+
+RUN poetry config virtualenvs.create false && poetry install
+
+USER 1001
 
 EXPOSE 8000
 
-CMD /bin/sh -c "wait-for-it.sh ${DATABASE_HOST:-db}:${DATABASE_PORT:-5432} -- ./manage.py migrate && gunicorn --bind :8000 outdated.wsgi"
+CMD ["sh", "-c", "wait4ports -s 15 tcp://db:5432 ; ./manage.py migrate && ./manage.py runserver 0.0.0.0:8000"]
+
+FROM base as prod
+
+COPY --from=build-prod /tmp/*.whl /tmp/
+
+COPY manage.py /usr/local/bin
+
+RUN pip install /tmp/*.whl && rm /tmp/*.whl
+
+USER 1001
+
+EXPOSE 8000
+
+CMD ["sh", "-c", "manage.py migrate && gunicorn --bind :8000 outdated.wsgi"]

@@ -56,6 +56,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./api/
+          target: prod
           load: true
           tags: ghcr.io/${{ github.repository_owner }}/outdated/api:latest
 
