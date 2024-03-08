@@ -48,7 +48,9 @@ FROM base as prod
 
 COPY --from=build-prod /tmp/*.whl /tmp/
 
-RUN ln -s /usr/local/lib/python3.12/site-packages/django/conf/project_template/manage.py-tpl /usr/local/bin/manage.py && pip install /tmp/*.whl && rm /tmp/*.whl
+COPY manage.py /usr/local/bin
+
+RUN pip install /tmp/*.whl && rm /tmp/*.whl
 
 USER 1001
 
