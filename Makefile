@@ -4,9 +4,9 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort -k 1,1 | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: api-bash
-api-bash: ## Shell into the API
-	@docker-compose run --rm api bash
+.PHONY: api-sh
+api-sh: ## Shell into the API
+	@docker compose run --rm api sh
 
 .PHONY: api-lint
 api-lint: ## Lint the backend
@@ -18,7 +18,7 @@ api-lint-fix: ## Lint and fix the API
 
 .PHONY: api-shell
 api-shell: ## Open django shell
-	@docker-compose exec api ./manage.py shell
+	@docker compose exec api ./manage.py shell
 
 .PHONY: api-start
 api-start: ## Start the API
