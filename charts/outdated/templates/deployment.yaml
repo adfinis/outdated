@@ -8,6 +8,8 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "outdated.selectorLabels" . | nindent 6 }}
@@ -61,14 +63,13 @@ spec:
                   {{- end }}         
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            - name: repos
+              mountPath: /home/outdated/projects
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: repos
+          persistentVolumeClaim:
+            claimName: {{ include "outdated.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
