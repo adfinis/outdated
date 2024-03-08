@@ -1,3 +1,4 @@
+---
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -18,14 +19,9 @@ updates:
     commit-message:
       prefix: chore
       include: scope
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
 
     groups:
-      linting:
-        patterns:
-          - "ruff"
-          - "black"
-
       testing:
         patterns:
           - "pytest"
@@ -35,11 +31,27 @@ updates:
 
       django:
         patterns:
-          - "django"
-          - "djangorestframework"
-          - "djangorestframework-jsonapi"
+          - "django*"
           - "mozilla-django-oidc"
           - "psycopg2-binary"
+          - "gunicorn"
+
+        exclude-patterns:
+          - "django-extensions"
+
+      python:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "pytest"
+          - "pytest-*"
+          - "pdbpp"
+          - "requests-mock"
+          - "django*"
+          - "mozilla-django-oidc"
+          - "psycopg2-binary"
+          - "ruff"
+          - "gunicorn"
 
   - package-ecosystem: docker
     directory: "/"
@@ -60,25 +72,21 @@ updates:
       time: "12:00"
       timezone: "Europe/Zurich"
     versioning-strategy: increase
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     commit-message:
       prefix: chore
       include: scope
 
     groups:
-      eslint:
+      lint:
         patterns:
           - "eslint"
           - "eslint-*"
           - "@adfinis/eslint-config"
 
-      template-lint:
-        patterns:
           - "ember-template-lint"
           - "ember-template-lint-*"
 
-      stylelint:
-        patterns:
           - "stylelint"
           - "stylelint-*"
 
@@ -107,6 +115,21 @@ updates:
           - "ember-cli"
           - "ember-data"
           - "ember-source"
+
           - "ember-template-lint"
           - "ember-template-lint-*"
           - "ember-auto-import"
+    js:
+      patterns:
+        - "*"
+      exclude-patterns:
+        - "ember-*"
+        - "@ember/*"
+        - "eslint"
+        - "eslint-*"
+        - "@adfinis/eslint-config"
+        - "stylelint"
+        - "stylelint-*"
+        - "@embroider/*"
+        - "ember-auto-import"
+        - "webpack"
