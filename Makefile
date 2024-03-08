@@ -10,7 +10,7 @@ api-sh: ## Shell into the API
 
 .PHONY: api-lint
 api-lint: ## Lint the backend
-	@docker compose run --rm api sh -c "ruff format --check . ; ruff . --show-source"
+	@docker compose run --rm api sh -c "ruff format --check . ; ruff check . --show-source"
 
 .PHONY: api-lint-fix
 api-lint-fix: ## Lint and fix the API
