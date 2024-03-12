@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 
 register(factories.DependencyFactory)
+register(factories.DependencySourceFactory)
 register(factories.VersionFactory)
 register(factories.ReleaseVersionFactory)
 register(factories.ProjectFactory)

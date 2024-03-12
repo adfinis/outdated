@@ -16,12 +16,10 @@ class Request(Protocol):  # pragma: no cover
     """Request protocol for permissions."""
 
     @property
-    def method(self) -> str:
-        ...
+    def method(self) -> str: ...
 
     @property
-    def user(self) -> None | OIDCUser:
-        ...
+    def user(self) -> None | OIDCUser: ...
 
 
 class ObjectPermissionIsHasPermission(BasePermission):

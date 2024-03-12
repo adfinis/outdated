@@ -56,20 +56,30 @@ class ProjectFactory(DjangoModelFactory):
     repo = Sequence(lambda n: "github.com/userorcompany/%s/" % n)
     repo_type = "public"
 
-    @post_generation
-    def versioned_dependencies(self, create, extracted, **kwargs):
-        if not create:
-            return  # pragma: no cover
-        if extracted:
-            for versioned_dependency in extracted:
-                self.versioned_dependencies.add(versioned_dependency)
-
     class Meta:
         model = models.Project
 
 
-class MaintainerFactory(DjangoModelFactory):
+class DependencySourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
+    path = random.choice(
+        ["/pyproject.toml", "/api/pyproject.toml", "/ember/pnpm-lock.yaml"]
+    )
+
+    @post_generation
+    def versions(self, create, extracted, **kwargs):
+        if not create:
+            return  # pragma: no cover
+        if extracted:
+            for version in extracted:
+                self.versions.add(version)
+
+    class Meta:
+        model = models.DependencySource
+
+
+class MaintainerFactory(DjangoModelFactory):
+    source = SubFactory(DependencySourceFactory)
     user = SubFactory(UserFactory)
 
     class Meta:

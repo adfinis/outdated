@@ -10,7 +10,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from outdated.outdated import tracking
-from outdated.outdated.models import Project
+from outdated.outdated.models import Project, Version
 from outdated.outdated.parser import LockfileParser
 from outdated.outdated.tracking import RepoError, Tracker
 
@@ -217,6 +217,7 @@ def test_sync(
     tracker_mock,
     exists,
     mocker,
+    dependency_source_factory,
     version_factory,
 ):
     project_path = tmp_repo_root / project.clone_path
@@ -237,15 +238,17 @@ def test_sync(
     )
 
     versions = version_factory.create_batch(5)
+
+    def side_effect() -> None:
+        dependency_source_factory(versions=versions, project=project)
+
     lockfile_parser_parser_mock = mocker.patch.object(
-        LockfileParser,
-        "parse",
-        return_value=versions,
+        LockfileParser, "parse", side_effect=side_effect
     )
 
     tracker = Tracker(project)
     assert tracker.local_path == project_path
-    assert not project.versioned_dependencies.all()
+    assert not project.sources.all()
     if exists:
         project_path.mkdir(parents=True, exist_ok=False)
 
@@ -258,13 +261,15 @@ def test_sync(
 
     tracker_fetch_mock.assert_called_once()
 
-    lockfile_parser_init_mock.assert_called_once_with([])
+    lockfile_parser_init_mock.assert_called_once_with(project, [])
 
     lockfile_parser_parser_mock.assert_called_once_with()
 
     tracker_lockfile_mock.assert_called_once()
 
-    assert set(project.versioned_dependencies.all()) == set(versions)
+    assert set(project.sources.values_list("versions", flat=True)) == {
+        v.id for v in versions
+    }
 
 
 @pytest.mark.parametrize("exists", [True, False])
@@ -395,11 +400,12 @@ def test_sync_tracks_changes(tmp_repo_root, project_factory):
     tracker.checkout()
     tracker.sync()
 
-    assert project.versioned_dependencies.count() == 2
+    versions = Version.objects.filter(
+        id__in=project.sources.values_list("versions", flat=True)
+    )
+    assert len(versions) == 2
     for requirement in POETRY_LOCK_REQUIREMENTS:
-        assert requirement in [
-            str(version) for version in project.versioned_dependencies.all()
-        ]
+        assert requirement in [str(version) for version in versions]
 
     def replace_versions(s: str | list[str]) -> str:
         if isinstance(s, list):
@@ -418,8 +424,10 @@ def test_sync_tracks_changes(tmp_repo_root, project_factory):
 
     tracker.sync()
 
-    assert project.versioned_dependencies.count() == 2
+    versions = Version.objects.filter(
+        id__in=project.sources.values_list("versions", flat=True)
+    )
+
+    assert len(versions) == 2
     for requirement in replace_versions(POETRY_LOCK_REQUIREMENTS):
-        assert requirement in [
-            str(version) for version in project.versioned_dependencies.all()
-        ]
+        assert requirement in [str(version) for version in versions]

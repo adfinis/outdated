@@ -15,7 +15,7 @@ from .tracking import Tracker
 
 class ProjectViewSet(ModelViewSet):
     queryset = models.Project.objects.annotate(
-        min_end_of_life=Min("versioned_dependencies__release_version__end_of_life")
+        min_end_of_life=Min("sources__versions__release_version__end_of_life")
     ).order_by("min_end_of_life")
 
     serializer_class = serializers.ProjectSerializer
@@ -60,6 +60,11 @@ class DependencyViewSet(ModelViewSet):
     queryset = models.Dependency.objects.all()
     serializer_class = serializers.DependencySerializer
     permission_classes = [is_readonly()]
+
+
+class DependencySourceViewSet(ModelViewSet):
+    queryset = models.DependencySource.objects.all()
+    serializer_class = serializers.DependencySourceSerializer
 
 
 class MaintainerViewset(ModelViewSet):

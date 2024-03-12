@@ -120,10 +120,14 @@ def test_version(client, version_factory):
 
 
 @pytest.mark.parametrize("defined", [True, False])
-def test_project(client, project_factory, version_factory, defined):
-    generated_project = project_factory(
-        versioned_dependencies=[version_factory()] if defined else [],
+def test_project(
+    client, project_factory, dependency_source_factory, version_factory, defined
+):
+    generated_project = project_factory()
+    dependency_source_factory(
+        versions=[version_factory()] if defined else [], project=generated_project
     )
+
     url = reverse("project-list")
     resp = client.get(url)
     assert resp.status_code == http_status.HTTP_200_OK
@@ -152,20 +156,20 @@ def test_project(client, project_factory, version_factory, defined):
     )
     if defined:
         for gen_dep_version, resp_dep_version in zip(
-            resp_detailed.json()["data"]["relationships"]["versioned-dependencies"][
-                "data"
-            ],
-            generated_project.versioned_dependencies.all(),
+            resp_detailed.json()["data"]["relationships"]["sources"]["data"],
+            generated_project.sources.all(),
         ):
             assert gen_dep_version["id"] == str(resp_dep_version.id)
     else:
-        assert not generated_project.versioned_dependencies.first()
+        assert not generated_project.sources.first().versions.first()
+        assert generated_project.sources.first().status == "UNDEFINED"
         assert generated_project.status == "UNDEFINED"
 
 
 def test_project_ordered_by_eol(
     client,
     project_factory,
+    dependency_source_factory,
     release_version_factory,
     version_factory,
 ):
@@ -179,26 +183,23 @@ def test_project_ordered_by_eol(
         release_version=release_version_factory(up_to_date=True),
     )
 
-    project_last = project_factory(
-        name="A project",
-        versioned_dependencies=[up_to_date_version],
-    )
-    project_middle = project_factory(
-        name="B project",
-        versioned_dependencies=[warning_version],
-    )
-    project_first = project_factory(
-        name="C project",
-        versioned_dependencies=[outdated_version],
-    )
+    project_up_to_date = project_factory(name="A project")
+    dependency_source_factory(versions=[up_to_date_version], project=project_up_to_date)
+    project_warning = project_factory(name="B project")
+    dependency_source_factory(versions=[warning_version], project=project_warning)
+    project_outdated = project_factory(name="C project")
+    dependency_source_factory(versions=[outdated_version], project=project_outdated)
+    project_undefined = project_factory(name="D project")
 
     url = reverse("project-list")
     resp = client.get(url)
+    assert resp.status_code == http_status.HTTP_200_OK
     json = resp.json()
 
-    assert json["data"][0]["id"] == str(project_first.pk)
-    assert json["data"][1]["id"] == str(project_middle.pk)
-    assert json["data"][2]["id"] == str(project_last.pk)
+    assert json["data"][0]["id"] == str(project_outdated.pk)
+    assert json["data"][1]["id"] == str(project_warning.pk)
+    assert json["data"][2]["id"] == str(project_up_to_date.pk)
+    assert json["data"][3]["id"] == str(project_undefined.pk)
 
 
 def test_maintainer(client, maintainer):
@@ -216,15 +217,15 @@ def test_maintainer(client, maintainer):
         == str(maintainer.user.id)
     )
     assert (
-        relationships["project"]["data"]["id"]
-        == detailed_relationships["project"]["data"]["id"]
-        == str(maintainer.project.id)
+        relationships["source"]["data"]["id"]
+        == detailed_relationships["source"]["data"]["id"]
+        == str(maintainer.source.id)
     )
     assert (
         resp.json()["data"][0]["attributes"]
         == resp_detailed.json()["data"]["attributes"]
     )
-    assert maintainer.project.maintainers.all()[0] == maintainer
+    assert maintainer.source.maintainers.all()[0] == maintainer
 
 
 @pytest.mark.django_db(transaction=True)
