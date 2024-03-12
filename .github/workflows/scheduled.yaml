@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Scan api image
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
       - uses: ./.github/workflows/trivy-scan.yaml
         with:
           image-ref: api
@@ -19,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Scan ember image
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
       - uses: ./.github/workflows/trivy-scan.yaml
         with:
           image-ref: ember
