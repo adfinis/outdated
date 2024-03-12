@@ -122,6 +122,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.ember.image.repository }}:{{ .Values.ember.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ember.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ template "outdated.fullname" . }}
           ports:
             - name: http
               containerPort: {{ .Values.ember.service.port }}
