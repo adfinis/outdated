@@ -87,9 +87,7 @@ jobs:
     if: always()
     needs: semrel
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - uses: ./.github/workflows/trivy-scan.yaml
+      - uses: ${{ github.repository }}/.github/workflows/trivy-scan.yaml@main
         with:
           image-ref: api
 
@@ -98,8 +96,6 @@ jobs:
     if: always()
     needs: semrel
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - uses: ./.github/workflows/trivy-scan.yaml
+      - uses: ${{ github.repository }}/.github/workflows/trivy-scan.yaml@main
         with:
           image-ref: ember
