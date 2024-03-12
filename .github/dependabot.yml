@@ -119,17 +119,17 @@ updates:
           - "ember-template-lint"
           - "ember-template-lint-*"
           - "ember-auto-import"
-    js:
-      patterns:
-        - "*"
-      exclude-patterns:
-        - "ember-*"
-        - "@ember/*"
-        - "eslint"
-        - "eslint-*"
-        - "@adfinis/eslint-config"
-        - "stylelint"
-        - "stylelint-*"
-        - "@embroider/*"
-        - "ember-auto-import"
-        - "webpack"
+      js:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "ember-*"
+          - "@ember/*"
+          - "eslint"
+          - "eslint-*"
+          - "@adfinis/eslint-config"
+          - "stylelint"
+          - "stylelint-*"
+          - "@embroider/*"
+          - "ember-auto-import"
+          - "webpack"
