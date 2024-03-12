@@ -16,5 +16,7 @@ RUN pnpm build
 
 FROM nginx:alpine
 
+COPY 99-configure-oidc.sh /docker-entrypoint.d/
+
 COPY --from=build /ember/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf

@@ -5,13 +5,14 @@ metadata:
   labels:
     {{- include "outdated.labels" . | nindent 4 }}
 data:
-  OIDC_OP_BASE_ENDPOINT: {{ cat .Values.oidc.host "/realms/" .Values.oidc.realm "/protocol/openid-connect" | replace " " "" | quote }}
   ALLOWED_HOSTS: {{ .Values.django.allowedHosts | quote }}
-  DEBUG: "false"
   {{- if .Values.postgresql.enabled }}
   DATABASE_HOST: "{{ template "outdated.fullname" . }}-postgresql.{{ .Release.Namespace }}"
   DATABASE_NAME: {{ .Values.postgresql.auth.database }}
   DATABASE_USER: {{ .Values.postgresql.auth.username }}
   {{- end }}
+  DEBUG: "false"
+  OIDC_OP_BASE_ENDPOINT: {{ cat .Values.oidc.host "/realms/" .Values.oidc.realm "/protocol/openid-connect" | replace " " "" | quote }}
+  OIDC_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
   OIDC_GROUPS_CLAIM: "groups"
   SECRET_KEY: {{ randAscii 20 | quote }}
