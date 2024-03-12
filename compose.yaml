@@ -39,6 +39,9 @@ services:
   ember:
     build:
       context: ./ember/
+    environment:
+      - OIDC_OP_BASE_ENDPOINT=https://outdated.local/auth/realms/outdated/protocol/openid-connect
+      - OIDC_CLIENT_ID=outdated
 
   caddy:
     image: caddy:2.6-alpine
