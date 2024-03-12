@@ -8,17 +8,13 @@ on:
 
 jobs:
   scan-api:
-    runs-on: ubuntu-latest
     name: Scan api image
-    steps:
-      - uses: adfinis/outdated/.github/workflows/trivy-scan.yaml@main
-        with:
-          image-ref: api
+    uses: ./.github/workflows/trivy-scan.yaml
+    with:
+      image-ref: api
 
   scan-ember:
-    runs-on: ubuntu-latest
     name: Scan ember image
-    steps:
-      - uses: adfinis/outdated/.github/workflows/trivy-scan.yaml@main
-        with:
-          image-ref: ember
+    uses: ./.github/workflows/trivy-scan.yaml
+    with:
+      image-ref: ember
