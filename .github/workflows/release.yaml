@@ -87,7 +87,7 @@ jobs:
     if: always()
     needs: semrel
     steps:
-      - uses: ${{ github.repository }}/.github/workflows/trivy-scan.yaml@main
+      - uses: adfinis/outdated/.github/workflows/trivy-scan.yaml@main
         with:
           image-ref: api
 
@@ -96,6 +96,6 @@ jobs:
     if: always()
     needs: semrel
     steps:
-      - uses: ${{ github.repository }}/.github/workflows/trivy-scan.yaml@main
+      - uses: adfinis/outdated/.github/workflows/trivy-scan.yaml@main
         with:
           image-ref: ember
