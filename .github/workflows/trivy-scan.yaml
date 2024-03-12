@@ -12,9 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Scan ${{ inputs.image-ref }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
