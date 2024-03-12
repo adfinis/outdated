@@ -81,3 +81,21 @@ jobs:
       - name: Push Chart
         if: steps.semrel.outputs.version != ''
         run: helm push dist/*.tgz oci://ghcr.io/${{ github.repository }}/helm
+
+  trivy-scan-api:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: semrel
+    steps:
+      - uses: ./.github/workflows/trivy-scan.yaml
+        with:
+          image-ref: api
+
+  trivy-scan-ember:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: semrel
+    steps:
+      - uses: ./.github/workflows/trivy-scan.yaml
+        with:
+          image-ref: ember

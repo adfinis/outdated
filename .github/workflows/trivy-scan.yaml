@@ -1,0 +1,26 @@
+---
+name: Trivy Scan
+
+on:
+  workflow_call:
+    inputs:
+      image-ref:
+        required: true
+        type: string
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    name: Scan ${{ inputs.image-ref }}
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository }}/${{ inputs.image-ref }}
+          format: "sarif"
+          output: "${{ inputs.image-ref }}.sarif"
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: "${{ inputs.image-ref }}.sarif"
