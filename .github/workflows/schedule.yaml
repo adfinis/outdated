@@ -1,5 +1,5 @@
 ---
-name: Run scheduled things
+name: Schedule
 
 on:
   schedule:
