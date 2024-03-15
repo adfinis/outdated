@@ -98,7 +98,7 @@
     "prettier-plugin-ember-template-tag": "^2.0.0",
     "qunit": "^2.20.1",
     "qunit-dom": "^3.0.0",
-    "sass": "^1.71.1",
+    "sass": "^1.72.0",
     "stylelint": "^16.2.1",
     "stylelint-config-standard-scss": "^13.0.0",
     "stylelint-prettier": "^5.0.0",
