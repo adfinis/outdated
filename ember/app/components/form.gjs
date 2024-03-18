@@ -50,7 +50,12 @@ export default class FormComponent extends Component {
   }
 
   <template>
-    <form class='uk-form' autocomplete='off' {{on 'submit' this.submit}}>
+    <form
+      class='uk-form'
+      autocomplete='off'
+      {{on 'submit' this.submit}}
+      ...attributes
+    >
       <fieldset class='uk-fieldset'>
         <legend class='uk-legend'>{{@name}}</legend>
         {{yield
