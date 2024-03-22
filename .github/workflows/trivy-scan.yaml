@@ -7,15 +7,55 @@ on:
       image-ref:
         required: true
         type: string
+      sign:
+        required: false
+        type: boolean
+        default: false
+
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest
     name: Scan ${{ inputs.image-ref }}
     steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.4.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/${{ inputs.image-ref }}
+          format: "json"
+          output: "${{ inputs.image-ref }}.json"
+
+      - name: Sign the image with GitHub OIDC Token using cosign
+        run: cosign sign --yes ${{ github.repository }}/${{ inputs.image-ref }}@latest
+        if: ${{ inputs.sign }}
+
+      - name: Convert trivy results to CycloneDX
+        uses: aquasecurity/trivy-action@0.18.0
+        if: ${{ inputs.sign }}
+        with:
+          image-ref: ${{ inputs.image-ref }}.json
+          scan-type: "convert"
+          format: "cyclonedx"
+          output: "${{ inputs.image-ref }}.cdx"
+
+      - name: Attach an SBOM attestation to the signed image
+        run: cosign attest --yes --type cyclonedx --predicate ${{ inputs.image-ref }}.cdx ${{ github.repository }}/${{ inputs.image-ref }}@latest
+        if: ${{ inputs.sign }}
+
+      - name: Convert results to sarif
+        uses: aquasecurity/trivy-action@0.18.0
+        with:
+          image-ref: ${{ inputs.image-ref }}.json
+          scan-type: "convert"
           format: "sarif"
           output: "${{ inputs.image-ref }}.sarif"
 
@@ -24,3 +64,14 @@ jobs:
         if: always()
         with:
           sarif_file: "${{ inputs.image-ref }}.sarif"
+
+      - name: Convert trivy results to cosign-vuln
+        uses: aquasecurity/trivy-action@0.18.0
+        with:
+          image-ref: ${{ inputs.image-ref }}
+          scan-type: "convert"
+          format: "cosign-vuln"
+          output: "${{ inputs.image-ref }}.cosign.json"
+
+      - name: Attach a security attestation to the signed image
+        run: cosign attest --yes --type vuln --predicate {{ inputs.image-ref }}.cosign.json ghcr.io/${{ github.repository }}/${{ inputs.image-ref }}
