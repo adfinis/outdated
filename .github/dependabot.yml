@@ -90,6 +90,9 @@ updates:
           - "stylelint"
           - "stylelint-*"
 
+          - "prettier"
+          - "prettier-*"
+
       ember-core:
         patterns:
           - "ember-cli"
@@ -133,3 +136,5 @@ updates:
           - "@embroider/*"
           - "ember-auto-import"
           - "webpack"
+          - "prettier"
+          - "prettier-*"
