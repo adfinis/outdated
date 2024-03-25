@@ -99,13 +99,13 @@ jobs:
 
       - name: Sign the images with GitHub OIDC Token using cosign
         run: |
-          cosign sign --yes ${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
-          cosign sign --yes ${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
+          cosign sign --yes ghcr.io/${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
+          cosign sign --yes ghcr.io/${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
 
       - name: Attach an SBOM attestation to the signed images
         run: |
-          cosign attest --yes --type cyclonedx --predicate api.cdx ${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
-          cosign attest --yes --type cyclonedx --predicate ember.cdx ${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
+          cosign attest --yes --type cyclonedx --predicate api.cdx ghcr.io/${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
+          cosign attest --yes --type cyclonedx --predicate ember.cdx ghcr.io/${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
 
       - name: Set up Helm
         if: steps.semrel.outputs.version != ''
