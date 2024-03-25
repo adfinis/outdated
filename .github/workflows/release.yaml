@@ -81,6 +81,7 @@ jobs:
             ghcr.io/${{ github.repository }}/ember:latest
 
       - name: Run Trivy vulnerability scanner on api
+        if: steps.semrel.outputs.version != ''
         uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/api
@@ -88,6 +89,7 @@ jobs:
           output: "api.cdx"
 
       - name: Run Trivy vulnerability scanner on ember
+        if: steps.semrel.outputs.version != ''
         uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/ember
@@ -95,14 +97,17 @@ jobs:
           output: "ember.cdx"
 
       - name: Install Cosign
+        if: steps.semrel.outputs.version != ''
         uses: sigstore/cosign-installer@v3.4.0
 
       - name: Sign the images with GitHub OIDC Token using cosign
+        if: steps.semrel.outputs.version != ''
         run: |
           cosign sign --yes ghcr.io/${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
           cosign sign --yes ghcr.io/${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
 
       - name: Attach an SBOM attestation to the signed images
+        if: steps.semrel.outputs.version != ''
         run: |
           cosign attest --yes --type cyclonedx --predicate api.cdx ghcr.io/${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
           cosign attest --yes --type cyclonedx --predicate ember.cdx ghcr.io/${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
