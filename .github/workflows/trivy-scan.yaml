@@ -16,6 +16,8 @@ jobs:
   trivy-scan:
 
     permissions:
+      packages: write
+      security-events: write
       id-token: write # needed for signing images with GitHub OIDC (cosign)
 
     runs-on: ubuntu-latest
