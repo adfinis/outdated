@@ -11,33 +11,24 @@ export default Factory.extend({
       this.name,
     )}`;
   },
-  withVersions: trait({
+  withMaintainers: trait({
+    afterCreate(project, server) {
+      project.update({
+        sources: [
+          server.create('dependency-source', 'withMaintainers', { project }),
+        ],
+      });
+    },
+  }),
+  withSources: trait({
     status: () =>
       faker.helpers.arrayElement(['OUTDATED', 'WARNING', 'UP-TO-DATE']),
 
     afterCreate(project, server) {
       project.update({
-        versionedDependencies: [
-          server.create('version', 'isEndOfLife'),
-          server.create('version', 'isNearlyEndOfLife'),
-          server.create('version'),
-        ],
-      });
-    },
-  }),
-  withMaintainers: trait({
-    afterCreate(project, server) {
-      project.update({
-        maintainers: [
-          server.create('maintainer', {
-            user: server.create('user'),
-            project,
-            isPrimary: true,
-          }),
-          server.create('maintainer', {
-            user: server.create('user'),
-            project,
-          }),
+        sources: [
+          server.create('dependency-source', 'withVersions', { project }),
+          server.create('dependency-source', { project }),
         ],
       });
     },

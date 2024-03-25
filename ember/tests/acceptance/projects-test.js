@@ -10,7 +10,11 @@ module('Acceptance | projects', function (hooks) {
   setupMirage(hooks);
 
   test('Project clickable and link is correct', async function (assert) {
-    const project = await this.server.create('project', 'withVersions');
+    const project = await this.server.create(
+      'project',
+      'withSources',
+      'withMaintainers',
+    );
 
     await authenticateSession();
     await visit('/');
@@ -25,8 +29,6 @@ module('Acceptance | projects', function (hooks) {
       .dom('[data-test-repo-link]')
       .hasProperty('href', `https://${project.repo}`);
 
-    assert
-      .dom('tbody>tr')
-      .exists({ count: project.versionedDependencies.models.length });
+    assert.dom('h2.table-header').exists({ count: project.sources.length });
   });
 });

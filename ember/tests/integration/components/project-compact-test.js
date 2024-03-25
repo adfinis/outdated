@@ -12,12 +12,12 @@ module('Integration | Component | project-compact', function (hooks) {
   setupIntl(hooks);
 
   test('it renders correctly', async function (assert) {
-    const project = this.server.create('project', 'withVersions');
+    const project = this.server.create('project', 'withSources');
 
     const store = this.owner.lookup('service:store');
     this.project = await store.findRecord('project', project.id, {
       include:
-        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
+        'sources,sources.versions,sources.versions.release-version,sources.versions.release-version.dependency',
     });
     await render(hbs`<ProjectCompact @project={{this.project}} />`);
     assert.dom('[data-test-dependency-compact]').exists();

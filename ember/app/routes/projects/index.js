@@ -14,7 +14,7 @@ export default class ProjectsRoute extends Route {
   model() {
     return this.store.findAll('project', {
       include:
-        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency,maintainers,maintainers.user',
+        'sources,sources.versions,sources.versions.release-version,sources.versions.release-version.dependency,sources.maintainers,sources.maintainers.user',
     });
   }
 }

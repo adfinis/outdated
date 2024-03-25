@@ -1,5 +1,4 @@
 import Model, { attr, hasMany } from '@ember-data/model';
-import { tracked } from '@glimmer/tracking';
 
 export default class ProjectModel extends Model {
   @attr name;
@@ -8,11 +7,13 @@ export default class ProjectModel extends Model {
   @attr({ defaultValue: 'public' }) repoType;
   @attr accessToken;
 
-  @hasMany('version', { inverse: null, async: false }) versionedDependencies;
-  @hasMany('maintainer', { inverse: 'project', async: false }) maintainers;
-
-  @tracked users;
-  @tracked primaryMaintainer;
+  @hasMany('dependency-source', {
+    inverse: 'project',
+    async: false,
+    as: 'project',
+    polymorphic: true,
+  })
+  sources;
 
   get repoURL() {
     return `https://${this.repo}`;
