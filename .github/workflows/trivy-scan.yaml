@@ -14,6 +14,10 @@ on:
 
 jobs:
   trivy-scan:
+
+    permissions:
+      id-token: write # needed for signing images with GitHub OIDC (cosign)
+
     runs-on: ubuntu-latest
     name: Scan ${{ inputs.image-ref }}
     steps:
