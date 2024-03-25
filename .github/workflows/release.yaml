@@ -12,6 +12,19 @@ on:
 
 jobs:
   semrel:
+    permissions:
+      actions: none
+      checks: none
+      contents: none
+      deployments: none
+      issues: none
+      packages: write
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: write # needed for signing the images with GitHub OIDC using cosign
+
     name: Semantic Release
     runs-on: ubuntu-latest
     steps:
@@ -71,45 +84,28 @@ jobs:
         uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/api
-          format: "json"
-          output: "api.json"
+          format: "cyclonedx"
+          output: "api.cdx"
 
       - name: Run Trivy vulnerability scanner on ember
         uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/ember
-          format: "json"
-          output: "ember.json"
-
-      - name: Sign the image with GitHub OIDC Token using cosign
-        run: cosign sign --yes ${{ github.repository }}/${{ inputs.image-ref }}@latest
-        if: ${{ inputs.sign }}
-
-      - name: Convert api trivy results to CycloneDX
-        uses: aquasecurity/trivy-action@0.18.0
-        with:
-          image-ref: api.json
-          scan-type: "convert"
           format: "cyclonedx"
-          # skip --vuln-type arg
-          vuln-type: ""
-          output: "api.cdx"
-
-      - name: Convert ember trivy results to CycloneDX
-        uses: aquasecurity/trivy-action@0.18.0
-        with:
-          image-ref: ember.json
-          scan-type: "convert"
-          format: "cyclonedx"
-          # skip --vuln-type arg
-          vuln-type: ""
           output: "ember.cdx"
 
-      - name: Attach an SBOM attestation to the signed api image
-        run: cosign attest --yes --type cyclonedx --predicate api.cdx ${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.4.0
 
-      - name: Attach an SBOM attestation to the signed ember image
-        run: cosign attest --yes --type cyclonedx --predicate ember.cdx ${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
+      - name: Sign the images with GitHub OIDC Token using cosign
+        run: |
+          cosign sign --yes ${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
+          cosign sign --yes ${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
+
+      - name: Attach an SBOM attestation to the signed images
+        run: |
+          cosign attest --yes --type cyclonedx --predicate api.cdx ${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
+          cosign attest --yes --type cyclonedx --predicate ember.cdx ${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
 
       - name: Set up Helm
         if: steps.semrel.outputs.version != ''

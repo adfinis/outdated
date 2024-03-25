@@ -18,6 +18,7 @@ jobs:
     name: Scan ${{ inputs.image-ref }}
     steps:
       - name: Install Cosign
+        if: ${{ inputs.attest }}
         uses: sigstore/cosign-installer@v3.4.0
 
       - name: Login to GitHub Container Registry
