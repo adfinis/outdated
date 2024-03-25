@@ -38,6 +38,7 @@ ruff = "^0.3.4"
 [tool.ruff]
 line-length = 88
 select = ["ALL"]
+output-format = "github"
 
 ignore = [
     "A003",   # flake8-builtins - Class attribute {name} is shadowing a Python builtin
@@ -90,7 +91,6 @@ ignore-fully-untyped = true
 
 [tool.ruff.flake8-unused-arguments]
 ignore-variadic-names = true
-
 
 [tool.ruff.extend-per-file-ignores]
 "factories.py" = [

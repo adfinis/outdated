@@ -18,18 +18,19 @@ jobs:
       - name: Set UID
         run: echo "UID=$(id --user)" > .env
       - name: Lint the backend code
-        run: make api-lint
+        run: docker compose run --rm api sh -c "ruff format --check . ; ruff check ."
 
   test:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set UID
+      - name: Set env vars
         run: echo "UID=$(id --user)" > .env
       - name: Build the containers
         run: docker compose up -d --build db api
       - name: Check for missing migrations
         run: docker compose exec -T api ./manage.py makemigrations --check --dry-run --no-input
-      - name: Run backend tests
-        run: make api-test
+      - name: Run tests
+        run: docker-compose run -e GITHUB_ACTIONS=true -e ENV=test -e PYTEST_RUN_PATH=/app api sh -c 'pip install pytest-github-actions-annotate-failures && pytest --no-cov-on-fail --cov -vvv -s'
+

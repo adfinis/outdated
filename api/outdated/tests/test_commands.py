@@ -46,3 +46,7 @@ def test_project_command(
         stderr
         == f"Projects with names {', '.join(nonexistant_projects)} do not exist\n"
     )
+
+
+def test_test_annotations_for_failures():
+    assert 0
