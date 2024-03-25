@@ -7,14 +7,13 @@ on:
       image-ref:
         required: true
         type: string
-      sign:
+      attest:
         required: false
         type: boolean
-        default: false
+        default: true
 
 jobs:
   trivy-scan:
-
     permissions:
       packages: write
       security-events: write
@@ -40,25 +39,6 @@ jobs:
           format: "json"
           output: "${{ inputs.image-ref }}.json"
 
-      - name: Sign the image with GitHub OIDC Token using cosign
-        run: cosign sign --yes ${{ github.repository }}/${{ inputs.image-ref }}@latest
-        if: ${{ inputs.sign }}
-
-      - name: Convert trivy results to CycloneDX
-        uses: aquasecurity/trivy-action@0.18.0
-        if: ${{ inputs.sign }}
-        with:
-          image-ref: ${{ inputs.image-ref }}.json
-          scan-type: "convert"
-          format: "cyclonedx"
-          # skip --vuln-type arg
-          vuln-type: ''
-          output: "${{ inputs.image-ref }}.cdx"
-
-      - name: Attach an SBOM attestation to the signed image
-        run: cosign attest --yes --type cyclonedx --predicate ${{ inputs.image-ref }}.cdx ${{ github.repository }}/${{ inputs.image-ref }}@latest
-        if: ${{ inputs.sign }}
-
       - name: Convert results to sarif
         uses: aquasecurity/trivy-action@0.18.0
         with:
@@ -66,7 +46,7 @@ jobs:
           scan-type: "convert"
           format: "sarif"
           # skip --vuln-type arg
-          vuln-type: ''
+          vuln-type: ""
           output: "${{ inputs.image-ref }}.sarif"
 
       - name: Upload Trivy scan results to GitHub Security tab
@@ -82,8 +62,9 @@ jobs:
           scan-type: "convert"
           format: "cosign-vuln"
           # skip --vuln-type arg
-          vuln-type: ''
+          vuln-type: ""
           output: "${{ inputs.image-ref }}.cosign.json"
 
       - name: Attach a security attestation to the signed image
+        if: ${{ inputs.attest }}
         run: cosign attest --yes --type vuln --predicate ${{ inputs.image-ref }}.cosign.json ghcr.io/${{ github.repository }}/${{ inputs.image-ref }}
