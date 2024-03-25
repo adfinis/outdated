@@ -25,8 +25,8 @@ jobs:
       repository-projects: none
       security-events: none
       statuses: none
-      # needed for signing the images with GitHub OIDC using cosign
-      id-token: ${{ inputs.attest && 'write' || 'none' }} # only allow id-token when attesting
+      # needed for `cosign attest`
+      id-token: write
 
     runs-on: ubuntu-latest
     name: Scan ${{ inputs.image-ref }}
