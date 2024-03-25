@@ -47,6 +47,7 @@ jobs:
       - name: Build and Push API Docker Image
         if: steps.semrel.outputs.version != ''
         uses: docker/build-push-action@v5
+        id: docker-api
         with:
           context: ./api/
           target: prod
@@ -58,12 +59,57 @@ jobs:
       - name: Build and Push Ember Docker Image
         if: steps.semrel.outputs.version != ''
         uses: docker/build-push-action@v5
+        id: docker-ember
         with:
           context: ./ember/
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/ember:${{ steps.semrel.outputs.version }}
             ghcr.io/${{ github.repository }}/ember:latest
+
+      - name: Run Trivy vulnerability scanner on api
+        uses: aquasecurity/trivy-action@0.18.0
+        with:
+          image-ref: ghcr.io/${{ github.repository }}/api
+          format: "json"
+          output: "api.json"
+
+      - name: Run Trivy vulnerability scanner on ember
+        uses: aquasecurity/trivy-action@0.18.0
+        with:
+          image-ref: ghcr.io/${{ github.repository }}/ember
+          format: "json"
+          output: "ember.json"
+
+      - name: Sign the image with GitHub OIDC Token using cosign
+        run: cosign sign --yes ${{ github.repository }}/${{ inputs.image-ref }}@latest
+        if: ${{ inputs.sign }}
+
+      - name: Convert api trivy results to CycloneDX
+        uses: aquasecurity/trivy-action@0.18.0
+        with:
+          image-ref: api.json
+          scan-type: "convert"
+          format: "cyclonedx"
+          # skip --vuln-type arg
+          vuln-type: ""
+          output: "api.cdx"
+
+      - name: Convert ember trivy results to CycloneDX
+        uses: aquasecurity/trivy-action@0.18.0
+        with:
+          image-ref: ember.json
+          scan-type: "convert"
+          format: "cyclonedx"
+          # skip --vuln-type arg
+          vuln-type: ""
+          output: "ember.cdx"
+
+      - name: Attach an SBOM attestation to the signed api image
+        run: cosign attest --yes --type cyclonedx --predicate api.cdx ${{ github.repository }}/api@${{ steps.docker-api.outputs.digest }}
+
+      - name: Attach an SBOM attestation to the signed ember image
+        run: cosign attest --yes --type cyclonedx --predicate ember.cdx ${{ github.repository }}/ember@${{ steps.docker-ember.outputs.digest }}
 
       - name: Set up Helm
         if: steps.semrel.outputs.version != ''
@@ -88,6 +134,7 @@ jobs:
     uses: ./.github/workflows/trivy-scan.yaml
     with:
       image-ref: api
+      attest: ${{ jobs.semrel.result == success }}
 
   trivy-scan-ember:
     if: always()
@@ -95,3 +142,4 @@ jobs:
     uses: ./.github/workflows/trivy-scan.yaml
     with:
       image-ref: ember
+      attest: ${{ jobs.semrel.result == success }}

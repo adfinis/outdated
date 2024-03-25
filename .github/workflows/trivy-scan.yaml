@@ -14,11 +14,6 @@ on:
 
 jobs:
   trivy-scan:
-    permissions:
-      packages: write
-      security-events: write
-      id-token: write # needed for signing images with GitHub OIDC (cosign)
-
     runs-on: ubuntu-latest
     name: Scan ${{ inputs.image-ref }}
     steps:
@@ -56,6 +51,7 @@ jobs:
           sarif_file: "${{ inputs.image-ref }}.sarif"
 
       - name: Convert trivy results to cosign-vuln
+        if: ${{ inputs.attest }}
         uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: ${{ inputs.image-ref }}.json
