@@ -78,7 +78,7 @@ jobs:
       - name: Convert trivy results to cosign-vuln
         uses: aquasecurity/trivy-action@0.18.0
         with:
-          image-ref: ${{ inputs.image-ref }}
+          image-ref: ${{ inputs.image-ref }}.json
           scan-type: "convert"
           format: "cosign-vuln"
           # skip --vuln-type arg
