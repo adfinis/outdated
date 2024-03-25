@@ -14,6 +14,20 @@ on:
 
 jobs:
   trivy-scan:
+    permissions:
+      actions: none
+      checks: none
+      contents: none
+      deployments: none
+      issues: none
+      packages: write
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      # needed for signing the images with GitHub OIDC using cosign
+      id-token: ${{ inputs.attest && 'write' || 'none' }} # only allow id-token when attesting
+
     runs-on: ubuntu-latest
     name: Scan ${{ inputs.image-ref }}
     steps:
