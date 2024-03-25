@@ -88,7 +88,6 @@ jobs:
     uses: ./.github/workflows/trivy-scan.yaml
     with:
       image-ref: api
-      sign: true
 
   trivy-scan-ember:
     if: always()
@@ -96,4 +95,3 @@ jobs:
     uses: ./.github/workflows/trivy-scan.yaml
     with:
       image-ref: ember
-      sign: true
