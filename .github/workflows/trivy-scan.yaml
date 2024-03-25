@@ -86,4 +86,4 @@ jobs:
           output: "${{ inputs.image-ref }}.cosign.json"
 
       - name: Attach a security attestation to the signed image
-        run: cosign attest --yes --type vuln --predicate {{ inputs.image-ref }}.cosign.json ghcr.io/${{ github.repository }}/${{ inputs.image-ref }}
+        run: cosign attest --yes --type vuln --predicate ${{ inputs.image-ref }}.cosign.json ghcr.io/${{ github.repository }}/${{ inputs.image-ref }}
