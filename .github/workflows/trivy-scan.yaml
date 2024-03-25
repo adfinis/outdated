@@ -49,6 +49,8 @@ jobs:
           image-ref: ${{ inputs.image-ref }}.json
           scan-type: "convert"
           format: "cyclonedx"
+          # skip --vuln-type arg
+          vuln-type: ''
           output: "${{ inputs.image-ref }}.cdx"
 
       - name: Attach an SBOM attestation to the signed image
@@ -61,6 +63,8 @@ jobs:
           image-ref: ${{ inputs.image-ref }}.json
           scan-type: "convert"
           format: "sarif"
+          # skip --vuln-type arg
+          vuln-type: ''
           output: "${{ inputs.image-ref }}.sarif"
 
       - name: Upload Trivy scan results to GitHub Security tab
@@ -75,6 +79,8 @@ jobs:
           image-ref: ${{ inputs.image-ref }}
           scan-type: "convert"
           format: "cosign-vuln"
+          # skip --vuln-type arg
+          vuln-type: ''
           output: "${{ inputs.image-ref }}.cosign.json"
 
       - name: Attach a security attestation to the signed image
