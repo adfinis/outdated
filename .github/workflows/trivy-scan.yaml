@@ -23,7 +23,7 @@ jobs:
       packages: write
       pull-requests: none
       repository-projects: none
-      security-events: none
+      security-events: write
       statuses: none
       # needed for `cosign attest`
       id-token: write
