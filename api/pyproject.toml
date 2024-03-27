@@ -37,8 +37,14 @@ ruff = "^0.3.4"
 
 [tool.ruff]
 line-length = 88
-select = ["ALL"]
 
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["ALL"]
 ignore = [
     "A003",   # flake8-builtins - Class attribute {name} is shadowing a Python builtin
     "ANN101", # Missing type annotation for `self` in method  - Annotating self shouldn't be necessary
@@ -85,30 +91,30 @@ ignore = [
     "ISC002",
 ]
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 ignore-fully-untyped = true
 
-[tool.ruff.flake8-unused-arguments]
+[tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
 
 
-[tool.ruff.extend-per-file-ignores]
+[tool.ruff.lint.extend-per-file-ignores]
 "factories.py" = [
     "S311",
 ] # Standard pseudo-random generators are not suitable for cryptographic purposes - factories are only used in tests 
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["outdated"]
 combine-as-imports = true
 
-[tool.ruff.flake8-pytest-style]
+[tool.ruff.lint.flake8-pytest-style]
 fixture-parentheses = false
 parametrize-names-type = "csv"
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 6
 
-[tool.ruff.pylint]
+[tool.ruff.lint.pylint]
 max-args = 10
 
 [tool.pytest.ini_options]
