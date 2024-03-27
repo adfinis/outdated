@@ -6,6 +6,8 @@ ENV GIT_ASKPASS=true \
   DJANGO_SETTINGS_MODULE=outdated.settings \
   PYTHONUNBUFFERED=1
 
+EXPOSE 8000
+
 FROM base AS build
 
 WORKDIR /app
@@ -40,8 +42,6 @@ RUN poetry config virtualenvs.create false && poetry install
 
 USER 1001
 
-EXPOSE 8000
-
 CMD ["sh", "-c", "wait4ports -s 15 tcp://db:5432 ; ./manage.py migrate && ./manage.py runserver 0.0.0.0:8000"]
 
 FROM base as prod
@@ -53,7 +53,5 @@ COPY manage.py /usr/local/bin
 RUN pip install /tmp/*.whl && rm /tmp/*.whl
 
 USER 1001
-
-EXPOSE 8000
 
 CMD ["sh", "-c", "manage.py migrate && gunicorn --bind :8000 outdated.wsgi"]
