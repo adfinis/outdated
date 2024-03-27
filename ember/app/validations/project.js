@@ -28,5 +28,4 @@ export default {
       validateFormat({ regex: /^[-_a-zA-Z\d]*$/ }),
     ],
   }),
-  maintainers: [],
 };

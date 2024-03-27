@@ -19,7 +19,7 @@ function icon(status) {
 }
 
 function version(project) {
-  return project.versionedDependencies[0];
+  return project.sources.at(0)?.versions.at(0);
 }
 
 const Dependency = <template>

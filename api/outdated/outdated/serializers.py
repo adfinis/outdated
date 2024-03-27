@@ -49,7 +49,7 @@ class VersionSerializer(serializers.ModelSerializer):
 class MaintainerSerializer(serializers.ModelSerializer):
     included_serializers = {
         "user": "outdated.user.serializers.UserSerializer",
-        "project": "outdated.outdated.serializers.ProjectSerializer",
+        "source": "outdated.outdated.serializers.DependencySourceSerializer",
     }
 
     class Meta:
@@ -57,11 +57,27 @@ class MaintainerSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class DependencySourceSerializer(serializers.ModelSerializer):
     maintainers = serializers.ResourceRelatedField(
         many=True,
         read_only=True,
-        required=False,
+    )
+
+    included_serializers = {
+        "project": "outdated.outdated.serializers.ProjectSerializer",
+        "versions": VersionSerializer,
+        "maintainers": MaintainerSerializer,
+    }
+
+    class Meta:
+        model = models.DependencySource
+        fields = "__all__"
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    sources = serializers.ResourceRelatedField(
+        many=True,
+        read_only=True,
     )
 
     access_token = serializers.CharField(
@@ -83,8 +99,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     )
 
     included_serializers = {
-        "versioned_dependencies": "outdated.outdated.serializers.VersionSerializer",
-        "maintainers": "outdated.outdated.serializers.MaintainerSerializer",
+        "sources": DependencySourceSerializer,
     }
 
     class Meta:
@@ -100,8 +115,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "repo_type",
             "access_token",
             "status",
-            "versioned_dependencies",
-            "maintainers",
+            "sources",
         )
 
     def create(self, validated_data: dict) -> models.Project:

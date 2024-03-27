@@ -11,12 +11,12 @@ module('Integration | Component | project-detailed', function (hooks) {
   setupIntl(hooks);
 
   test('it renders correctly', async function (assert) {
-    const project = await this.server.create('project', 'withVersions');
+    const project = await this.server.create('project', 'withSources');
     const store = this.owner.lookup('service:store');
 
     this.project = await store.findRecord('project', project.id, {
       include:
-        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
+        'sources,sources.versions,sources.versions.release-version,sources.versions.release-version.dependency,sources.maintainers,sources.maintainers.user',
     });
 
     await render(hbs`<ProjectDetailed @project={{this.project}} />`);
@@ -27,8 +27,8 @@ module('Integration | Component | project-detailed', function (hooks) {
       .hasProperty('href', this.project.repoURL);
 
     assert
-      .dom('tbody>tr')
-      .exists({ count: this.project.versionedDependencies.length });
+      .dom('h2.table-header')
+      .exists({ count: this.project.sources.length });
 
     this.project.versionedDependencies = [];
     await settled();

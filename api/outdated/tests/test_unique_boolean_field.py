@@ -6,7 +6,7 @@ def test_unique_boolean_field(db, maintainer_factory):
     assert Maintainer.objects.count() == 1
     assert maintainer.is_primary
 
-    other_maintainer = maintainer_factory(project=maintainer.project)
+    other_maintainer = maintainer_factory(source=maintainer.source)
 
     assert Maintainer.objects.count() == 2
     assert not other_maintainer.is_primary

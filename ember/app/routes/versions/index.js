@@ -7,7 +7,7 @@ export default class DependencyIndexRoute extends Route {
   async model() {
     await this.store.findAll('project', {
       include:
-        'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
+        'sources,sources.versions,sources.versions.release-version,sources.versions.release-version.dependency',
     });
     return await this.store.peekAll('version');
   }

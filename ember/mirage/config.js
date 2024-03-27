@@ -40,8 +40,9 @@ function routes() {
   this.passthrough('https://outdated.local/auth/**');
 
   this.namespace = '/api';
-  this.resource('maintainers');
   this.resource('users');
+  this.resource('dependency-sources');
+  this.resource('maintainers');
   this.resource('projects');
   this.resource('versions');
   this.resource('release-versions');

@@ -24,7 +24,7 @@ export default class ProjectDetailedComponent extends Component {
       const project = await this.fetch.fetch(
         `/api/projects/${this.args.project.id}/sync?${new URLSearchParams({
           include:
-            'versionedDependencies,versionedDependencies.releaseVersion,versionedDependencies.releaseVersion.dependency',
+            'sources,sources.versions,sources.versions.release-version,sources.versions.release-version.dependency,sources.maintainers,sources.maintainers.user',
         })}`,
         {
           method: 'POST',
@@ -60,8 +60,8 @@ export default class ProjectDetailedComponent extends Component {
     }
   });
 
-  get dependencyData() {
-    return this.args.project.versionedDependencies.map((version) => ({
+  sourceData(source) {
+    return source.versions.map((version) => ({
       component: <template>
         <tr class='{{statusToClass version.status}}'>{{yield}}</tr>
       </template>,
@@ -76,21 +76,24 @@ export default class ProjectDetailedComponent extends Component {
     }));
   }
 
-  get maintainerData() {
-    return this.args.project.maintainers.map((m) => ({
-      values: {
-        username: <template>
-          {{#if m.isPrimary}}<UkIcon @icon='star' @ratio={{0.5}} />
-          {{/if}}{{m.user.username}}
-        </template>,
-        email: <template>
-          <a
-            class='uk-link-text'
-            href='mailto:{{m.user.email}}'
-          >{{m.user.email}}</a>
-        </template>,
-      },
-    }));
+  maintainerData(source) {
+    return source.maintainers
+      .slice()
+      .sort((a, b) => (a.isPrimary - b.isPrimary) * -1)
+      .map((m) => ({
+        values: {
+          username: <template>
+            {{#if m.isPrimary}}<UkIcon @icon='star' @ratio={{0.5}} />
+            {{/if}}{{m.user.username}}
+          </template>,
+          email: <template>
+            <a
+              class='uk-link-text'
+              href='mailto:{{m.user.email}}'
+            >{{m.user.email}}</a>
+          </template>,
+        },
+      }));
   }
 
   <template>
@@ -109,19 +112,21 @@ export default class ProjectDetailedComponent extends Component {
       </div>
 
       <hr class='seperator' />
-      <Table @data={{this.maintainerData}} @title='Maintainers' as |t|>
-        <t.head />
-        <t.body />
-      </Table>
-      <Table
-        @data={{this.dependencyData}}
-        @fallback='No dependencies yet'
-        @title='Dependencies'
-        as |t|
-      >
-        <t.head />
-        <t.body />
-      </Table>
+      {{#each @project.sources as |source|}}
+        <Table
+          @data={{this.sourceData source}}
+          @fallback='No dependencies yet'
+          @title={{source.path}}
+          as |t|
+        >
+          <t.head />
+          <t.body />
+        </Table>
+        <Table @data={{this.maintainerData source}} as |t|>
+          <t.head />
+          <t.body />
+        </Table>
+      {{/each}}
       <UkButton
         @label='Sync'
         @loading={{this.syncProject.isRunning}}

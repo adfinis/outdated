@@ -30,26 +30,8 @@
     autocomplete="off"
     @hidden={{(eq this.project.repoType "public")}}
   />
-
-  <f.input
-    @name="users"
-    @type="select"
-    @label="Maintainers"
-    @multiple={{true}}
-    @value={{this.project.users}}
-    @options={{this.users}}
-    @searchField="searchField"
-    @visibleField="fullName"
-  />
-  {{#if (gt this.project.users.length 1)}}
-    <f.input
-      @name="primaryMaintainer"
-      @type="select"
-      @options={{this.project.users}}
-      @value={{this.primaryMaintainer}}
-      @searchField="searchField"
-      @visibleField="fullName"
-    />
-  {{/if}}
+  {{#each @project.sources as |source|}}
+    <SourceForm @source={{source}} />
+  {{/each}}
   <f.button @loading={{this.saveProject.isRunning}} />
 </Form>
