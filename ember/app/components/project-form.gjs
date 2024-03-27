@@ -1,8 +1,14 @@
+import { concat } from '@ember/helper';
 import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import { dropTask } from 'ember-concurrency';
+import perform from 'ember-concurrency/helpers/perform';
 import { scheduleTask } from 'ember-lifeline';
+import { pageTitle } from 'ember-page-title';
+import { eq, gt } from 'ember-truth-helpers';
 import { tracked } from 'tracked-built-ins';
+
+import Form from './form';
 
 import { emptyChangeset } from 'outdated/utils';
 import ProjectValidations from 'outdated/validations/project';
@@ -88,4 +94,61 @@ export default class ProjectFormComponent extends Component {
   get repoTypes() {
     return ['public', 'access-token'];
   }
+  <template>
+    {{pageTitle @project.name}}
+
+    <Form
+      @name={{if
+        @project
+        (concat 'Edit project ' @project.name)
+        'Track new Project'
+      }}
+      @model={{this.project}}
+      @onSubmit={{perform this.saveProject}}
+      as |f|
+    >
+      <f.input @name='name' />
+      <div class='uk-margin'>
+        <label class='uk-form-label'>Repo</label>
+        <div class='repo-inputs'>
+          <f.input @name='repo' @raw={{true}} />
+          <f.input
+            @name='repoType'
+            @type='select'
+            @options={{this.repoTypes}}
+            @raw={{true}}
+          />
+        </div>
+      </div>
+
+      <f.input
+        @name='accessToken'
+        type='password'
+        autocomplete='off'
+        @hidden={{(eq this.project.repoType 'public')}}
+      />
+
+      <f.input
+        @name='users'
+        @type='select'
+        @label='Maintainers'
+        @multiple={{true}}
+        @value={{this.project.users}}
+        @options={{this.users}}
+        @searchField='searchField'
+        @visibleField='fullName'
+      />
+      {{#if (gt this.project.users.length 1)}}
+        <f.input
+          @name='primaryMaintainer'
+          @type='select'
+          @options={{this.project.users}}
+          @value={{this.primaryMaintainer}}
+          @searchField='searchField'
+          @visibleField='fullName'
+        />
+      {{/if}}
+      <f.button @loading={{this.saveProject.isRunning}} />
+    </Form>
+  </template>
 }
