@@ -10,8 +10,6 @@ FROM base AS build
 
 WORKDIR /app
 
-COPY . ./
-
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -23,6 +21,8 @@ ENV PYTHONFAULTHANDLER=1 \
     POETRY_NO_INTERACTION=1
 
 RUN pip install -U poetry
+
+COPY . ./
 
 FROM build as build-prod
 
