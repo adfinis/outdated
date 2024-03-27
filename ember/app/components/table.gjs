@@ -5,7 +5,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import formatDate from 'ember-intl/helpers/format-date';
 import { or } from 'ember-truth-helpers';
-import { startCase } from 'lodash';
+import startCase from 'lodash/startCase';
 
 const TableRow = <template>
   <tr>{{yield}}</tr>
