@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { uniq } from 'lodash';
+import uniq from 'lodash/uniq';
 
 export default class VersionIndexController extends Controller {
   queryParams = ['status', 'dependency', 'version'];

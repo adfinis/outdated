@@ -5,7 +5,7 @@ import Component from '@glimmer/component';
 import optional from 'ember-composable-helpers/helpers/optional';
 import PowerSelect from 'ember-power-select/components/power-select';
 import { or } from 'ember-truth-helpers';
-import { startCase } from 'lodash';
+import startCase from 'lodash/startCase';
 
 const Select = <template>
   <PowerSelect

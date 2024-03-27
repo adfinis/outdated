@@ -3,7 +3,7 @@ import { service } from '@ember/service';
 import Component from '@glimmer/component';
 import formatDate from 'ember-intl/helpers/format-date';
 import UkIcon from 'ember-uikit/components/uk-icon';
-import { startCase } from 'lodash';
+import startCase from 'lodash/startCase';
 
 import {
   ProjectCell,
