@@ -43,14 +43,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.18.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/${{ inputs.image-ref }}
           format: "json"
           output: "${{ inputs.image-ref }}.json"
 
       - name: Convert results to sarif
-        uses: aquasecurity/trivy-action@0.18.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
           image-ref: ${{ inputs.image-ref }}.json
           scan-type: "convert"
@@ -67,7 +67,7 @@ jobs:
 
       - name: Convert trivy results to cosign-vuln
         if: ${{ inputs.attest }}
-        uses: aquasecurity/trivy-action@0.18.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
           image-ref: ${{ inputs.image-ref }}.json
           scan-type: "convert"

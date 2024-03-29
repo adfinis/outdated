@@ -82,7 +82,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner on api
         if: steps.semrel.outputs.version != ''
-        uses: aquasecurity/trivy-action@0.18.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/api
           format: "cyclonedx"
@@ -90,7 +90,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner on ember
         if: steps.semrel.outputs.version != ''
-        uses: aquasecurity/trivy-action@0.18.0
+        uses: aquasecurity/trivy-action@0.19.0
         with:
           image-ref: ghcr.io/${{ github.repository }}/ember
           format: "cyclonedx"
