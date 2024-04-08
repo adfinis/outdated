@@ -76,6 +76,9 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      - dependency-name: eslint
+        versions: ["^9.0.0"]
 
     groups:
       lint:
