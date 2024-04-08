@@ -96,13 +96,13 @@ export default class FormInputComponent extends Component {
         @afterOptionsComponent={{@afterOptionsComponent}}
         @optionsComponent={{@optionsComponent}}
         @searchMessage={{@searchMessage}}
-        @searchable={{(or
+        @searchable={{or
           @searchable
           @searchMessage
           @searchField
           @noMatchesMessage
           @noMatchesMessageComponent
-        )}}
+        }}
         @noMatchesMessage={{@noMatchesMessage}}
         @noMatchesMessageComponent={{@noMatchesMessageComponent}}
         @errorComponent={{if

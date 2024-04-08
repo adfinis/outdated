@@ -125,7 +125,7 @@ export default class ProjectFormComponent extends Component {
         @name='accessToken'
         type='password'
         autocomplete='off'
-        @hidden={{(eq this.project.repoType 'public')}}
+        @hidden={{eq this.project.repoType 'public'}}
       />
 
       <f.input

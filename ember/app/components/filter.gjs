@@ -1,4 +1,3 @@
-import { Input } from '@ember/component';
 import { fn, get } from '@ember/helper';
 import { on } from '@ember/modifier';
 import Component from '@glimmer/component';
@@ -22,10 +21,10 @@ const Select = <template>
   </PowerSelect>
 </template>;
 const Text = <template>
-  <Input
+  <input
     class='uk-input'
     placeholder={{@placeholder}}
-    @value={{@value}}
+    value={{@value}}
     {{on 'change' (optional @onChange)}}
   />
 </template>;
