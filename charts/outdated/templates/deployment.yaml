@@ -66,6 +66,14 @@ spec:
           volumeMounts:
             - name: repos
               mountPath: /home/outdated/projects
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.api.service.port }}
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.api.service.port }}
       volumes:
         - name: repos
           persistentVolumeClaim:
@@ -131,6 +139,14 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: {{ .Values.ember.service.port }}
+          livenessProbe:
+            httpGet:
+              path: /index.html
+              port: {{ .Values.ember.service.port }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
