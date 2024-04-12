@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework_json_api",
     "outdated.outdated",
     "outdated.user",
+    "watchman",
 ]
 
 if DEBUG:
@@ -202,3 +203,13 @@ SUPPORTED_LOCK_FILES = [*NPM_FILES, *PYPI_FILES]
 
 # Variables used only in testing
 VALIDATE_REMOTES = True
+
+# health checks
+WATCHMAN_CHECKS = env.list(
+    "WATCHMAN_CHECKS",
+    default=(
+        "watchman.checks.caches",
+        "watchman.checks.databases",
+    ),
+)
+WATCHMAN_ERROR_CODE = 503
