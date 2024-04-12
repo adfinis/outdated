@@ -32,7 +32,7 @@ pdbpp = "^0.10.3"
 requests-mock = "^1.12.1"
 django-extensions = "^3.2.3"
 ipdb = "^0.13.13"
-ruff = "^0.3.5"
+ruff = "^0.3.7"
 
 
 [tool.ruff]
