@@ -97,14 +97,14 @@
     "prettier": "^3.2.5",
     "prettier-plugin-ember-template-tag": "^2.0.2",
     "qunit": "^2.20.1",
-    "qunit-dom": "^3.0.0",
-    "sass": "^1.74.1",
+    "qunit-dom": "^3.1.1",
+    "sass": "^1.75.0",
     "stylelint": "^16.3.1",
     "stylelint-config-standard-scss": "^13.1.0",
     "stylelint-prettier": "^5.0.0",
     "stylelint-scss": "^6.2.1",
     "tracked-built-ins": "^3.1.1",
-    "typescript": "^5.4.4",
+    "typescript": "^5.4.5",
     "webpack": "^5.91.0"
   },
   "engines": {
