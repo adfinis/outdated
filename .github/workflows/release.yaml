@@ -56,6 +56,45 @@ jobs:
       - name: Set up Docker Buildx
         if: steps.semrel.outputs.version != ''
         uses: docker/setup-buildx-action@v3
+      - name: Docker meta for API
+        id: api-meta
+        if: steps.semrel.outputs.version != ''
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/api
+          flavor: |
+            latest=auto
+          tags: |
+            type=semver,pattern={{version}},value=${{ steps.semrel.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.semrel.outputs.version }}
+            type=semver,pattern={{major}},value=${{ steps.semrel.outputs.version }}
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+
+      - name: Docker meta for ember
+        id: ember-meta
+        if: steps.semrel.outputs.version != ''
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/ember
+          flavor: |
+            latest=auto
+          tags: |
+            type=semver,pattern={{version}},value=${{ steps.semrel.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.semrel.outputs.version }}
+            type=semver,pattern={{major}},value=${{ steps.semrel.outputs.version }}
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
 
       - name: Build and Push API Docker Image
         if: steps.semrel.outputs.version != ''
@@ -63,11 +102,10 @@ jobs:
         id: docker-api
         with:
           context: ./api/
-          target: prod
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/api:${{ steps.semrel.outputs.version }}
-            ghcr.io/${{ github.repository }}/api:latest
+          tags: ${{ steps.api-meta.outputs.tags }}
+          labels: |
+            ${{ steps.api-meta.outputs.labels }}
 
       - name: Build and Push Ember Docker Image
         if: steps.semrel.outputs.version != ''
@@ -76,9 +114,9 @@ jobs:
         with:
           context: ./ember/
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/ember:${{ steps.semrel.outputs.version }}
-            ghcr.io/${{ github.repository }}/ember:latest
+          tags: ${{ steps.ember-meta.outputs.tags }}
+          labels: |
+            ${{ steps.ember-meta.outputs.labels }}
 
       - name: Sign api image and attach SBOM attestation
         if: steps.semrel.outputs.version != ''
