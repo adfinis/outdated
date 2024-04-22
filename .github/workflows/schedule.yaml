@@ -9,12 +9,46 @@ on:
 jobs:
   scan-api:
     name: Scan api image
-    uses: ./.github/workflows/trivy-scan.yaml
-    with:
-      image-ref: api
+    runs-on: ubuntu-latest
+    permissions:
+      actions: none
+      checks: none
+      contents: none
+      deployments: none
+      issues: none
+      packages: write
+      pull-requests: none
+      repository-projects: none
+      security-events: write
+      statuses: none
+      # needed for `cosign attest`
+      id-token: write
+    steps:
+      - uses: adfinis/container-scanning-action@v0.2.2
+        with:
+          image-ref: ghcr.io/${{ github.repository }}/ember
+          token: ${{ secrets.GITHUB_TOKEN }}
+          attest: true
 
   scan-ember:
     name: Scan ember image
-    uses: ./.github/workflows/trivy-scan.yaml
-    with:
-      image-ref: ember
+    runs-on: ubuntu-latest
+    permissions:
+      actions: none
+      checks: none
+      contents: none
+      deployments: none
+      issues: none
+      packages: write
+      pull-requests: none
+      repository-projects: none
+      security-events: write
+      statuses: none
+      # needed for `cosign attest`
+      id-token: write
+    steps:
+      - uses: adfinis/container-scanning-action@v0.2.2
+        with:
+          image-ref: ghcr.io/${{ github.repository }}/ember
+          token: ${{ secrets.GITHUB_TOKEN }}
+          attest: true
