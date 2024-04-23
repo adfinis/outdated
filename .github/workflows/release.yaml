@@ -191,7 +191,7 @@ jobs:
           attest: true
 
   chart:
-    name: Release frontend
+    name: Release Helm Chart
     runs-on: ubuntu-latest
     needs:
       - api
@@ -218,6 +218,14 @@ jobs:
         if: needs.semrel.outputs.version != ''
         run: |
           sed -r 's/"(0.0.0|latest)"/"${{ needs.semrel.outputs.version }}"/g' -i ./charts/outdated/Chart.yaml
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        if: needs.semrel.outputs.version != ''
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Helm
         if: needs.semrel.outputs.version != ''
