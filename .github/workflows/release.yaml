@@ -5,13 +5,40 @@ on:
   push:
     branches:
       - main
-  workflow_call:
-    secrets:
-      ADFINISBOT_PAT:
-        required: true
 
 jobs:
   semrel:
+    permissions:
+      actions: none
+      checks: none
+      contents: none
+      deployments: none
+      issues: none
+      packages: none
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: none
+
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semrel.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Semantic Release
+        uses: go-semantic-release/action@v1
+        id: semrel
+        with:
+          github-token: ${{ secrets.ADFINISBOT_PAT }}
+          allow-initial-development-versions: true
+  api:
+    name: Release API
+    runs-on: ubuntu-latest
+    needs: semrel
     permissions:
       actions: none
       checks: none
@@ -25,71 +52,41 @@ jobs:
       statuses: none
       id-token: write # needed for signing the images with GitHub OIDC using cosign
 
-    name: Semantic Release
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.ADFINISBOT_PAT }}
 
-      - name: Semantic Release
-        uses: go-semantic-release/action@v1
-        id: semrel
-        with:
-          github-token: ${{ secrets.ADFINISBOT_PAT }}
-          allow-initial-development-versions: true
-
-      - name: Adjust Versions
-        if: steps.semrel.outputs.version != ''
+      - name: Adjust Version
+        if: needs.semrel.outputs.version != ''
         run: |
-          sed -r 's/"(0.0.0|latest)"/"${{ steps.semrel.outputs.version }}"/g' -i ./ember/package.json ./api/pyproject.toml ./charts/outdated/Chart.yaml
+          sed 's/"0.0.0"/"${{ needs.semrel.outputs.version }}"/g' -i ./api/pyproject.toml
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
-        if: steps.semrel.outputs.version != ''
+        if: needs.semrel.outputs.version != ''
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Docker Buildx
-        if: steps.semrel.outputs.version != ''
+        if: needs.semrel.outputs.version != ''
         uses: docker/setup-buildx-action@v3
-      - name: Docker meta for API
-        id: api-meta
-        if: steps.semrel.outputs.version != ''
+
+      - name: Docker meta
+        id: meta
+        if: needs.semrel.outputs.version != ''
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}/api
           flavor: |
             latest=auto
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.semrel.outputs.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.semrel.outputs.version }}
-            type=semver,pattern={{major}},value=${{ steps.semrel.outputs.version }}
+            type=semver,pattern={{version}},value=${{ needs.semrel.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.semrel.outputs.version }}
+            type=semver,pattern={{major}},value=${{ needs.semrel.outputs.version }}
           labels: |
-            org.opencontainers.image.title=${{ github.event.repository.name }}
-            org.opencontainers.image.description=${{ github.event.repository.description }}
-            org.opencontainers.image.url=${{ github.event.repository.html_url }}
-            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
-
-      - name: Docker meta for ember
-        id: ember-meta
-        if: steps.semrel.outputs.version != ''
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}/ember
-          flavor: |
-            latest=auto
-          tags: |
-            type=semver,pattern={{version}},value=${{ steps.semrel.outputs.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.semrel.outputs.version }}
-            type=semver,pattern={{major}},value=${{ steps.semrel.outputs.version }}
-          labels: |
-            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.title=api
             org.opencontainers.image.description=${{ github.event.repository.description }}
             org.opencontainers.image.url=${{ github.event.repository.html_url }}
             org.opencontainers.image.source=${{ github.event.repository.clone_url }}
@@ -97,58 +94,144 @@ jobs:
             org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
 
       - name: Build and Push API Docker Image
-        if: steps.semrel.outputs.version != ''
+        if: needs.semrel.outputs.version != ''
         uses: docker/build-push-action@v5
-        id: docker-api
+        id: docker
         with:
           context: ./api/
           push: true
-          tags: ${{ steps.api-meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: |
-            ${{ steps.api-meta.outputs.labels }}
-
-      - name: Build and Push Ember Docker Image
-        if: steps.semrel.outputs.version != ''
-        uses: docker/build-push-action@v5
-        id: docker-ember
-        with:
-          context: ./ember/
-          push: true
-          tags: ${{ steps.ember-meta.outputs.tags }}
-          labels: |
-            ${{ steps.ember-meta.outputs.labels }}
+            ${{ steps.meta.outputs.labels }}
 
       - name: Sign api image and attach SBOM attestation
-        if: steps.semrel.outputs.version != ''
+        if: needs.semrel.outputs.version != ''
         uses: adfinis/container-scanning-action@v0.2.3
         with:
           image-ref: ghcr.io/${{ github.repository }}/api
           token: ${{ secrets.GITHUB_TOKEN }}
-          digest: ${{ steps.docker-api.outputs.digest }}
+          digest: ${{ steps.docker.outputs.digest }}
           attest: true
+  ember:
+    name: Release frontend
+    runs-on: ubuntu-latest
+    needs: semrel
+    permissions:
+      actions: none
+      checks: none
+      contents: none
+      deployments: none
+      issues: none
+      packages: write
+      pull-requests: none
+      repository-projects: none
+      security-events: write
+      statuses: none
+      id-token: write # needed for signing the images with GitHub OIDC using cosign
 
-      - name: Sign ember image and attach SBOM attestation
-        if: steps.semrel.outputs.version != ''
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Adjust Version
+        if: needs.semrel.outputs.version != ''
+        run: |
+          sed 's/"0.0.0"/"${{ needs.semrel.outputs.version }}"/g' -i ./ember/package.json
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        if: needs.semrel.outputs.version != ''
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        if: needs.semrel.outputs.version != ''
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        if: needs.semrel.outputs.version != ''
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/ember
+          flavor: |
+            latest=auto
+          tags: |
+            type=semver,pattern={{version}},value=${{ needs.semrel.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.semrel.outputs.version }}
+            type=semver,pattern={{major}},value=${{ needs.semrel.outputs.version }}
+          labels: |
+            org.opencontainers.image.title=ember
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+
+      - name: Build and Push
+        if: needs.semrel.outputs.version != ''
+        uses: docker/build-push-action@v5
+        id: docker
+        with:
+          context: ./ember/
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+
+      - name: Sign image and attach SBOM attestation
+        if: needs.semrel.outputs.version != ''
         uses: adfinis/container-scanning-action@v0.2.3
         with:
           image-ref: ghcr.io/${{ github.repository }}/ember
           token: ${{ secrets.GITHUB_TOKEN }}
-          digest: ${{ steps.docker-ember.outputs.digest }}
+          digest: ${{ steps.docker.outputs.digest }}
           attest: true
 
+  chart:
+    name: Release frontend
+    runs-on: ubuntu-latest
+    needs:
+      - api
+      - ember
+      - semrel
+    permissions:
+      actions: none
+      checks: none
+      contents: none
+      deployments: none
+      issues: none
+      packages: write
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: none
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Adjust Version
+        if: needs.semrel.outputs.version != ''
+        run: |
+          sed -r 's/"(0.0.0|latest)"/"${{ needs.semrel.outputs.version }}"/g' -i ./charts/outdated/Chart.yaml
+
       - name: Set up Helm
-        if: steps.semrel.outputs.version != ''
+        if: needs.semrel.outputs.version != ''
         uses: azure/setup-helm@v3.5
         with:
           version: v3.14.0
 
       - name: Package Chart
-        if: steps.semrel.outputs.version != ''
+        if: needs.semrel.outputs.version != ''
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build charts/outdated
           helm package --destination=dist charts/outdated
 
       - name: Push Chart
-        if: steps.semrel.outputs.version != ''
+        if: needs.semrel.outputs.version != ''
         run: helm push dist/*.tgz oci://ghcr.io/${{ github.repository }}/helm
