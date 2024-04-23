@@ -120,7 +120,7 @@ jobs:
 
       - name: Sign api image and attach SBOM attestation
         if: steps.semrel.outputs.version != ''
-        uses: adfinis/container-scanning-action@v0.2.2
+        uses: adfinis/container-scanning-action@v0.2.3
         with:
           image-ref: ghcr.io/${{ github.repository }}/api
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -129,7 +129,7 @@ jobs:
 
       - name: Sign ember image and attach SBOM attestation
         if: steps.semrel.outputs.version != ''
-        uses: adfinis/container-scanning-action@v0.2.2
+        uses: adfinis/container-scanning-action@v0.2.3
         with:
           image-ref: ghcr.io/${{ github.repository }}/ember
           token: ${{ secrets.GITHUB_TOKEN }}
