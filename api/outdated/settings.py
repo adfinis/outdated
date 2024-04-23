@@ -210,6 +210,7 @@ WATCHMAN_CHECKS = env.list(
     default=(
         "watchman.checks.caches",
         "watchman.checks.databases",
+        "outdated.checks.oidc",
     ),
 )
 WATCHMAN_ERROR_CODE = 503
