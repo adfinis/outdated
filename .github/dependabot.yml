@@ -4,16 +4,14 @@ updates:
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "friday"
+      interval: daily
       time: "12:00"
       timezone: "Europe/Zurich"
 
   - package-ecosystem: pip
     directory: "/api"
     schedule:
-      interval: weekly
-      day: friday
+      interval: daily
       time: "12:00"
       timezone: "Europe/Zurich"
     commit-message:
@@ -56,8 +54,7 @@ updates:
   - package-ecosystem: docker
     directory: "/api"
     schedule:
-      interval: weekly
-      day: friday
+      interval: daily
       time: "12:00"
       timezone: "Europe/Zurich"
     commit-message:
@@ -67,8 +64,7 @@ updates:
   - package-ecosystem: docker
     directory: "/ember"
     schedule:
-      interval: weekly
-      day: friday
+      interval: daily
       time: "12:00"
       timezone: "Europe/Zurich"
     commit-message:
@@ -78,8 +74,7 @@ updates:
   - package-ecosystem: npm
     directory: "/ember"
     schedule:
-      interval: weekly
-      day: friday
+      interval: daily
       time: "12:00"
       timezone: "Europe/Zurich"
     versioning-strategy: increase
