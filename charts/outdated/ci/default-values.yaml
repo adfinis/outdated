@@ -5,3 +5,7 @@ postgresql:
     password: outdated
 ingress:
   enabled: true
+django:
+  watchmanChecks:
+    - watchman.checks.caches
+    - watchman.checks.databases
