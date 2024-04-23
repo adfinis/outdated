@@ -15,4 +15,7 @@ data:
   OIDC_OP_BASE_ENDPOINT: {{ cat .Values.oidc.host "/realms/" .Values.oidc.realm "/protocol/openid-connect" | replace " " "" | quote }}
   OIDC_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
   OIDC_GROUPS_CLAIM: "groups"
+  {{- if .Values.django.watchmanChecks }}
+  WATCHMAN_CHECKS : {{ .Values.django.watchmanChecks | join "," | quote }}
+  {{- end}}
   SECRET_KEY: {{ randAscii 20 | quote }}

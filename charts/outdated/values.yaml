@@ -30,6 +30,7 @@ ember:
 
 django:
   allowedHosts: "*"
+  watchmanChecks: ~
   debug: "False"
 
 oidc:
