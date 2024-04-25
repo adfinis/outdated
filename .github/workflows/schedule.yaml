@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: adfinis/container-scanning-action@v0.2.3
         with:
-          image-ref: ghcr.io/${{ github.repository }}/ember
+          image-ref: ghcr.io/${{ github.repository }}/api
           token: ${{ secrets.GITHUB_TOKEN }}
           attest: true
 
