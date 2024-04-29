@@ -13,7 +13,7 @@ PROVIDERS = ["PIP", "NPM"]
 
 
 class DependencyFactory(DjangoModelFactory):
-    name = Sequence(lambda n: "ember-%s" % n)
+    name = Sequence(lambda n: f"ember-{n}")
     provider = random.choice(PROVIDERS)
 
     class Meta:
@@ -53,7 +53,7 @@ class VersionFactory(DjangoModelFactory):
 
 class ProjectFactory(DjangoModelFactory):
     name = Faker("uuid4")
-    repo = Sequence(lambda n: "github.com/userorcompany/%s/" % n)
+    repo = Sequence(lambda n: f"github.com/userorcompany/{n}/")
     repo_type = "public"
 
     @post_generation
