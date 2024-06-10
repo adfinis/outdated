@@ -24,7 +24,7 @@ jobs:
       # needed for `cosign attest`
       id-token: write
     steps:
-      - uses: adfinis/container-scanning-action@v0.2.6
+      - uses: adfinis/container-scanning-action@v0.2.8
         with:
           image-ref: ghcr.io/${{ github.repository }}/api
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,7 +47,7 @@ jobs:
       # needed for `cosign attest`
       id-token: write
     steps:
-      - uses: adfinis/container-scanning-action@v0.2.6
+      - uses: adfinis/container-scanning-action@v0.2.8
         with:
           image-ref: ghcr.io/${{ github.repository }}/ember
           token: ${{ secrets.GITHUB_TOKEN }}
