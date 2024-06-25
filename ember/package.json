@@ -35,9 +35,9 @@
     "@ember/optional-features": "^2.1.0",
     "@ember/string": "^3.1.1",
     "@ember/test-helpers": "^3.3.0",
-    "@embroider/compat": "^3.5.0",
-    "@embroider/core": "^3.4.9",
-    "@embroider/webpack": "^4.0.0",
+    "@embroider/compat": "^3.5.4",
+    "@embroider/core": "^3.4.13",
+    "@embroider/webpack": "^4.0.3",
     "@faker-js/faker": "^8.4.1",
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
@@ -45,7 +45,7 @@
     "broccoli-asset-rev": "^3.0.0",
     "brotli-webpack-plugin": "^1.1.0",
     "concurrently": "^8.2.2",
-    "ember-auto-import": "^2.7.2",
+    "ember-auto-import": "^2.7.4",
     "ember-basic-dropdown": "^8.1.0",
     "ember-changeset": "^4.1.2",
     "ember-changeset-validations": "^4.1.1",
@@ -105,7 +105,7 @@
     "stylelint-scss": "^6.3.0",
     "tracked-built-ins": "^3.1.1",
     "typescript": "^5.4.5",
-    "webpack": "^5.91.0"
+    "webpack": "^5.92.1"
   },
   "engines": {
     "node": ">= 18"
