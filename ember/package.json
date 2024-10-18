@@ -74,7 +74,7 @@
     "ember-qunit": "^8.0.2",
     "ember-resolver": "^11.0.1",
     "ember-simple-auth": "^6.0.0",
-    "ember-simple-auth-oidc": "^6.0.1",
+    "ember-simple-auth-oidc": "^7.0.3",
     "ember-source": "^5.9.0",
     "ember-template-imports": "^4.1.1",
     "ember-template-lint": "^6.0.0",
@@ -114,11 +114,7 @@
     "edition": "octane"
   },
   "@comment": {
-    "resolutions": "https://github.com/mainmatter/ember-simple-auth/issues/2577",
     "prettier-script": "https://github.com/ember-template-lint/ember-template-lint-plugin-prettier/issues/268"
-  },
-  "resolutions": {
-    "ember-simple-auth": "^6.0.0-rc.1"
   },
   "volta": {
     "node": "20.9.0",
