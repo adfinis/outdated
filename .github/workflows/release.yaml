@@ -91,7 +91,7 @@ jobs:
             org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
 
       - name: Build and Push API Docker Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: docker
         with:
           context: ./api/
@@ -163,7 +163,7 @@ jobs:
             org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
 
       - name: Build and Push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: docker
         with:
           context: ./ember/
