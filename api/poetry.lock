@@ -931,13 +931,13 @@ anchors = ["unidecode"]
 
 [[package]]
 name = "pyarn"
-version = "0.2.0"
+version = "0.3.0"
 description = "Yarn JS package manager lockfile parser"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyarn-0.2.0-py3-none-any.whl", hash = "sha256:d06e8b79bb830f142187b57ee664dc0104f658efdb2b2bae7ed99eaf7746eb1a"},
-    {file = "pyarn-0.2.0.tar.gz", hash = "sha256:542ff739af2b81a1200776eff2b4d2566a330846decbd0f815999b196d7b067d"},
+    {file = "pyarn-0.3.0-py3-none-any.whl", hash = "sha256:e8eaed3ae80c1891a8ea7f6b7538c049a79dd7e7d3b4279f275699b3477b38c2"},
+    {file = "pyarn-0.3.0.tar.gz", hash = "sha256:8f799d94a9b2fd4bd54185149d8745187c7ededcde98576ff70bf0823fd8a710"},
 ]
 
 [package.dependencies]
@@ -1378,4 +1378,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "72e7f42660cefef9066c70ccf0ab877a1d8165c2db80e5bcbe5655d78df2573a"
+content-hash = "ae4ed8999b08ee1ce281f54834bcecae5b472a210c33385fbe21dcc42fe9b405"
